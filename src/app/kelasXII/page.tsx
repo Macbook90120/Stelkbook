@@ -18,23 +18,23 @@ function Page() {
 
   const handleAgamaClick = (bookName: string) => {
     router.push(`/Buku_XII/${bookName}_XII`); // Navigasi ke buku agama
-  }; 
-  
+  };
+
   const handlePancasilaClick = (bookName: string) => {
     router.push(`/Buku_XII/${bookName}_XII`); // Navigasi ke buku pancasila
   };
 
   const handleKimiaClick = (bookName: string) => {
     router.push(`/Buku_XII/${bookName}_XII`); // Navigasi ke buku Kimia
-  }; 
+  };
 
   const handleSejarahClick = (bookName: string) => {
     router.push(`/Buku_XII/${bookName}_XII`); // Navigasi ke buku Sejarah
-  }; 
+  };
 
   const handleFisikaClick = (bookName: string) => {
     router.push(`/Buku_XII/${bookName}_XII`); // Navigasi ke buku Fisika
-  }; 
+  };
 
   const handleGeografiClick = (bookName: string) => {
     router.push(`/Buku_XII/${bookName}_XII`); // Navigasi ke buku geografi
@@ -42,16 +42,16 @@ function Page() {
 
   const handleEkonomiClick = (bookName: string) => {
     router.push(`/Buku_XII/${bookName}_XII`); // Navigasi ke buku Ekonomi
-  }; 
+  };
 
   const handleMatematikaClick = (bookName: string) => {
     router.push(`/Buku_XII/${bookName}_XII`); // Navigasi ke buku Matematika
-  }; 
+  };
 
   const handleBahasaIndonesiaClick = (bookName: string) => {
     router.push(`/Buku_XII/${bookName}_XII`); // Navigasi ke buku Bahasa Indonesia
-  }; 
-  
+  };
+
 
   return (
     <div className="min-h-screen p-8 bg-gray-50 overflow-y-auto">
@@ -107,7 +107,7 @@ function Page() {
       </div>
 
       {/* Studi Anda Text */}
-      <div className="mb-8 flex items-center">
+      <div className="mb-8 flex items-center cursor-pointer" onClick={handleStelkbookClick}>
         <p className="text-xl font-semibold text-left font-poppins translate-y-[-15px]">
           Studi Anda
         </p>
@@ -124,6 +124,7 @@ function Page() {
           Kelas XII
         </p>
       </div>
+
 
       {/* Buku Display Section */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 justify-items-center">
