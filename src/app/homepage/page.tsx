@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import Navbar from './navbar';
+// import Navbar from './navbar';
 
 function HomePage() {
   const router = useRouter();
@@ -45,7 +45,7 @@ function HomePage() {
       <header className="flex justify-between items-center mb-4">
 
         {/* Integrate Navbar here */}
-        <Navbar />
+        {/* <Navbar /> */}
 
         {/* Navbar */}
         <div className="flex-shrink-0 cursor-pointer translate-x-2 bg-transparent">
