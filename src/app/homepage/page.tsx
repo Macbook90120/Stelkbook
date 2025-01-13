@@ -2,6 +2,7 @@
 import React, { useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import Navbar from './navbar';
 
 function HomePage() {
   const router = useRouter();
@@ -43,10 +44,14 @@ function HomePage() {
     <div className="min-h-screen p-8 bg-gray-50">
       <header className="flex justify-between items-center mb-4">
 
+        {/* Integrate Navbar here */}
+        <Navbar />
+
         {/* Navbar */}
         <div className="flex-shrink-0 cursor-pointer translate-x-2 bg-transparent">
           <Image src="/assets/Class/Navbar_Button.png" alt="Stelkbook" width={25} height={20} />
         </div>
+        
         
         {/* Stelkbook Title */}
         <div className="flex-shrink-0 translate-x-[-150px] translate-y-[-4px]">
