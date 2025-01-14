@@ -98,7 +98,7 @@ function Page() {
             <Image src="/assets/Kelas_X/Primary_Direct.png" alt="Breadcrumb Divider" width={10} height={16} />
           </div>
           <p className="text-xl font-semibold font-poppins cursor-pointer" onClick={handleKelasXClick}
-          >Kelas XI</p>
+          >Kelas X</p>
           <div className="mx-2">
             <Image src="/assets/Kelas_X/Primary_Direct.png" alt="Breadcrumb Divider" width={10} height={16} />
           </div>

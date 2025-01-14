@@ -12,44 +12,40 @@ function Page() {
     }
   };
 
-  const handleStelkbookClick = () => {
-    router.push('/homepage'); // Navigate to homepage
-  };
-
   const handleAgamaClick = (bookName: string) => {
     router.push(`/Buku_XII/${bookName}_XII`); // Navigasi ke buku agama
   };
 
   const handlePancasilaClick = (bookName: string) => {
-    router.push(`/Buku_XII/${bookName}_XII`); // Navigasi ke buku pancasila
+    router.push(`/Buku_XI/${bookName}_XI`); // Navigasi ke buku pancasila
   };
 
   const handleKimiaClick = (bookName: string) => {
-    router.push(`/Buku_XII/${bookName}_XII`); // Navigasi ke buku Kimia
+    router.push(`/Buku_X/${bookName}_X`); // Navigasi ke buku Kimia
   };
 
   const handleSejarahClick = (bookName: string) => {
-    router.push(`/Buku_XII/${bookName}_XII`); // Navigasi ke buku Sejarah
+    router.push(`/Buku_X/${bookName}_X`); // Navigasi ke buku Sejarah
   };
 
   const handleFisikaClick = (bookName: string) => {
-    router.push(`/Buku_XII/${bookName}_XII`); // Navigasi ke buku Fisika
+    router.push(`/Buku_X/${bookName}_X`); // Navigasi ke buku Fisika
   };
 
   const handleGeografiClick = (bookName: string) => {
-    router.push(`/Buku_XII/${bookName}_XII`); // Navigasi ke buku geografi
+    router.push(`/Buku_X/${bookName}_X`); // Navigasi ke buku geografi
   };
 
   const handleEkonomiClick = (bookName: string) => {
-    router.push(`/Buku_XII/${bookName}_XII`); // Navigasi ke buku Ekonomi
+    router.push(`/Buku_X/${bookName}_X`); // Navigasi ke buku Ekonomi
   };
 
   const handleMatematikaClick = (bookName: string) => {
-    router.push(`/Buku_XII/${bookName}_XII`); // Navigasi ke buku Matematika
+    router.push(`/Buku_X/${bookName}_X`); // Navigasi ke buku Matematika
   };
 
   const handleBahasaIndonesiaClick = (bookName: string) => {
-    router.push(`/Buku_XII/${bookName}_XII`); // Navigasi ke buku Bahasa Indonesia
+    router.push(`/Buku_X/${bookName}_X`); // Navigasi ke buku Bahasa Indonesia
   };
 
 
@@ -57,7 +53,7 @@ function Page() {
     <div className="min-h-screen p-8 bg-gray-50 overflow-y-auto">
       <header className="flex justify-between items-center mb-4">
         {/* Stelkbook Title */}
-        <div className="flex-shrink-0 cursor-pointer" onClick={handleStelkbookClick}>
+        <div className="flex-shrink-0" >
           <Image
             src="/assets/Class/Stelk_bookTitle.png"
             alt="Stelkbook"
@@ -107,142 +103,130 @@ function Page() {
       </div>
 
       {/* Studi Anda Text */}
-      <div className="mb-8 flex items-center cursor-pointer" onClick={handleStelkbookClick}>
+      <div className="mb-8 flex items-center">
         <p className="text-xl font-semibold text-left font-poppins translate-y-[-15px]">
           Studi Anda
-        </p>
-        <div className="mx-2">
-          <Image
-            src="/assets/Kelas_X/Primary_Direct.png"
-            alt="Divider Icon"
-            width={10} // SIZE UKURAN
-            height={16}
-            className="translate-y-[-15px] translate-x-[1px]"
-          />
-        </div>
-        <p className="text-xl font-semibold text-left font-poppins translate-y-[-15px]">
-          Kelas XII
         </p>
       </div>
 
 
       {/* Buku Display Section */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 justify-items-center">
-        <div className="text-center cursor-pointer" onClick={() => handleEkonomiClick('Ekonomi')}>
+        <div className="text-center cursor-pointer" onClick={() => handleAgamaClick('Agama')}>
           <Image
-            src="/assets/Kelas_XI/Buku_Ekonomi.png"
-            alt="Ekonomi SMA Kelas X"
+            src="/assets/Kelas_XII/Buku_Agama.png"
+            alt="Agama SMA Kelas X"
             width={150}
             height={200}
             className="mx-auto translate-x-[140px]"
           />
           <p className="mt-2 text-sm font-poppins font-semibold translate-x-[140px]">
-            Buku paket Ekonomi <br /> Kelas XII
+          Buku paket Agama <br /> Kelas XII SMA
           </p>
         </div>
-        <div className="text-center cursor-pointer" onClick={() => handleMatematikaClick('Matematika')}>
+        <div className="text-center cursor-pointer" onClick={() => handlePancasilaClick('Pancasila')}>
           <Image
-            src="/assets/Kelas_XI/Buku_Matematika.png"
-            alt="Matematika SMA Kelas X"
+            src="/assets/Kelas_XI/Buku_Pancasila.png"
+            alt="Pancasila SMA Kelas X"
             width={150}
             height={200}
             className="mx-auto translate-x-[28px]"
           />
           <p className="mt-2 text-sm font-poppins font-semibold translate-x-[28px]">
-            Buku paket Matematika  <br /> Kelas XII
+            Pendidikan Pancasila  <br /> untuk SMA/MA/SMK/ <br /> MAK Kelas XI 
           </p>
         </div>
-        <div className="text-center cursor-pointer" onClick={() => handleBahasaIndonesiaClick('BahasaIndonesia')}>
+        <div className="text-center cursor-pointer " onClick={() => handleEkonomiClick('Ekonomi')}>
           <Image
-            src="/assets/Kelas_XI/Buku_Bahasa_Indonesia.png"
-            alt="Bahasa Indonesia SMA Kelas X"
+            src="/assets/Kelas_X/Buku_Ekonomi.png"
+            alt="Ekonomi SMA Kelas X"
             width={150}
             height={200}
             className="mx-auto translate-x-[-80px]"
           />
           <p className="mt-2 text-sm font-poppins font-semibold translate-x-[-80px]">
-            Buku paket Bahasa Indonesia  <br /> Kelas XII
+            Buku paket Ekonomi SMA  <br /> Kelas X
           </p>
         </div>
       </div>
 
       {/* Tambahan Buku Display Section */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 justify-items-center mt-8">
-        <div className="text-center cursor-pointer" onClick={() => handleSejarahClick('Sejarah')}>
+        <div className="text-center cursor-pointer" onClick={() => handleMatematikaClick('Matematika')}>
           <Image
-            src="/assets/Kelas_XI/Buku_Sejarah.png"
-            alt="Sosiologi SMA Kelas X"
+            src="/assets/Kelas_X/Buku_Matematika.png"
+            alt="Matematika SMA Kelas X"
             width={150}
             height={200}
             className="mx-auto translate-x-[140px]"
           />
           <p className="mt-2 text-sm translate-x-[140px] font-poppins font-semibold">
-            Buku paket Sejarah  <br /> Kelas XII
+            Buku paket Matematika  <br /> Untuk SMA/MA Kelas X  <br /> Kelompok Wajib
           </p>
         </div>
-        <div className="text-center cursor-pointer" onClick={() => handleFisikaClick('Fisika')}>
+        <div className="text-center cursor-pointer" onClick={() => handleBahasaIndonesiaClick('BahasaIndonesia')}>
           <Image
-            src="/assets/Kelas_XI/Buku_Fisika.png"
+            src="/assets/Kelas_X/Buku_Bahasa_Indonesia.png"
             alt="Biologi SMA Kelas X"
             width={150}
             height={200}
             className="mx-auto translate-x-[28px]"
           />
           <p className="mt-2 text-sm translate-x-[28px] font-poppins font-semibold">
-            Buku paket Fisika  <br /> Kelas XII
+            Buku paket Bahasa  <br /> Indonesia SMA Kelas X
           </p>
         </div>
-        <div className="text-center cursor-pointer" onClick={() => handleKimiaClick('Kimia')}>
+        <div className="text-center cursor-pointer" onClick={() => handleSejarahClick('Sejarah')}>
           <Image
-            src="/assets/Kelas_XI/Buku_Kimia.png"
-            alt="Pendidikan Agama SMA Kelas X"
+            src="/assets/Kelas_X/Buku_Sejarah.png"
+            alt="Sejarah SMA Kelas X"
             width={165}
             height={200}
-            className="mx-auto translate-x-[-80px]"
+            className="mx-auto translate-x-[-80px] translate-y-[-5px]"
           />
-          <p className="mt-2 text-sm translate-x-[-80px] translate-y-[2px] font-poppins font-semibold">
-            Buku paket Kimia  <br /> Kelas XII
+          <p className="mt-2 text-sm translate-x-[-80px] translate-y-[-10px] font-poppins font-semibold">
+            Buku paket Sejarah  <br /> Indonesia Untuk SMA/MA Kelas X
           </p>
         </div>
       </div>
 
       {/* Tambahan Buku */}
       <div className="grid grid-cols-1 sm:grid-cols-2 justify-items-center mt-8">
-        <div className="text-center cursor-pointer" onClick={() => handleGeografiClick('Geografi')}>
+        <div className="text-center cursor-pointer" onClick={() => handleFisikaClick('Fisika')}>
           <Image
-            src="/assets/Kelas_XI/Buku_Geografi.png"
-            alt="Geografi SMA Kelas X"
+            src="/assets/Kelas_X/Buku_Fisika.png"
+            alt="Fisika SMA Kelas X"
             width={150}
             height={200}
             className="mx-auto translate-x-[10px]"
           />
           <p className="mt-2 text-sm translate-x-[10px] font-poppins font-semibold">
-            Buku paket Geografi  <br /> Kelas XII
+            Buku paket Mandiri  <br /> Fisika SMA/MA Kelas X
           </p>
         </div>
         {/* New Book Section */}
-        <div className="text-center cursor-pointer" onClick={() => handlePancasilaClick('Pancasila')}>
+        <div className="text-center cursor-pointer" onClick={() => handleKimiaClick('Kimia')}>
           <Image
-            src="/assets/Kelas_XI/Buku_Pancasila.png"
-            alt="Buku Baru SMA Kelas X"
+            src="/assets/Kelas_X/Buku_Kimia.png"
+            alt="Buku Kimia SMA Kelas X"
             width={150}
             height={200}
             className="mx-auto translate-x-[-335px]"
           />
           <p className="mt-2 text-sm translate-x-[-335px] font-poppins font-semibold">
-            Buku paket Pancasila  <br /> Kelas XII
+            Buku paket Kimia 1 SMA  <br /> Kelas X
           </p>
         </div>
-        <div className="text-center cursor-pointer" onClick={() => handleAgamaClick('Agama')}>
+        <div className="text-center cursor-pointer" onClick={() => handleGeografiClick('Geografi')}>
           <Image
-            src="/assets/Kelas_XII/Buku_Agama.png"
-            alt="Buku Baru SMA Kelas X"
+            src="/assets/Kelas_XII/Buku_Geografi.png"
+            alt="Buku Geografi SMA Kelas X"
             width={150}
             height={200}
-            className="mx-auto translate-x-[770px] translate-y-[-245px]"
+            className="mx-auto translate-x-[770px] translate-y-[-270px]"
           />
-          <p className="mt-2 text-sm translate-x-[770px] translate-y-[-245px] font-poppins font-semibold">
-            Buku paket Agama  <br /> Kelas XII
+          <p className="mt-2 text-sm translate-x-[770px] translate-y-[-275px] font-poppins font-semibold">
+            Buku paket Mandiri  <br /> Geografi Untuk SMA/MA <br /> Kelas X
           </p>
         </div>
 

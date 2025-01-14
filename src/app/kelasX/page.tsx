@@ -98,7 +98,7 @@
         </div>
 
         {/* Studi Anda Text */}
-        <div className="mb-8 flex items-center">
+        <div className="mb-8 flex items-center cursor-pointer" onClick={handleStelkbookClick}>
           <p className="text-xl font-semibold text-left font-poppins translate-y-[-15px]">
             Studi Anda
           </p>

@@ -1,11 +1,21 @@
 'use client';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import WarningModal from './WarningModal';
 // import Navbar from './navbar';
 
 function HomePage() {
   const router = useRouter();
+  const [showWarning, setShowWarning] = useState(false);
+
+  const handleLogoutClick = () => {
+    setShowWarning(true); // Show the warning modal
+  };
+
+  const handleCloseWarning = () => {
+    setShowWarning(false); // Close the warning modal
+  };
 
   // Disable scroll on mount and enable on unmount
   useEffect(() => {
@@ -40,6 +50,7 @@ function HomePage() {
     }
   };
 
+
   return (
     <div className="min-h-screen p-8 bg-gray-50">
       <header className="flex justify-between items-center mb-4">
@@ -48,11 +59,11 @@ function HomePage() {
         {/* <Navbar /> */}
 
         {/* Navbar */}
-        <div className="flex-shrink-0 cursor-pointer translate-x-2 bg-transparent">
-          <Image src="/assets/Class/Navbar_Button.png" alt="Stelkbook" width={25} height={20} />
+        <div className="flex-shrink-0 cursor-pointer translate-x-2 translate-y-[-2px] bg-transparent">
+          <Image src="/assets/Class/Menu_Button.png" alt="Stelkbook" width={25} height={20} />
         </div>
-        
-        
+
+
         {/* Stelkbook Title */}
         <div className="flex-shrink-0 translate-x-[-150px] translate-y-[-4px]">
           <Image src="/assets/Class/Stelk_bookTitle.png" alt="Stelkbook" width={175} height={100} />
@@ -76,9 +87,19 @@ function HomePage() {
           </div>
         </div>
 
+
         {/* Log out user */}
-        <div className="flex-shrink-0 cursor-pointer bg-transparent translate-x-[220px]">
-          <Image src="/assets/Class/Log_out.png" alt="Icon-User" width={30} height={40} className="rounded-full translate-y-[-0px] translate-x-[-20px]" />
+        <div
+          className="flex-shrink-0 cursor-pointer bg-transparent translate-x-[220px]"
+          onClick={handleLogoutClick}
+        >
+          <Image
+            src="/assets/Class/Log_out.png"
+            alt="Icon-User"
+            width={30}
+            height={40}
+            className="rounded-full translate-y-[-0px] translate-x-[-20px]"
+          />
         </div>
 
         {/* Icon user */}
@@ -86,16 +107,16 @@ function HomePage() {
           <Image src="/assets/Class/icon_user.png" alt="Icon-User" width={45} height={40} className="rounded-full translate-y-[-0px] translate-x-[-20px]" />
         </div>
       </header>
-      
+
+      {/* Warning Modal */}
+      {showWarning && (
+        <WarningModal onClose={handleCloseWarning} />
+      )}
+
 
       {/* Header */}
       <div className="mb-8">
-        <Image
-          src="/assets/Class/Lines.png"
-          alt="Header Line"
-          width={3000}
-          height={100}
-        />
+        <Image src="/assets/Class/Lines.png" alt="Header Line" width={3000} height={100} />
       </div>
 
       {/* Studi Anda Text */}
@@ -106,7 +127,7 @@ function HomePage() {
       <main className="flex flex-col items-center space-y-4">
         {/* Row for Kelas X and Kelas XI on top */}
         <div className="flex justify-between w-full max-w-md">
-          <div className="flex-shrink-0 transform translate-y-[-15px] translate-x-[-350px] relative">
+          <div className="flex-shrink-0 transform translate-y-[-30px] translate-x-[-350px] relative">
             <Image
               src="/assets/Class/Card_KelasX.png"
               alt="Kelas X"
@@ -124,7 +145,7 @@ function HomePage() {
             </div>
           </div>
 
-          <div className="flex-shrink-0 transform translate-y-[-15px] translate-x-[-310px] relative">
+          <div className="flex-shrink-0 transform translate-y-[-30px] translate-x-[-310px] relative">
             <Image
               src="/assets/Class/Card_KelasXI.png"
               alt="Kelas XI"
@@ -144,7 +165,7 @@ function HomePage() {
         </div>
 
         {/* Lainnya container */}
-        <div className="relative transform translate-y-[5px] translate-x-[290px]">
+        <div className="relative transform translate-y-[-30px] translate-x-[290px]">
           <Image
             src="/assets/Class/Card_Lainnya.png"
             alt="Lainnya"
@@ -163,7 +184,7 @@ function HomePage() {
         </div>
 
         {/* Gambaran tengah untuk Kelas XII */}
-        <div className="relative mt-4 transform translate-y-[-280px] translate-x-[-300px]">
+        <div className="relative mt-4 transform translate-y-[-315px] translate-x-[-300px]">
           <Image
             src="/assets/Class/Card_KelasXII.png"
             alt="Kelas XII"
