@@ -2,6 +2,7 @@
 import React, { useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+// import Navbar from './navbar';
 
 function HomePage() {
   const router = useRouter();
@@ -42,13 +43,23 @@ function HomePage() {
   return (
     <div className="min-h-screen p-8 bg-gray-50">
       <header className="flex justify-between items-center mb-4">
+
+        {/* Integrate Navbar here */}
+        {/* <Navbar /> */}
+
+        {/* Navbar */}
+        <div className="flex-shrink-0 cursor-pointer translate-x-2 bg-transparent">
+          <Image src="/assets/Class/Navbar_Button.png" alt="Stelkbook" width={25} height={20} />
+        </div>
+        
+        
         {/* Stelkbook Title */}
-        <div className="flex-shrink-0">
-          <Image src="/assets/Class/Stelk_bookTitle.png" alt="Stelkbook" width={165} height={100} />
+        <div className="flex-shrink-0 translate-x-[-150px] translate-y-[-4px]">
+          <Image src="/assets/Class/Stelk_bookTitle.png" alt="Stelkbook" width={175} height={100} />
         </div>
 
         {/* Search Bar */}
-        <div className="mx-4 flex-grow max-w-md relative">
+        <div className="mx-4 flex-grow max-w-md relative translate-x-[-60px]">
           <input
             type="text"
             placeholder="Pencarian disini"
@@ -65,11 +76,17 @@ function HomePage() {
           </div>
         </div>
 
+        {/* Log out user */}
+        <div className="flex-shrink-0 cursor-pointer bg-transparent translate-x-[220px]">
+          <Image src="/assets/Class/Log_out.png" alt="Icon-User" width={30} height={40} className="rounded-full translate-y-[-0px] translate-x-[-20px]" />
+        </div>
+
         {/* Icon user */}
-        <div className="flex-shrink-0 cursor-pointer" onClick={() => handleButtonClick('User')}>
+        <div className="flex-shrink-0 cursor-pointer translate-x-[-60px]" onClick={() => handleButtonClick('User')}>
           <Image src="/assets/Class/icon_user.png" alt="Icon-User" width={45} height={40} className="rounded-full translate-y-[-0px] translate-x-[-20px]" />
         </div>
       </header>
+      
 
       {/* Header */}
       <div className="mb-8">
@@ -101,7 +118,7 @@ function HomePage() {
             </div>
             <div
               onClick={() => handleButtonClick('Kelas X')}
-              className="absolute bottom-12 left-1/2 transform -translate-x-1/2 bg-white text-green-500 font-semibold text-lg py-2 px-12 rounded-full shadow-xl w-180 h-53 translate-x-[-230px] cursor-pointer"
+              className="absolute bottom-12 left-1/2 transform -translate-x-1/2px bg-white text-green-500 font-semibold text-lg py-2 px-12 rounded-full shadow-xl w-180 h-53 translate-x-[-230px] cursor-pointer"
             >
               Lanjut
             </div>
@@ -119,7 +136,7 @@ function HomePage() {
             </div>
             <div
               onClick={() => handleButtonClick('Kelas XI')}
-              className="absolute bottom-12 left-1/2 transform -translate-x-1/2 bg-white text-pink-500 font-semibold text-lg py-2 px-12 rounded-full shadow-xl w-180 h-53 translate-x-[-240px] cursor-pointer"
+              className="absolute bottom-12 left-1/2 transform -translate-x-1/2px bg-white text-pink-500 font-semibold text-lg py-2 px-12 rounded-full shadow-xl w-180 h-53 translate-x-[-240px] cursor-pointer"
             >
               Lanjut
             </div>
@@ -139,7 +156,7 @@ function HomePage() {
           </div>
           <div
             onClick={() => handleButtonClick('Lainnya')}
-            className="absolute bottom-12 left-1/2 transform -translate-x-1/2 bg-white text-red font-semibold text-lg py-2 px-12 rounded-full shadow-xl w-180 h-53 translate-y-[-5px] translate-x-[-240px] cursor-pointer"
+            className="absolute bottom-12 left-1/2 transform -translate-x-1/2px bg-white text-red font-semibold text-lg py-2 px-12 rounded-full shadow-xl w-180 h-53 translate-y-[-5px] translate-x-[-240px] cursor-pointer"
           >
             Lanjut
           </div>
@@ -158,7 +175,7 @@ function HomePage() {
           </div>
           <div
             onClick={() => handleButtonClick('Kelas XII')}
-            className="absolute bottom-12 left-1/2 transform -translate-x-1/2 bg-white text-sky-500 font-semibold text-lg py-2 px-12 rounded-full shadow-xl w-180 h-53 translate-x-[-230px] cursor-pointer"
+            className="absolute bottom-12 left-1/2 transform -translate-x-1/2px bg-white text-sky-500 font-semibold text-lg py-2 px-12 rounded-full shadow-xl w-180 h-53 translate-x-[-230px] cursor-pointer"
           >
             Lanjut
           </div>
