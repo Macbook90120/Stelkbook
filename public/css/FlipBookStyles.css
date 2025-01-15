@@ -1,0 +1,22 @@
+/* FlipBookStyles.css */
+.book-container {
+    position: relative;
+    width: 800px;
+    height: 500px;
+    margin: auto;
+    border: 5px solid #ddd;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+    background: url("/images/wood-texture.jpg") no-repeat center center;
+    background-size: cover;
+  }
+  
+  .page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #fdfdfd;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.15);
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
