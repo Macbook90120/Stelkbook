@@ -1,51 +1,61 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import WarningModal_2 from './WarningModal_2';
 
 function Page() {
   const router = useRouter();
+  const [showWarning, setShowWarning] = useState(false);
+
+  const handleLogoutClick = () => {
+    setShowWarning(true); // Show the warning modal
+  };
+
+  const handleCloseWarning = () => {
+    setShowWarning(false); // Close the warning modal
+  };
 
   const handleButtonClick = (button: string) => {
     if (button === 'User') {
-      router.push('/profile'); // Navigate to profile page
+      router.push('/profile_guru'); // Navigate to profile page
     }
   };
 
   const handleAgamaClick = (bookName: string) => {
-    router.push(`/Buku_XII/${bookName}_XII`); // Navigasi ke buku agama
+    router.push(`/homepage_guru/Buku_XII_Guru/${bookName}_XII_Guru`); // Navigasi ke buku agama
   };
 
   const handlePancasilaClick = (bookName: string) => {
-    router.push(`/Buku_XI/${bookName}_XI`); // Navigasi ke buku pancasila
+    router.push(`/homepage_guru/Buku_XI_Guru/${bookName}_XI_Guru`); // Navigasi ke buku pancasila
   };
 
   const handleKimiaClick = (bookName: string) => {
-    router.push(`/Buku_X/${bookName}_X`); // Navigasi ke buku Kimia
+    router.push(`/homepage_guru/Buku_X_Guru/${bookName}_X_Guru`); // Navigasi ke buku Kimia
   };
 
   const handleSejarahClick = (bookName: string) => {
-    router.push(`/Buku_X/${bookName}_X`); // Navigasi ke buku Sejarah
+    router.push(`/homepage_guru/Buku_X_Guru/${bookName}_X_Guru`); // Navigasi ke buku Sejarah
   };
 
   const handleFisikaClick = (bookName: string) => {
-    router.push(`/Buku_X/${bookName}_X`); // Navigasi ke buku Fisika
+    router.push(`/homepage_guru/Buku_X_Guru/${bookName}_X_Guru`); // Navigasi ke buku Fisika
   };
 
   const handleGeografiClick = (bookName: string) => {
-    router.push(`/Buku_X/${bookName}_X`); // Navigasi ke buku geografi
+    router.push(`/homepage_guru/Buku_X_Guru/${bookName}_X_Guru`); // Navigasi ke buku geografi
   };
 
   const handleEkonomiClick = (bookName: string) => {
-    router.push(`/Buku_X/${bookName}_X`); // Navigasi ke buku Ekonomi
+    router.push(`/homepage_guru/Buku_X_Guru/${bookName}_X_Guru`); // Navigasi ke buku Ekonomi
   };
 
   const handleMatematikaClick = (bookName: string) => {
-    router.push(`/Buku_X/${bookName}_X`); // Navigasi ke buku Matematika
+    router.push(`/homepage_guru/Buku_X_Guru/${bookName}_X_Guru`); // Navigasi ke buku Matematika
   };
 
   const handleBahasaIndonesiaClick = (bookName: string) => {
-    router.push(`/Buku_X/${bookName}_X`); // Navigasi ke buku Bahasa Indonesia
+    router.push(`/homepage_guru/Buku_X_Guru/${bookName}_X_Guru`); // Navigasi ke buku Bahasa Indonesia
   };
 
 
@@ -63,14 +73,29 @@ function Page() {
         </div>
 
         {/* Search Bar */}
-        <div className="mx-4 flex-grow max-w-md relative">
+        <div className="mx-4 flex-grow max-w-md relative translate-y-[20px]">
           <input
             type="text"
             placeholder="Pencarian disini"
             className="w-full rounded-lg border border-gray-300 pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
+
+           {/* Log out user */}
+                  <div
+                    className="flex-shrink-0 cursor-pointer bg-transparent translate-x-[870px] translate-y-[-35px]"
+                    onClick={handleLogoutClick}
+                  >
+                    <Image
+                      src="/assets/Class/Log_out.png"
+                      alt="Icon-User"
+                      width={30}
+                      height={40}
+                      className="rounded-full translate-y-[-0px] translate-x-[-20px]"
+                    />
+                  </div>
+
           {/* Icon-Image */}
-          <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
+          <div className="absolute left-3 top-1/2 transform -translate-y-[25px]">
             <Image
               src="/assets/Class/Search_icon.png"
               alt="Search Icon"
@@ -81,7 +106,7 @@ function Page() {
         </div>
 
         {/* Icon user */}
-        <div className="flex-shrink-0 cursor-pointer" onClick={() => handleButtonClick('User')}>
+        <div className="flex-shrink-0 cursor-pointer translate-x-[-45px] translate-y-[5px]" onClick={() => handleButtonClick('User')}>
           <Image
             src="/assets/Class/icon_user.png"
             alt="Icon-User"
@@ -91,6 +116,11 @@ function Page() {
           />
         </div>
       </header>
+
+      {/* Warning Modal */}
+      {showWarning && (
+        <WarningModal_2 onClose={handleCloseWarning} />
+      )}
 
       {/* Header Line */}
       <div className="mb-8">

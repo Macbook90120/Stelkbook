@@ -87,7 +87,6 @@ function HomePage() {
           </div>
         </div>
 
-
         {/* Log out user */}
         <div
           className="flex-shrink-0 cursor-pointer bg-transparent translate-x-[220px]"

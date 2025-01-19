@@ -145,6 +145,16 @@ function Login() {
                         </div>
                     </form>
 
+                     {/* Forgot Password Link */}
+                     <div className="mt-4 text-right translate-x-1 translate-y-[-10px]">
+                        <a
+                            href="/forgot-password"
+                            className="text-sm text-red-500 hover:underline cursor-pointer"
+                        >
+                            Forgot Password?
+                        </a>
+                    </div>
+
                     <div className="mt-8 text-center flex justify-center items-center space-x-4">
                         <Image src="/assets/PoweredBy.png" alt="Powered by Logo" width={100} height={30} />
                         <Image src="/assets/Telkom.schools.png" alt="Telkom Logo" width={100} height={30} />
