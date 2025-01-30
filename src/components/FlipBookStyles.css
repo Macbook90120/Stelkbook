@@ -1,0 +1,17 @@
+/* FlipBookStyles.css */
+.book-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    background-color: transparent;
+    padding: 0; /* Remove padding */
+    margin: 0 auto; /* Center the book */
+    box-shadow: none; /* Remove any shadow */
+  }
+  
+  #book-container canvas {
+    margin: 0;
+    padding: 0;
+  }
+  

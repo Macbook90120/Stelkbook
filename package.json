@@ -12,12 +12,15 @@
     "@react-icons/all-files": "^4.1.0",
     "@types/react-router-dom": "^5.3.3",
     "next": "15.0.3",
-    "react": "19.0.0-rc-66855b96-20241106",
-    "react-dom": "19.0.0-rc-66855b96-20241106",
+    "page-flip": "^2.0.7",
+    "pdfjs-dist": "^4.10.38",
+    "react": "^19.0.0-rc-66855b96-20241106",
+    "react-dom": "^19.0.0-rc-66855b96-20241106",
     "react-icons": "^5.4.0"
   },
   "devDependencies": {
     "@types/node": "^20",
+    "@types/page-flip": "^2.0.3",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "eslint": "^8",

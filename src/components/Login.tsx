@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
-
 function Login() {
     const router = useRouter();
     const [username, setUsername] = useState('');
@@ -19,10 +18,9 @@ function Login() {
         };
     }, []);
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = (e: { preventDefault: () => void; }) => {
         e.preventDefault();
 
-        // Credentials for each role
         const credentials = {
             teacher: { username: 'guru123', password: '123456789', redirect: '/homepage_guru' },
             perpus: { username: 'perpus123', password: '123456789', redirect: '/perpustakaan' },
@@ -30,7 +28,6 @@ function Login() {
             siswa: { username: 'siswa123', password: '123456789', redirect: '/homepage' },
         };
 
-        // Match credentials and redirect properly
         if (
             username === credentials.teacher.username &&
             password === credentials.teacher.password
@@ -58,38 +55,32 @@ function Login() {
 
     return (
         <div className="flex min-h-screen">
-
-            {/* foto bagian kiri */}
+            {/* Left-side image */}
             <div
-                className="w-6/12 hidden lg:block relative z-0"
-                style={{ height: '100vh', width: '55vw' }}
+                className="hidden lg:block lg:w-9/12 relative"
+                style={{ height: '100vh' }}
             >
-                <div className="absolute inset-0" style={{ height: '100%', width: '101%' }}>
-                    <Image
-                        src="/assets/Lab komputer.jpg"
-                        alt="BackgroundComputer"
-                        className="object-cover"
-                        layout="fill"
-                        priority
-                        style={{
-                            objectFit: 'cover',
-                            transform: 'scale(1.3) translateX(11%)',
-                            height: '100%',
-                            width: '100%',
-                        }}
-                    />
-                </div>
+                <Image
+                    src="/assets/Lab komputer.jpg"
+                    alt="BackgroundComputer"
+                    className="absolute inset-0 object-cover"
+                    layout="fill"
+                    priority
+                    style={{ objectFit: 'cover', transform: 'scale(1.3) translateX(11%)' }}
+                />
             </div>
 
-            {/* Form section */}
+            {/* Right-side login */}
             <div
-                className="w-full lg:w-7/12 flex items-center justify-center p-8 relative z-10 min-h-screen"
+                className="flex w-full lg:w-4/12 items-center justify-center p-8 bg-white lg:min-h-screen lg:shadow-lg lg:rounded-none"
                 style={{
-                    transform: 'scale(1.0) translateX(120px)',
-                    backgroundColor: 'transparent',
+                    position: 'relative',
+                    boxShadow: 'none',
+                    borderTopRightRadius: '0px',
+                    borderBottomRightRadius: '0px',
                 }}
             >
-                <div className="w-full max-w-md p-8 bg-white/80 rounded-lg shadow-lg">
+                <div className="w-full h-full max-w-md p-8 bg-white rounded-lg">
                     <div className="text-center mb-8">
                         <Image
                             src="/assets/Stelkbook_logo.png"
@@ -108,30 +99,24 @@ function Login() {
                     </div>
                     <form onSubmit={handleSubmit}>
                         <div className="mb-6">
-                            <label className="block text-gray-700 font-bold mb-2" htmlFor="username">
-                                Username
-                            </label>
                             <input
                                 type="text"
                                 id="username"
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
-                                className="w-full px-4 py-2 bg-gray-300 text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
-                                placeholder="Enter your username"
+                                className="w-full px-4 py-2 bg-gray-200 text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
+                                placeholder="Username"
                                 required
                             />
                         </div>
                         <div className="mb-6">
-                            <label className="block text-gray-700 font-bold mb-2" htmlFor="password">
-                                Password
-                            </label>
                             <input
                                 type="password"
                                 id="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="w-full px-4 py-2 bg-gray-300 text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
-                                placeholder="Enter your password"
+                                className="w-full px-4 py-2 bg-gray-200 text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
+                                placeholder="Password"
                                 required
                             />
                         </div>
@@ -144,11 +129,19 @@ function Login() {
                             </button>
                         </div>
                     </form>
-
-                    <div className="mt-8 text-center flex justify-center items-center space-x-4">
-                        <Image src="/assets/PoweredBy.png" alt="Powered by Logo" width={100} height={30} />
-                        <Image src="/assets/Telkom.schools.png" alt="Telkom Logo" width={100} height={30} />
+                    <div className="mt-4 text-right">
+                        <a
+                            href="/forgot-password"
+                            className="text-sm text-red-500 hover:underline cursor-pointer"
+                        >
+                            Forgot Password?
+                        </a>
                     </div>
+                </div>
+                {/* Powered by Telkom section */}
+                <div className="absolute bottom-8 w-full text-center flex justify-center items-center space-x-4">
+                    <Image src="/assets/PoweredBy.png" alt="Powered by Logo" width={80} height={10} />
+                    <Image src="/assets/Telkom.schools.png" alt="Telkom Logo" width={80} height={10} />
                 </div>
             </div>
         </div>
