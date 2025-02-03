@@ -2,7 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/Navbar_Guru";
 import { useRouter } from "next/navigation";
 
 function Page() {
@@ -17,55 +17,55 @@ function Page() {
       title: "Buku Paket Ekonomi",
       subtitle: "Kelas X SMA",
       imgSrc: "/assets/Kelas_XII/Buku_Ekonomi.png",
-      path: "/kelasX/Ekonomi_X",
+      path: "/homepage_guru/KelasGuru/Ekonomi_X",
     },
     {
       title: "Pendidikan Pancasila",
       subtitle: "Kelas XI SMA",
       imgSrc: "/assets/Kelas_XI/Buku_Pancasila.png",
-      path: "/kelasXI/Pancasila_XI",
+      path: "/homepage_guru/KelasGuru/Pancasila_XI",
     },
     {
       title: "Buku Paket Agama",
       subtitle: "Kelas XII SMA",
       imgSrc: "/assets/Kelas_XII/Buku_Agama.png",
-      path: "/kelasXII/Agama_XII",
+      path: "/homepage_guru/KelasGuru/Agama_XII",
     },
     {
       title: "Buku Paket Matematika",
       subtitle: "Kelas X SMA",
       imgSrc: "/assets/Kelas_X/Buku_Matematika.png",
-      path: "/kelasX/Matematika_X",
+      path: "/homepage_guru/KelasGuru/Matematika_X",
     },
     {
       title: "Buku Paket Bahasa Indonesia",
       subtitle: "Kelas X SMA",
       imgSrc: "/assets/Kelas_X/Buku_Bahasa_Indonesia.png",
-      path: "/kelasX/BahasaIndonesia_X",
+      path: "/homepage_guru/KelasGuru/BahasaIndonesia_X",
     },
     {
       title: "Buku Paket Sejarah",
       subtitle: "Kelas X SMA",
       imgSrc: "/assets/Kelas_X/Buku_Sejarah.png",
-      path: "/kelasX/Sejarah_X",
+      path: "/homepage_guru/KelasGuru/Sejarah_X",
     },
     {
       title: "Buku Paket Fisika",
       subtitle: "Kelas X SMA",
       imgSrc: "/assets/Kelas_X/Buku_Fisika.png",
-      path: "/kelasX/Fisika_X",
+      path: "/homepage_guru/KelasGuru/Fisika_X",
     },
     {
       title: "Buku Paket Kimia",
       subtitle: "Kelas X SMA",
       imgSrc: "/assets/Kelas_X/Buku_Kimia.png",
-      path: "/kelasX/Kimia_X",
+      path: "/homepage_guru/KelasGuru/Kimia_X",
     },
     {
       title: "Buku Paket Geografi",
       subtitle: "Kelas X SMA",
       imgSrc: "/assets/Kelas_XII/Buku_Geografi.png",
-      path: "/kelasX/Geografi_X",
+      path: "/homepage_guru/KelasGuru/Geografi_X",
     },
   ];
 

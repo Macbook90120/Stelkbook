@@ -14,7 +14,6 @@ const BookCard = ({ imageSrc, altText, title, onClick }: any) => (
   </div>
 );
 
-
 function Page() {
   const router = useRouter();
 
