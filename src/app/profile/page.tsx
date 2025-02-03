@@ -1,46 +1,37 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
+import WarningModal from '@/app/profile/WarningLogout'; // Import the WarningModal component
 
 function Page() {
   const router = useRouter();
+  const [showWarningModal, setShowWarningModal] = useState(false); // State to control the modal visibility
 
   const handleChangePasswordClick = () => {
-    router.push('/change-password'); // navigasi untuk halaman ganti password
+    router.push('/change-password'); // Navigate to the change password page
   };
 
   const handleLogoutClick = () => {
-    router.push('http://localhost:3000/'); // navigasi untuk halaman logout
+    setShowWarningModal(true); // Show the warning modal when logout is clicked
+  };
+
+  const handleConfirmLogout = () => {
+    // Perform any logout logic here (e.g., clearing session, user data, etc.)
+    router.push('http://localhost:3000/'); // Redirect to the home page
+  };
+
+  const handleCloseModal = () => {
+    setShowWarningModal(false); // Close the modal
   };
 
   return (
     <div className="min-h-screen p-8 bg-gray-50">
-            <header className="flex justify-between items-center mb-4">
+      <header className="flex justify-between items-center mb-4">
         {/* Navbar */}
         <div className="mb-8"><Navbar /></div>
       </header>
-
-      {/* Studi Anda Text */}
-      {/* <div className="mb-8 flex items-center space-x-2">
-        <p className="text-lg font-semibold text-gray-700">Profil</p> */}
-
-        {/* Arrow Icon */}
-        {/* <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-5 w-5 text-gray-500"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={2}
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-        </svg> */}
-
-        {/* "Profil" Text */}
-        {/* <p className="text-lg font-medium text-gray-900 font-poppins">Profil</p>
-      </div> */}
 
       {/* Profile Section */}
       <div className="flex justify-center pt-12 px-8">
@@ -99,7 +90,7 @@ function Page() {
               </div>
             </div>
 
-             {/* Action Buttons */}
+            {/* Action Buttons */}
             <div className="flex flex-col md:flex-row md:space-x-12 space-y-4 md:space-y-0 mt-6">
               <button
                 onClick={handleChangePasswordClick}
@@ -129,6 +120,14 @@ function Page() {
           </div>
         </div>
       </div>
+
+      {/* Warning Modal */}
+      {showWarningModal && (
+        <WarningModal
+          onClose={handleCloseModal}
+          onConfirm={handleConfirmLogout}
+        />
+      )}
     </div>
   );
 }

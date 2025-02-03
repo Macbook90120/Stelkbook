@@ -79,7 +79,7 @@ function Page() {
           <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
         </svg>
 
-        {/* "Siswa" Text */}
+        {/* "Perpus" Text */}
         <p className="text-lg font-semibold text-gray-600">Perpus</p>
 
         {/* Second Arrow Icon */}

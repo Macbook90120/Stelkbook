@@ -2,11 +2,13 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import WarningModal from './WarningForgot'; // Import the WarningModal component
 
 function Login() {
     const router = useRouter();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [showWarningModal, setShowWarningModal] = useState(false); // State to control modal visibility
 
     useEffect(() => {
         // Disable scrolling on mount
@@ -51,6 +53,15 @@ function Login() {
         } else {
             alert('Invalid credentials. Please try again.');
         }
+    };
+
+    const handleForgotPasswordClick = (e: { preventDefault: () => void; }) => {
+        e.preventDefault();
+        setShowWarningModal(true); // Show the warning modal
+    };
+
+    const handleCloseWarningModal = () => {
+        setShowWarningModal(false); // Close the warning modal
     };
 
     return (
@@ -131,7 +142,8 @@ function Login() {
                     </form>
                     <div className="mt-4 text-right">
                         <a
-                            href="/forgot-password"
+                            href="#"
+                            onClick={handleForgotPasswordClick}
                             className="text-sm text-red-500 hover:underline cursor-pointer"
                         >
                             Forgot Password?
@@ -144,6 +156,11 @@ function Login() {
                     <Image src="/assets/Telkom.schools.png" alt="Telkom Logo" width={80} height={10} />
                 </div>
             </div>
+
+            {/* Warning Modal */}
+            {showWarningModal && (
+                <WarningModal onClose={handleCloseWarningModal} />
+            )}
         </div>
     );
 }

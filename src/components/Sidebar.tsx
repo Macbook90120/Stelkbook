@@ -28,7 +28,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             {/* Kelas X */}
             <li
               className="flex items-center space-x-2 cursor-pointer hover:opacity-80"
-              onClick={() => handleNavigation("/Buku_X")}
+              onClick={() => handleNavigation("/kelasX")}
             >
               <Image
                 src="/assets/Class/buku.png"
@@ -42,7 +42,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             {/* Kelas XI */}
             <li
               className="flex items-center space-x-2 cursor-pointer hover:opacity-80"
-              onClick={() => handleNavigation("/Buku_XI")}
+              onClick={() => handleNavigation("/kelasXI")}
             >
               <Image
                 src="/assets/Class/buku.png"
@@ -56,7 +56,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             {/* Kelas XII */}
             <li
               className="flex items-center space-x-2 cursor-pointer hover:opacity-80"
-              onClick={() => handleNavigation("/Buku_XII")}
+              onClick={() => handleNavigation("/kelasXII")}
             >
               <Image
                 src="/assets/Class/buku.png"
@@ -70,7 +70,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             {/* Lainnya */}
             <li
               className="flex items-center space-x-2 cursor-pointer hover:opacity-80"
-              onClick={() => handleNavigation("/Lainnya")}
+              onClick={() => handleNavigation("/lainnya")}
             >
               <Image
                 src="/assets/Class/buku.png"

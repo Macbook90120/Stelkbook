@@ -30,10 +30,6 @@ function Page() {
     setIsResetModalOpen(true); // Open the reset password modal
   };
 
-  const handleStelkbookClick = () => {
-    router.push("/admin"); // navigasi untuk perpustakaan homepage
-  };
-
   return (
     <div className="min-h-screen p-8 bg-gray-50 overflow-y-auto">
       
