@@ -1,168 +1,65 @@
 "use client";
 import React, { useState } from "react";
-import { useRouter } from "next/navigation"; // Import useRouter
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import WarningModalBuku from "./WarningModalBuku7";
+import PageFlipBook from "@/components/PageFlipBook";
+import Navbar from '@/components/Navbar_Perpus';
+
 function Page() {
   const [showWarningModal, setShowWarningModal] = useState(false);
   const router = useRouter();
 
-  // Chapter data
-  const chapters = [
-    "Pengenalan Ilmu Kimia",
-    "Struktur Atom dan Tabel Periodik",
-    "Ikatan Kimia, Bentuk Molekul, dan Interaksi Antar Molekul",
-    "Larutan Elektrolit dan Larutan Non-elektrolit",
-    "Reaksi Redoks dan Tata Nama Senyawa",
-    "Hukum-Hukum dasar Kimia dan Stoikiometri",
-  ];
-
   return (
-    <>
-      <head>
-        <link
-          href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap"
-          rel="stylesheet"
-        />
-      </head>
-      <div className="h-screen p-8 bg-gray-50 overflow-hidden">
-        {/* Header */}
-        <header className="flex justify-between items-center mb-4">
-          <div className="flex-shrink-0">
-            <Image
-              src="/assets/Class/Stelk_bookTitle.png"
-              alt="Stelkbook"
-              width={165}
-              height={100}
-            />
+    <div className="h-screen p-8 bg-gray-50 overflow-y-auto">
+      {/* Header */}
+      <header className="flex justify-between items-center mb-4">
+        <div className="pt-12 px-8">
+          <Navbar />
+        </div>
+      </header>
+
+      {/* Breadcrumb */}
+      <div className="mb-8 flex items-center">
+        <p className="text-xl font-semibold font-poppins">Studi Anda</p>
+        <Image src="/assets/Kelas_X/Primary_Direct.png" alt="Breadcrumb Divider" width={10} height={16} className="mx-2" />
+        <p className="text-xl font-semibold font-poppins">Kelas X</p>
+        <Image src="/assets/Kelas_X/Primary_Direct.png" alt="Breadcrumb Divider" width={10} height={16} className="mx-2" />
+        <p className="text-xl font-semibold font-poppins">Buku Paket Kimia</p>
+      </div>
+
+      {/* Content */}
+      <div className="flex flex-col lg:flex-row gap-8 items-start">
+        {/* Book Info */}
+        <div className="flex flex-col items-center lg:items-start">
+          <Image src="/assets/Kelas_X/Buku_Kimia.png" alt="Ekonomi" width={200} height={280} className="rounded-lg shadow-md mb-6" />
+
+          <div className="text-center lg:text-left">
+            <h2 className="text-lg font-bold">Buku Paket Kimia <br /> 1 SMA Kelas X </h2>
+            <ul className="mt-2 text-sm space-y-1">
+              <li><strong>Penerbit:</strong> Yudistira</li>
+              <li><strong>Penulis:</strong>Muchtaridi</li>
+              <li><strong>Tahun:</strong> 2016</li>
+              <li><strong>ISBN:</strong> 9786022995180</li>
+            </ul>
           </div>
 
-          <div className="relative flex-grow max-w-md mx-4">
-            <input
-              type="text"
-              placeholder="Pencarian disini"
-              className="w-full pl-10 pr-4 py-2 border rounded-lg border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-              <Image
-                src="/assets/Class/Search_icon.png"
-                alt="Search Icon"
-                width={20}
-                height={20}
-              />
-            </div>
+          {/* Buttons */}
+          <div className="mt-4 flex flex-col gap-2">
+            <button onClick={() => router.push("/perpustakaan/Edit_Buku/Edit_Kimia_X")} className="bg-green-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-600 flex items-center gap-2">
+              <Image src="/assets/Admin/Edit_user.png" alt="Edit Icon" width={16} height={16} />
+              <span>Edit Buku</span>
+            </button>
+            <button onClick={() => setShowWarningModal(true)} className="bg-red text-white px-4 py-2 rounded-lg shadow-md hover:bg-red-600 flex items-center gap-2">
+              <Image src="/assets/Admin/Delete_user.png" alt="Delete Icon" width={16} height={16} />
+              <span>Hapus Buku</span>
+            </button>
           </div>
-
-          <div className="flex-shrink-0">
-            <Image
-              src="/assets/Class/icon_user.png"
-              alt="User Icon"
-              width={45}
-              height={40}
-              className="rounded-full"
-            />
-          </div>
-        </header>
-
-        <div className="mb-8">
-          <Image
-            src="/assets/Class/Lines.png"
-            alt="Header Divider"
-            width={3000}
-            height={100}
-          />
         </div>
 
-        <div className="mb-8 flex items-center">
-          <p className="text-xl font-semibold font-poppins">Studi Anda</p>
-          <div className="mx-2">
-            <Image
-              src="/assets/Kelas_X/Primary_Direct.png"
-              alt="Breadcrumb Divider"
-              width={10}
-              height={16}
-            />
-          </div>
-          <p className="text-xl font-semibold font-poppins">Kelas X</p>
-          <div className="mx-2">
-            <Image
-              src="/assets/Kelas_X/Primary_Direct.png"
-              alt="Breadcrumb Divider"
-              width={10}
-              height={16}
-            />
-          </div>
-          <p className="text-xl font-semibold font-poppins">
-            Kimia
-          </p>
-        </div>
-
-        <div className="flex flex-col lg:flex-row gap-8 items-start">
-          <div className="flex flex-col items-center lg:items-start">
-            <div className="mb-6 translate-y-[-15px]">
-              <Image
-                src="/assets/Kelas_X/Buku_Kimia.png"
-                alt="Kimia"
-                width={200}
-                height={280}
-                className="rounded-lg shadow-md"
-              />
-            </div>
-
-            <div className="text-center lg:text-left">
-              <h2 className="text-base font-bold translate-y-[-30px]">
-                Buku Paket Kimia <br /> 1 SMA Kelas X 
-              </h2>
-              <ul className="mt-2 text-xs space-y-1 translate-y-[-30px]">
-                <li className="whitespace-nowrap">
-                  <strong>Penerbit:</strong> Yudistira
-                </li>
-                <li className="whitespace-nowrap">
-                  <strong>Penulis:</strong> Muchtaridi
-                </li>
-                <li className="whitespace-nowrap">
-                  <strong>Tahun:</strong> 2016
-                </li>
-                <li className="whitespace-nowrap">
-                  <strong>ISBN:</strong> 9786022995180
-                </li>
-              </ul>
-            </div>
-
-            <div className="mt-4 flex flex-col gap-2">
-              <button onClick={() => router.push("/perpustakaan/Edit_Buku/Edit_Kimia_X")} className="bg-green-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-600 transition scale-100 duration-300 translate-y-[-30px] translate-x-[40px]">
-                Edit Buku
-              </button>
-              <button
-                onClick={() => setShowWarningModal(true)}
-                className="bg-red text-white px-4 py-2 rounded-lg shadow-md hover:bg-red transition duration-300 scale-100 translate-y-[-20px] translate-x-[40px]"
-              >
-                Hapus Buku
-              </button>
-            </div>
-          </div>
-
-          <div
-            className="bg-white shadow-md rounded-lg overflow-hidden w-full "
-            style={{ transform: "scale(0.9)", transformOrigin: "top center" }}
-          >
-            {chapters.map((chapter, index) => (
-              <div
-                key={index}
-                className="flex items-center gap-4 px-6 py-4 border-b last:border-b-0"
-              >
-                <div className="flex items-center justify-center bg-transparent rounded-md p-2">
-                  <Image
-                    src="/assets/Kelas_details/Book.png"
-                    alt={`Bab ${index + 1} Icon`}
-                    width={14}
-                    height={30}
-                  />
-                </div>
-                <p className="text-sm font-medium text-gray-800 font-poppins">{`Bab ${index + 1}: ${chapter}`}</p>
-              </div>
-            ))}
-          </div>
+        {/* Flipbook */}
+        <div className="flex-grow overflow-x-auto">
+          <PageFlipBook pdfPath="/assets/pdfs/MTK-OLM.pdf" />
         </div>
       </div>
 
@@ -177,7 +74,7 @@ function Page() {
           onCancel={() => setShowWarningModal(false)}
         />
       )}
-    </>
+    </div>
   );
 }
 

@@ -1,6 +1,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
+import NotificationEditSuccessful from './NotificationEditSuccessful';
 import { useRouter } from 'next/navigation';
 
 function Page() {
@@ -10,6 +11,7 @@ function Page() {
     const [isbn, setIsbn] = useState('');
     const [coverImage, setCoverImage] = useState<string | null>(null);
     const [pdfName, setPdfName] = useState<string | null>(null);
+    const [showNotification, setShowNotification] = useState(false);
 
     const handleCoverUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files[0]) {
@@ -32,11 +34,19 @@ function Page() {
             }
         }
     };
-
+    
     const handleButtonClick = (button: string) => {
         if (button === 'User') {
             router.push('/profile_perpus');
         }
+    };
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        // Simulate a successful edit and trigger the notification
+        setShowNotification(true);
+        // Hide the notification after 3 seconds
+        setTimeout(() => setShowNotification(false), 3000);
     };
 
     useEffect(() => {
@@ -51,6 +61,9 @@ function Page() {
 
     return (
         <div className="min-h-screen bg-gray-50 p-8 overflow-hidden">
+            {/* Notification */}
+            {showNotification && <NotificationEditSuccessful show={true} />}
+            
             {/* Header */}
             <header className="flex justify-between items-center mb-8">
                 <Image
@@ -101,7 +114,7 @@ function Page() {
 
             {/* Form */}
             <div className="bg-white p-6 rounded-lg shadow-lg max-w-4xl mx-auto">
-                <form>
+                <form onSubmit={handleSubmit}>
                     <div className="flex flex-wrap gap-8">
                         {/* Left Section */}
                         <div className="flex-grow">

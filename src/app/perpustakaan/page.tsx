@@ -2,7 +2,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import Navbar from '@/components/Navbar';
+import Navbar from '@/components/Navbar_Perpus';
 
 function Page() {
   const router = useRouter();
@@ -60,7 +60,7 @@ function Page() {
     {
       title: 'Buku paket Mandiri\nGeografi Untuk SMA/MA\nKelas X',
       image: '/assets/Kelas_XII/Buku_Geografi.png',
-      path: '/perpustakaan/Buku_XII_perpus/Geografi_XII_perpus',
+      path: '/perpustakaan/Buku_X_perpus/Geografi_X_perpus',
     },
   ];
 

@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import WarningModalBuku from "./WarningModalBuku4";
 import PageFlipBook from "@/components/PageFlipBook";
-import Navbar from "@/components/Navbar";
+import Navbar from '@/components/Navbar_Perpus';
 
 function Page() {
   const [showWarningModal, setShowWarningModal] = useState(false);
@@ -25,7 +25,7 @@ function Page() {
         <Image src="/assets/Kelas_X/Primary_Direct.png" alt="Breadcrumb Divider" width={10} height={16} className="mx-2" />
         <p className="text-xl font-semibold font-poppins">Kelas X</p>
         <Image src="/assets/Kelas_X/Primary_Direct.png" alt="Breadcrumb Divider" width={10} height={16} className="mx-2" />
-        <p className="text-xl font-semibold font-poppins">Ekonomi</p>
+        <p className="text-xl font-semibold font-poppins">Buku Paket Ekonomi</p>
       </div>
 
       {/* Content */}

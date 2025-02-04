@@ -40,7 +40,7 @@ const Navbar: React.FC = () => {
             {/* Logo (Responsive Changes) */}
             <div
               className="flex-shrink-0 cursor-pointer"
-              onClick={() => handleNavigation("/homepage_guru")}
+              onClick={() => handleNavigation("/admin")}
             >
               {/* Use different logos based on screen size */}
               <Image
@@ -82,7 +82,7 @@ const Navbar: React.FC = () => {
           <div className="flex items-center space-x-4">
             <div
               className="flex-shrink-0 cursor-pointer"
-              onClick={() => handleNavigation("/profile_guru")}
+              onClick={() => handleNavigation("/profile_admin")}
             >
               <Image
                 src="/assets/Class/icon_user.png"

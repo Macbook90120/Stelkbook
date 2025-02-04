@@ -1,6 +1,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
+import NotificationEditSuccessful from './NotificationEditSuccessful';
 import { useRouter } from 'next/navigation';
 
 function Page() {
@@ -10,6 +11,7 @@ function Page() {
     const [isbn, setIsbn] = useState('');
     const [coverImage, setCoverImage] = useState<string | null>(null);
     const [pdfName, setPdfName] = useState<string | null>(null);
+    const [notificationVisible, setNotificationVisible] = useState(false); // New state for notification
 
     const handleCoverUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files[0]) {
@@ -37,6 +39,12 @@ function Page() {
         if (button === 'User') {
             router.push('/profile_perpus');
         }
+    };
+
+    const handleSubmit = (event: React.FormEvent) => {
+        event.preventDefault();
+        setNotificationVisible(true); // Show notification on form submit
+        // Handle form submission logic (e.g., saving data)
     };
 
     useEffect(() => {
@@ -101,7 +109,7 @@ function Page() {
 
             {/* Form */}
             <div className="bg-white p-6 rounded-lg shadow-lg max-w-4xl mx-auto">
-                <form>
+                <form onSubmit={handleSubmit}>
                     <div className="flex flex-wrap gap-8">
                         {/* Left Section */}
                         <div className="flex-grow">
@@ -216,9 +224,11 @@ function Page() {
                     >
                         Selesai
                     </button>
-
                 </form>
             </div>
+
+            {/* Notification */}
+            <NotificationEditSuccessful show={notificationVisible} />
         </div>
     );
 }

@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import ConfirmationModal from "./hapus_user"; // Import the delete modal component
 import ResetPasswordModal from "./reset_user"; // Import the reset password modal component
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/Navbar_Admin";
 
 function Page() {
   const [isModalOpen, setIsModalOpen] = useState(false);
