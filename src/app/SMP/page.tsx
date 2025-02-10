@@ -12,14 +12,14 @@ function HomePage() {
       case 'User':
         router.push('/profile');
         break;
-      case 'SD':
-        router.push('/SD');
+      case 'kelasVII':
+        router.push('/kelasVII');
         break;
-      case 'SMP':
-        router.push('/SMP');
+      case 'kelasVIII':
+        router.push('/kelasVIII');
         break;
-      case 'SMK':
-        router.push('/SMK');
+      case 'kelasIX':
+        router.push('/kelasIX');
         break;
       default:
         console.error('Unknown destination:', destination);
@@ -36,7 +36,7 @@ function HomePage() {
       </header>
 
       <main className="grid grid-cols-1 gap-y-8 md:grid-cols-2 md:gap-6 pt-4">
-        {/* SD */}
+        {/* Kelas VII */}
         <div className="relative w-full h-56 md:h-64 mx-auto">
           <Image
             src="/assets/Class/Card_KelasX.png"
@@ -45,9 +45,9 @@ function HomePage() {
             className="rounded-lg object-cover"
           />
           <div className="absolute bottom-4 left-4">
-            <p className="text-white font-bold italic text-3xl lg:text-4xl">SD</p>
+            <p className="text-white font-bold italic text-3xl lg:text-4xl">Kelas VII</p>
             <button
-              onClick={() => handleButtonClick('SD')}
+              onClick={() => handleButtonClick('kelasVII')}
               className="mt-2 bg-white text-green-500 font-semibold text-sm py-2 px-8 rounded-full"
             >
               Lanjut
@@ -55,7 +55,7 @@ function HomePage() {
           </div>
         </div>
 
-        {/* SMP */}
+        {/* Kelas VIII */}
         <div className="relative w-full h-56 md:h-64 mx-auto">
           <Image
             src="/assets/Class/Card_KelasXI.png"
@@ -64,9 +64,9 @@ function HomePage() {
             className="rounded-lg object-cover"
           />
           <div className="absolute bottom-4 left-4">
-            <p className="text-white font-bold italic text-3xl lg:text-4xl">SMP</p>
+            <p className="text-white font-bold italic text-3xl lg:text-4xl">Kelas VIII</p>
             <button
-              onClick={() => handleButtonClick('SMP')}
+              onClick={() => handleButtonClick('kelasVIII')}
               className="mt-2 bg-white text-pink-500 font-semibold text-sm py-2 px-8 rounded-full"
             >
               Lanjut
@@ -74,7 +74,7 @@ function HomePage() {
           </div>
         </div>
 
-        {/* SMK */}
+        {/* Kelas IX */}
         <div className="relative w-full h-56 md:h-64 mx-auto">
           <Image
             src="/assets/Class/Card_KelasXII.png"
@@ -83,29 +83,10 @@ function HomePage() {
             className="rounded-lg object-cover"
           />
           <div className="absolute bottom-4 left-4">
-            <p className="text-white font-bold italic text-3xl lg:text-4xl">SMK</p>
+            <p className="text-white font-bold italic text-3xl lg:text-4xl">Kelas IX</p>
             <button
-              onClick={() => handleButtonClick('SMK')}
+              onClick={() => handleButtonClick('kelasIX')}
               className="mt-2 bg-white text-blue-500 font-semibold text-sm py-2 px-8 rounded-full"
-            >
-              Lanjut
-            </button>
-          </div>
-        </div>
-
-        {/* Non Akademik */}
-        <div className="relative w-full h-56 md:h-64 mx-auto">
-          <Image
-            src="/assets/Class/Card_Lainnya.png"
-            alt="Non Akademik"
-            fill
-            className="rounded-lg object-cover"
-          />
-          <div className="absolute bottom-4 left-4">
-            <p className="text-white font-bold italic text-3xl lg:text-4xl">Non Akademik</p>
-            <button
-              onClick={() => handleButtonClick('Non Akademik')}
-              className="mt-2 bg-white text-red font-semibold text-sm py-2 px-8 rounded-full"
             >
               Lanjut
             </button>
