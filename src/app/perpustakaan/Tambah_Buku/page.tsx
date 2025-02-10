@@ -12,7 +12,20 @@ function Page() {
     const [Tahun, setTahun] = useState('');
     const [isbn, setIsbn] = useState('');
     const [selectedKelas, setSelectedKelas] = useState('');
-    const [selectedSekolah, setSelectedSekolah] = useState(''); 
+    const [selectedSekolah, setSelectedSekolah] = useState('');
+    const [kelasOptions, setKelasOptions] = useState<string[]>([]);
+
+    useEffect(() => {
+        if (selectedSekolah === 'SD') {
+            setKelasOptions(['I', 'II', 'III', 'IV', 'V', 'VI']);
+        } else if (selectedSekolah === 'SMP') {
+            setKelasOptions(['VII', 'VIII', 'IX']);
+        } else if (selectedSekolah === 'SMK') {
+            setKelasOptions(['X', 'XI', 'XII']);
+        } else {
+            setKelasOptions([]);
+        }
+    }, [selectedSekolah]);
 
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
@@ -76,24 +89,6 @@ function Page() {
                             </div>
 
                             <div className="mb-4">
-                                <label className="block text-gray-700 font-medium mb-2">Kelas</label>
-                                <div className="flex space-x-4">
-                                    {['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII',].map((kelas) => (
-                                        <button
-                                            key={kelas}
-                                            type="button"
-                                            onClick={() => setSelectedKelas(kelas)}
-                                            className={`py-2 px-4 text-sm font-semibold border rounded-lg transition ${
-                                                selectedKelas === kelas ? 'bg-red text-white border-red-500' : 'bg-white text-gray-700 border-gray-300'
-                                            } focus:outline-none cursor-pointer`}
-                                        >
-                                            {kelas}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-
-                            <div className="mb-4">
                                 <label className="block text-gray-700 font-medium mb-2">Sekolah</label>
                                 <div className="flex space-x-4">
                                     {['SD', 'SMP', 'SMK'].map((Sekolah) => (
@@ -106,6 +101,24 @@ function Page() {
                                             } focus:outline-none cursor-pointer`}
                                         >
                                             {Sekolah}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="mb-4">
+                                <label className="block text-gray-700 font-medium mb-2">Kelas</label>
+                                <div className="flex space-x-4">
+                                    {kelasOptions.map((kelas) => (
+                                        <button
+                                            key={kelas}
+                                            type="button"
+                                            onClick={() => setSelectedKelas(kelas)}
+                                            className={`py-2 px-4 text-sm font-semibold border rounded-lg transition ${
+                                                selectedKelas === kelas ? 'bg-red text-white border-red-500' : 'bg-white text-gray-700 border-gray-300'
+                                            } focus:outline-none cursor-pointer`}
+                                        >
+                                            {kelas}
                                         </button>
                                     ))}
                                 </div>
