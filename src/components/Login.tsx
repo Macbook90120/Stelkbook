@@ -6,7 +6,7 @@ import WarningModal from './WarningForgot'; // Import the WarningModal component
 
 function Login() {
     const router = useRouter();
-    const [username, setUsername] = useState('');
+    const [nisNik, setNisNik] = useState('');
     const [password, setPassword] = useState('');
     const [showWarningModal, setShowWarningModal] = useState(false); // State to control modal visibility
 
@@ -24,29 +24,29 @@ function Login() {
         e.preventDefault();
 
         const credentials = {
-            teacher: { username: 'guru123', password: '123456789', redirect: '/homepage_guru' },
-            perpus: { username: 'perpus123', password: '123456789', redirect: '/perpustakaan' },
-            admin: { username: 'admin12345', password: '123456789', redirect: '/admin' },
-            siswa: { username: 'siswa123', password: '123456789', redirect: '/homepage' },
+            teacher: { nisNik: 'guru123', password: '123456789', redirect: '/homepage_guru' },
+            perpus: { nisNik: 'perpus123', password: '123456789', redirect: '/perpustakaan' },
+            admin: { nisNik: 'admin12345', password: '123456789', redirect: '/admin' },
+            siswa: { nisNik: 'siswa123', password: '123456789', redirect: '/homepage' },
         };
 
         if (
-            username === credentials.teacher.username &&
+            nisNik === credentials.teacher.nisNik &&
             password === credentials.teacher.password
         ) {
             router.push(credentials.teacher.redirect);
         } else if (
-            username === credentials.perpus.username &&
+            nisNik === credentials.perpus.nisNik &&
             password === credentials.perpus.password
         ) {
             router.push(credentials.perpus.redirect);
         } else if (
-            username === credentials.admin.username &&
+            nisNik === credentials.admin.nisNik &&
             password === credentials.admin.password
         ) {
             router.push(credentials.admin.redirect);
         } else if (
-            username === credentials.siswa.username &&
+            nisNik === credentials.siswa.nisNik &&
             password === credentials.siswa.password
         ) {
             router.push(credentials.siswa.redirect);
@@ -112,11 +112,11 @@ function Login() {
                         <div className="mb-6">
                             <input
                                 type="text"
-                                id="username"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
+                                id="nisNik"
+                                value={nisNik}
+                                onChange={(e) => setNisNik(e.target.value)}
                                 className="w-full px-4 py-2 bg-gray-200 text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
-                                placeholder="Username"
+                                placeholder="NIS/NIK"
                                 required
                             />
                         </div>

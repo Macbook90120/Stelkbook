@@ -9,8 +9,10 @@ function Page() {
     const [pdfName, setPdfName] = useState<string | null>(null);
     const [coverImage, setCoverImage] = useState<string | null>(null);
     const [penulis, setPenulis] = useState('');
+    const [Tahun, setTahun] = useState('');
     const [isbn, setIsbn] = useState('');
     const [selectedKelas, setSelectedKelas] = useState('');
+    const [selectedSekolah, setSelectedSekolah] = useState(''); 
 
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
@@ -18,20 +20,16 @@ function Page() {
     };
 
     const handlePdfUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.files && event.target.files[0]) {
-            const file = event.target.files[0];
-            if (file.type === 'application/pdf') {
-                setPdfName(file.name);
-            } else {
-                alert('Please upload a valid PDF file.');
-            }
+        if (event.target.files?.[0]?.type === 'application/pdf') {
+            setPdfName(event.target.files[0].name);
+        } else {
+            alert('Please upload a valid PDF file.');
         }
     };
 
     const handleCoverUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.files && event.target.files[0]) {
-            const file = URL.createObjectURL(event.target.files[0]);
-            setCoverImage(file);
+        if (event.target.files?.[0]) {
+            setCoverImage(URL.createObjectURL(event.target.files[0]));
         }
     };
 
@@ -69,9 +67,18 @@ function Page() {
                             </div>
 
                             <div className="mb-4">
+                                <label className="block text-gray-700 font-medium mb-2">Deskripsi</label>
+                                <input
+                                    type="text"
+                                    placeholder="(Isi Judul)"
+                                    className="w-full border border-gray-300 bg-gray-100 rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                />
+                            </div>
+
+                            <div className="mb-4">
                                 <label className="block text-gray-700 font-medium mb-2">Kelas</label>
                                 <div className="flex space-x-4">
-                                    {['X', 'XI', 'XII', 'NA'].map((kelas) => (
+                                    {['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII',].map((kelas) => (
                                         <button
                                             key={kelas}
                                             type="button"
@@ -81,6 +88,24 @@ function Page() {
                                             } focus:outline-none cursor-pointer`}
                                         >
                                             {kelas}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="mb-4">
+                                <label className="block text-gray-700 font-medium mb-2">Sekolah</label>
+                                <div className="flex space-x-4">
+                                    {['SD', 'SMP', 'SMK'].map((Sekolah) => (
+                                        <button
+                                            key={Sekolah}
+                                            type="button"
+                                            onClick={() => setSelectedSekolah(Sekolah)}
+                                            className={`py-2 px-4 text-sm font-semibold border rounded-lg transition ${
+                                                selectedSekolah === Sekolah ? 'bg-red text-white border-red-500' : 'bg-white text-gray-700 border-gray-300'
+                                            } focus:outline-none cursor-pointer`}
+                                        >
+                                            {Sekolah}
                                         </button>
                                     ))}
                                 </div>
@@ -102,6 +127,17 @@ function Page() {
                                     value={penulis}
                                     onChange={(e) => setPenulis(e.target.value)}
                                     placeholder="(Isi Penulis)"
+                                    className="w-full border border-gray-300 bg-gray-100 rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                />
+                            </div>
+
+                            <div className="mb-4">
+                                <label className="block text-gray-700 font-medium mb-2">Tahun</label>
+                                <input
+                                    type="text"
+                                    value={Tahun}
+                                    onChange={(e) => setTahun(e.target.value)}
+                                    placeholder="(Isi Tahun)"
                                     className="w-full border border-gray-300 bg-gray-100 rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 />
                             </div>
