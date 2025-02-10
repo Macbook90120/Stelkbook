@@ -52,28 +52,28 @@ function Page() {
             onClick={() => navigateToBook('History_Math2')}
           />
           <BookCard
-            imageSrc="/assets/Kelas_X/Buku_Bahasa_Indonesia.png"
-            altText="Bahasa Indonesia SMA Kelas X"
-            title="Title"
-            onClick={() => navigateToBook('BahasaIndonesia')}
+            imageSrc="/assets/Lainnya/History_Math3.png"
+            altText="Buku Sejarah Matematika"
+            title="History of Mathematics Brief Edition"
+            onClick={() => navigateToBook('History_Math3')}
           />
           <BookCard
-            imageSrc="/assets/Kelas_X/Buku_Sejarah.png"
-            altText="Sejarah SMA Kelas X"
-            title="Title"
-            onClick={() => navigateToBook('Sejarah')}
+            imageSrc="/assets/Lainnya/Physics_Enginner.jpg"
+            altText="Physics Enginner"
+            title="Enginnering Physics"
+            onClick={() => navigateToBook('Physics_Enginner')}
           />
            <BookCard
-            imageSrc="/assets/Kelas_X/Buku_Kimia.png"
-            altText="Sejarah SMA Kelas X"
-            title="Title"
-            onClick={() => navigateToBook('Sejarah')}
+            imageSrc="/assets/Lainnya/Chemistry.jpg"
+            altText="Chemistry"
+            title="Chemistry"
+            onClick={() => navigateToBook('Chemistry')}
           />
            <BookCard
-            imageSrc="/assets/Kelas_X/Buku_Fisika.png"
+            imageSrc="/assets/Lainnya/Organic_Chemistry.jpg"
             altText="Sejarah SMA Kelas X"
-            title="Title"
-            onClick={() => navigateToBook('Fisika')}
+            title="Organic Chemistry Second Edition"
+            onClick={() => navigateToBook('Organic_Chemistry')}
           />
         </div>
       </div>
