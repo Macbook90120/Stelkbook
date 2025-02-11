@@ -1,10 +1,14 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 function Page() {
   const router = useRouter();
+  const [showSekolahField, setShowSekolahField] = useState(false);
+  const [status, setStatus] = useState('');
+  const [sekolah, setSekolah] = useState('');
+  const [gender, setGender] = useState('');
 
   const handleStelkbookClick = () => {
     router.push('/admin'); // Navigate to the admin page
@@ -13,6 +17,16 @@ function Page() {
   const handleSelesaiClick = () => {
     // Navigate to the target page after clicking 'Selesai'
     router.push('/admin');
+  };
+
+  const handleStatusChange = (e) => {
+    const role = e.target.value;
+    setStatus(role);
+    if (role === 'Siswa' || role === 'Guru') {
+      setShowSekolahField(true);
+    } else {
+      setShowSekolahField(false);
+    }
   };
 
   return (
@@ -99,7 +113,7 @@ function Page() {
               <input
                 type="text"
                 defaultValue=""
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
               />
             </div>
 
@@ -109,17 +123,17 @@ function Page() {
               <input
                 type="text"
                 defaultValue=""
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
               />
             </div>
 
-             {/* Password Field */}
-             <div>
+            {/* Password Field */}
+            <div>
               <label className="block text-gray-700 text-sm font-medium mb-2">Password</label>
               <input
                 type="text"
                 defaultValue=""
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
               />
             </div>
 
@@ -129,31 +143,57 @@ function Page() {
               <input
                 type="email"
                 defaultValue=""
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
               />
             </div>
+
+            {/* Sekolah Field */}
+            {showSekolahField && (
+              <div>
+                <label className="block text-gray-700 text-sm font-medium mb-2">Sekolah</label>
+                <select
+                  value={sekolah}
+                  onChange={(e) => setSekolah(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
+                >
+                  <option value="">Pilih Sekolah</option>
+                  <option value="SD">SD</option>
+                  <option value="SMP">SMP</option>
+                  <option value="SMK">SMK</option>
+                </select>
+              </div>
+            )}
 
             {/* Status and Gender Fields */}
             <div className="flex space-x-4">
               {/* Status Field */}
               <div className="w-1/2">
                 <label className="block text-gray-700 text-sm font-medium mb-2">Status</label>
-                <input
-                  type="text"
-                  defaultValue="Siswa"
-                  readOnly
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+                <select
+                  value={status}
+                  onChange={handleStatusChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
+                >
+                  <option value="">Pilih Status</option>
+                  <option value="Siswa">Siswa</option>
+                  <option value="Guru">Guru</option>
+                  <option value="Staff Perpus">Perpus</option>
+                  <option value="Admin">Admin</option>
+                </select>
               </div>
 
               {/* Gender Field */}
               <div className="w-1/2">
                 <label className="block text-gray-700 text-sm font-medium mb-2">Gender</label>
-                <input
-                  type="text"
-                  defaultValue=""
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+                <select
+                  value={gender}
+                  onChange={(e) => setGender(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
+                >
+                  <option value="">Pilih Gender</option>
+                  <option value="Laki-laki">Laki-laki</option>
+                  <option value="Perempuan">Perempuan</option>
+                </select>
               </div>
             </div>
 
