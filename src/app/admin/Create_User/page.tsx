@@ -147,6 +147,22 @@ function Page() {
               />
             </div>
 
+            {/* Status Field */}
+            <div>
+              <label className="block text-gray-700 text-sm font-medium mb-2">Status</label>
+              <select
+                value={status}
+                onChange={handleStatusChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
+              >
+                <option value="">Pilih Status</option>
+                <option value="Siswa">Siswa</option>
+                <option value="Guru">Guru</option>
+                <option value="Staff Perpus">Perpus</option>
+                <option value="Admin">Admin</option>
+              </select>
+            </div>
+
             {/* Sekolah Field */}
             {showSekolahField && (
               <div>
@@ -164,37 +180,18 @@ function Page() {
               </div>
             )}
 
-            {/* Status and Gender Fields */}
-            <div className="flex space-x-4">
-              {/* Status Field */}
-              <div className="w-1/2">
-                <label className="block text-gray-700 text-sm font-medium mb-2">Status</label>
-                <select
-                  value={status}
-                  onChange={handleStatusChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
-                >
-                  <option value="">Pilih Status</option>
-                  <option value="Siswa">Siswa</option>
-                  <option value="Guru">Guru</option>
-                  <option value="Staff Perpus">Perpus</option>
-                  <option value="Admin">Admin</option>
-                </select>
-              </div>
-
-              {/* Gender Field */}
-              <div className="w-1/2">
-                <label className="block text-gray-700 text-sm font-medium mb-2">Gender</label>
-                <select
-                  value={gender}
-                  onChange={(e) => setGender(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
-                >
-                  <option value="">Pilih Gender</option>
-                  <option value="Laki-laki">Laki-laki</option>
-                  <option value="Perempuan">Perempuan</option>
-                </select>
-              </div>
+            {/* Gender Field */}
+            <div>
+              <label className="block text-gray-700 text-sm font-medium mb-2">Gender</label>
+              <select
+                value={gender}
+                onChange={(e) => setGender(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
+              >
+                <option value="">Pilih Gender</option>
+                <option value="Laki-laki">Laki-laki</option>
+                <option value="Perempuan">Perempuan</option>
+              </select>
             </div>
 
             {/* Submit Button */}
