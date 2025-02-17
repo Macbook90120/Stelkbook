@@ -1,5 +1,6 @@
 import React from 'react'
 import Login from '@/components/Login'
+import Login2 from '@/components/Login2'
 // fungsi login section
 
 function page() {
@@ -8,7 +9,8 @@ function page() {
 
       {/* Login Section */}
       <section>
-        <Login/>
+        {/* <Login/> */}
+        <Login2/>
       </section>
       {/* end Login Section */}
 

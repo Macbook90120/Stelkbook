@@ -1,27 +1,28 @@
 // authContext.js
-'use client'
-import { createContext, useState, useEffect, useContext } from "react";
-import axios from "../utils/axios";
-import { useRouter } from "next/navigation";
+'use client';
+import { createContext, useState, useEffect, useContext } from 'react';
+import axios from '../utils/axios';
+import { useRouter } from 'next/navigation';
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
+  // Fetch user data on mount
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const res = await axios.get('/user');
         setUser(res.data);
       } catch (error) {
-        return error
+        console.error('Failed to fetch user:', error);
       }
     };
+
     fetchUser();
-    console.log(user);
   }, []);
 
   const login = async (form) => {
@@ -30,13 +31,22 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('auth_token', res.data.token);
       setUser(res.data.user);
 
-      router.push("/dashboard");
+      // Redirect setelah login berhasil
+      if (res.data.user.role === 'admin') {
+        router.push('/admin');
+      } else if (res.data.user.role === 'perpus') {
+        router.push('/perpustakaan');
+      } else if (res.data.user.role === 'guru') {
+        router.push('/homepage_guru');
+      } else {
+        router.push('/homepage');
+      }
     } catch (e) {
-      console.error(e);
+      console.error('Login failed:', e);
     }
   };
 
-  const register = async (name, email, password,kode,role,gender,sekolah) => {
+  const register = async (name, email, password, kode, role, gender, sekolah) => {
     try {
       await axios.post('/register', {
         name,
@@ -46,11 +56,10 @@ export const AuthProvider = ({ children }) => {
         role,
         gender,
         sekolah,
-
       });
       router.push('/login');
     } catch (e) {
-      console.error(e);
+      console.error('Registration failed:', e);
     }
   };
 
@@ -61,7 +70,7 @@ export const AuthProvider = ({ children }) => {
       setUser(null);
       router.push('/login');
     } catch (e) {
-      console.error(e);
+      console.error('Logout failed:', e);
     }
   };
 
@@ -72,4 +81,4 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-export const useAuth= () => useContext(AuthContext);
+export const useAuth = () => useContext(AuthContext);
