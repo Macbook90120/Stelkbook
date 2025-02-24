@@ -21,7 +21,7 @@ function HomePage() {
         {/* Kelas X */}
         <button
           onClick={() => handleButtonClick('kelasX')}
-          className="w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] py-14 text-white font-bold italic text-4xl text-center rounded-lg bg-green-500 shadow-lg transition-transform duration-300 transform scale-100 sm:scale-105 md:scale-110 lg:scale-115 hover:scale-125"
+          className="flex flex-col items-center pt-6 space-y- w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] py-12 text-white font-bold italic text-4xl text-center rounded-lg bg-green-500 shadow-lg transition-transform duration-300 transform scale-100 sm:scale-105 md:scale-110 lg:scale-115 hover:scale-125"
         >
           Kelas X
         </button>
@@ -29,7 +29,7 @@ function HomePage() {
         {/* Kelas XI */}
         <button
           onClick={() => handleButtonClick('kelasXI')}
-          className="w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] py-14 text-white font-bold italic text-4xl text-center rounded-lg bg-fuchsia-700 shadow-lg transition-transform duration-300 transform scale-100 sm:scale-105 md:scale-110 lg:scale-115 hover:scale-125"
+          className="flex flex-col items-center pt-6 space-y- w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] py-12 text-white font-bold italic text-4xl text-center rounded-lg bg-fuchsia-700 shadow-lg transition-transform duration-300 transform scale-100 sm:scale-105 md:scale-110 lg:scale-115 hover:scale-125"
         >
           Kelas XI
         </button>
@@ -37,7 +37,7 @@ function HomePage() {
         {/* Kelas XII */}
         <button
           onClick={() => handleButtonClick('kelasXII')}
-          className="w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] py-14 text-white font-bold italic text-4xl text-center rounded-lg bg-cyan-600 shadow-lg transition-transform duration-300 transform scale-100 sm:scale-105 md:scale-110 lg:scale-115 hover:scale-125"
+          className="flex flex-col items-center pt-6 space-y- w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] py-12 text-white font-bold italic text-4xl text-center rounded-lg bg-cyan-600 shadow-lg transition-transform duration-300 transform scale-100 sm:scale-105 md:scale-110 lg:scale-115 hover:scale-125"
         >
           Kelas XII
         </button>

@@ -20,7 +20,7 @@ function Page() {
       </header>
 
       {/* Breadcrumb */}
-      <div className="mb-8 flex items-center">
+      <div className="mb-8 flex items-center justify-start">
         <p className="text-xl font-semibold font-poppins">Studi Anda</p>
         <Image src="/assets/Kelas_X/Primary_Direct.png" alt="Breadcrumb Divider" width={10} height={16} className="mx-2" />
         <p className="text-xl font-semibold font-poppins">Kelas X</p>
@@ -29,7 +29,7 @@ function Page() {
       </div>
 
       {/* Content */}
-      <div className="flex flex-col lg:flex-row gap-8 items-start">
+      <div className="flex flex-col lg:flex-row gap-8 items-center">
         {/* Book Info */}
         <div className="flex flex-col items-center lg:items-start">
           <Image src="/assets/Kelas_X/Buku_Fisika.png" alt="Ekonomi" width={200} height={280} className="rounded-lg shadow-md mb-6" />

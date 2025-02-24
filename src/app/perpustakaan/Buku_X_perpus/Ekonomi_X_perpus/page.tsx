@@ -1,10 +1,11 @@
 "use client";
+
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import WarningModalBuku from "./WarningModalBuku4";
 import PageFlipBook from "@/components/PageFlipBook";
-import Navbar from '@/components/Navbar_Perpus';
+import Navbar from "@/components/Navbar";
 
 function Page() {
   const [showWarningModal, setShowWarningModal] = useState(false);
@@ -20,21 +21,27 @@ function Page() {
       </header>
 
       {/* Breadcrumb */}
-      <div className="mb-8 flex items-center">
+      <div className="mb-8 flex items-center justify-start">
         <p className="text-xl font-semibold font-poppins">Studi Anda</p>
         <Image src="/assets/Kelas_X/Primary_Direct.png" alt="Breadcrumb Divider" width={10} height={16} className="mx-2" />
         <p className="text-xl font-semibold font-poppins">Kelas X</p>
         <Image src="/assets/Kelas_X/Primary_Direct.png" alt="Breadcrumb Divider" width={10} height={16} className="mx-2" />
-        <p className="text-xl font-semibold font-poppins">Buku Paket Ekonomi</p>
+        <p className="text-xl font-semibold font-poppins">Ekonomi</p>
       </div>
 
       {/* Content */}
-      <div className="flex flex-col lg:flex-row gap-8 items-start">
+      <div className="flex flex-col lg:flex-row gap-8 items-center lg:items-start">
         {/* Book Info */}
-        <div className="flex flex-col items-center lg:items-start">
-          <Image src="/assets/Kelas_X/Buku_Ekonomi.png" alt="Ekonomi" width={200} height={280} className="rounded-lg shadow-md mb-6" />
+        <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
+          <Image
+            src="/assets/Kelas_X/Buku_Ekonomi.png"
+            alt="Ekonomi"
+            width={200}
+            height={280}
+            className="rounded-lg shadow-md mb-6 lg:w-48 lg:h-64 md:w-40 md:h-56 sm:w-32 sm:h-48"
+          />
 
-          <div className="text-center lg:text-left">
+          <div>
             <h2 className="text-lg font-bold">Buku Paket <br /> Ekonomi SMA <br /> Kelas X</h2>
             <ul className="mt-2 text-sm space-y-1">
               <li><strong>Penerbit:</strong> Yudistira</li>
@@ -45,8 +52,8 @@ function Page() {
           </div>
 
           {/* Buttons */}
-          <div className="mt-4 flex flex-col gap-2">
-            <button onClick={() => router.push("/perpustakaan/Edit_Buku/Edit_Ekonomi_X")} className="bg-green-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-600 flex items-center gap-2">
+          <div className="mt-4 flex flex-col gap-2 w-full items-center lg:items-start">
+            <button onClick={() => router.push("/perpustakaan/Edit_Buku/Edit_Ekonomi_X")} className="bg-green-500 text-white px-6 py-2 rounded-lg shadow-md hover:bg-green-600 flex items-center gap-2">
               <Image src="/assets/Admin/Edit_user.png" alt="Edit Icon" width={16} height={16} />
               <span>Edit Buku</span>
             </button>

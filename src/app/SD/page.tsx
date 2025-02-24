@@ -3,10 +3,13 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 
-const classes = [
+const classesTop = [
   { name: 'Kelas I', color: 'bg-pink-400', route: '/kelasI' },
   { name: 'Kelas II', color: 'bg-blue-500', route: '/kelasII' },
   { name: 'Kelas III', color: 'bg-teal-400', route: '/kelasIII' },
+];
+
+const classesBottom = [
   { name: 'Kelas IV', color: 'bg-purple-500', route: '/kelasIV' },
   { name: 'Kelas V', color: 'bg-orange-500', route: '/kelasV' },
   { name: 'Kelas VI', color: 'bg-yellow-400', route: '/kelasVI' },
@@ -28,8 +31,22 @@ const HomePage = () => {
         </div>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 place-items-center mt-8">
-        {classes.map((cls) => (
+      {/* Grid for Kelas I, II, III */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 place-items-center mt-4 mx-auto max-w-3xl translate-y-[20px]">
+        {classesTop.map((cls) => (
+          <div
+            key={cls.name}
+            className={`${cls.color} w-52 h-52 flex items-center justify-center rounded-lg text-white font-bold italic text-xl shadow-lg hover:opacity-80 transition transform hover:scale-105 cursor-pointer`}
+            onClick={() => handleButtonClick(cls.route)}
+          >
+            {cls.name}
+          </div>
+        ))}
+      </div>
+
+      {/* Grid for Kelas IV, V, VI */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 place-items-center mt-6 mx-auto max-w-3xl translate-y-[38px]">
+        {classesBottom.map((cls) => (
           <div
             key={cls.name}
             className={`${cls.color} w-52 h-52 flex items-center justify-center rounded-lg text-white font-bold italic text-xl shadow-lg hover:opacity-80 transition transform hover:scale-105 cursor-pointer`}

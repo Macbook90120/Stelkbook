@@ -6,38 +6,49 @@ import Navbar from "@/components/Navbar";
 import PageFlipBook from "@/components/PageFlipBook";
 
 function Page() {
+  const handleDownload = () => {
+    const link = document.createElement("a");
+    link.href = "/assets/pdfs/MTK-OLM.pdf";
+    link.download = "MTK-OLM.pdf";
+    link.click();
+  };
+
+  const handleScrollToFlipBook = () => {
+    const flipBook = document.getElementById("flipbook");
+    flipBook?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 overflow-y-auto">
       {/* Navbar */}
-      <div className="mb-8"><Navbar /></div>
+      <div className="mb-8">
+        <Navbar />
+      </div>
 
       {/* Main Content */}
-      <main className="pt-20 px-8"> {/* Added padding to avoid overlap with navbar */}
-
+      <main className="pt-20 px-8">
         {/* Studi Anda Section */}
         <div className="mb-8 flex items-center">
-                  <p className="text-xl font-semibold font-poppins">Studi Anda</p>
-                  <div className="mx-2">
-                    <Image
-                      src="/assets/Kelas_X/Primary_Direct.png"
-                      alt="Breadcrumb Divider"
-                      width={10}
-                      height={16}
-                    />
-                  </div>
-                  <p className="text-xl font-semibold font-poppins">Kelas XII</p>
-                  <div className="mx-2">
-                    <Image
-                      src="/assets/Kelas_X/Primary_Direct.png"
-                      alt="Breadcrumb Divider"
-                      width={10}
-                      height={16}
-                    />
-                  </div>
-                  <p className="text-xl font-semibold font-poppins">
-                    Pancasila
-                  </p>
-                </div>
+          <p className="text-xl font-semibold font-poppins">Studi Anda</p>
+          <div className="mx-2">
+            <Image
+              src="/assets/Kelas_X/Primary_Direct.png"
+              alt="Breadcrumb Divider"
+              width={10}
+              height={16}
+            />
+          </div>
+          <p className="text-xl font-semibold font-poppins">Kelas XII</p>
+          <div className="mx-2">
+            <Image
+              src="/assets/Kelas_X/Primary_Direct.png"
+              alt="Breadcrumb Divider"
+              width={10}
+              height={16}
+            />
+          </div>
+          <p className="text-xl font-semibold font-poppins">Pancasila</p>
+        </div>
 
         {/* Book and Flipbook Section */}
         <div className="flex flex-col lg:flex-row gap-8 items-start">
@@ -57,7 +68,8 @@ function Page() {
             {/* Book Metadata */}
             <div className="text-center lg:text-left">
               <h2 className="text-lg font-bold">
-                Pendidikan <br /> Pancasila untuk  <br /> SMA/MA/SMK/ <br/> MAK Kelas XII
+                Pendidikan <br /> Pancasila untuk <br /> SMA/MA/SMK/ <br /> MAK
+                Kelas XII
               </h2>
               <ul className="mt-2 text-sm space-y-1">
                 <li className="whitespace-nowrap">
@@ -73,11 +85,27 @@ function Page() {
                   <strong>ISBN:</strong> 9786231946232
                 </li>
               </ul>
+
+              {/* Buttons */}
+              <div className="mt-4 space-y-2 w-full max-w-xs">
+                <button
+                  onClick={handleDownload}
+                  className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600"
+                >
+                  Download Buku
+                </button>
+                <button
+                  onClick={handleScrollToFlipBook}
+                  className="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 lg:hidden"
+                >
+                  Read Now
+                </button>
+              </div>
             </div>
           </div>
 
           {/* Flipbook */}
-          <div className="flex-grow">
+          <div id="flipbook" className="flex-grow">
             <PageFlipBook pdfPath="/assets/pdfs/MTK-OLM.pdf" />
           </div>
         </div>
