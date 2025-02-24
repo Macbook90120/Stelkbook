@@ -39,12 +39,12 @@ function HomePage() {
           { title: 'SMA/SMK', image: '/assets/Homepage-Front/smk.png' },
           { title: 'Non Akademik', image: '/assets/Homepage-Front/NonAkademik.png' },
         ].map(({ title, image }) => (
-          <div key={title} className="flex w-full h-56 md:h-64 bg-red rounded-lg overflow-hidden">
+          <div key={title} className="flex w-full h-56 md:h-64 bg-OldRed rounded-lg overflow-hidden">
             <div className="flex flex-col justify-end p-4 w-1/2">
               <p className="text-white font-bold italic text-3xl lg:text-4xl">{title}</p>
               <button
                 onClick={() => handleButtonClick(title)}
-                className="mt-2 bg-white text-red font-semibold text-sm py-2 px-8 rounded-full min-w-28 max-w-40"
+                className="mt-2 bg-white text-OldRed font-semibold text-sm py-2 px-8 rounded-full min-w-28 max-w-40"
               >
                 Lanjut
               </button>

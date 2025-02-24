@@ -13,6 +13,7 @@ export default {
         foreground: "var(--foreground)",
         // Warna list
         red: '#DC2626',
+        OldRed: '#B8292D',
       },
       fontFamily: {
         // Poppins font
