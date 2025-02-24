@@ -34,7 +34,7 @@ function Page() {
         <div className="flex items-center space-x-2 mb-6">
           <h1 className="text-xl font-bold text-gray-800">Studi Anda</h1>
           <Image src="/assets/Kelas_X/Primary_Direct.png" alt="Divider Icon" width={10} height={16} />
-          <h2 className="text-xl font-bold text-gray-800">Kelas XI</h2>
+          <h2 className="text-xl font-bold text-gray-800">Kelas VI</h2>
         </div>
 
         {/* Books Section */}

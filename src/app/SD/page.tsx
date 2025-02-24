@@ -1,166 +1,63 @@
 'use client';
 import React from 'react';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 
-function HomePage() {
+const classesTop = [
+  { name: 'Kelas I', color: 'bg-pink-400', route: '/kelasI' },
+  { name: 'Kelas II', color: 'bg-blue-500', route: '/kelasII' },
+  { name: 'Kelas III', color: 'bg-teal-400', route: '/kelasIII' },
+];
+
+const classesBottom = [
+  { name: 'Kelas IV', color: 'bg-purple-500', route: '/kelasIV' },
+  { name: 'Kelas V', color: 'bg-orange-500', route: '/kelasV' },
+  { name: 'Kelas VI', color: 'bg-yellow-400', route: '/kelasVI' },
+];
+
+const HomePage = () => {
   const router = useRouter();
 
   const handleButtonClick = (destination: string) => {
-    switch (destination) {
-      case 'User':
-        router.push('/profile');
-        break;
-      case 'kelasI':
-        router.push('/kelasI');
-        break;
-      case 'kelasII':
-        router.push('/kelasII');
-        break;
-      case 'kelasIII':
-        router.push('/kelasIII');
-        break;
-      case 'kelasIV':
-        router.push('/kelasIV');
-        break;
-      case 'kelasV':
-        router.push('/kelasV');
-        break;
-      case 'kelasVI':
-        router.push('/kelasVI');
-        break;
-      default:
-        console.error('Unknown destination:', destination);
-    }
+    router.push(destination);
   };
 
   return (
-    <div className="min-h-screen p-4 bg-white">
+    <div className="min-h-screen p-6 bg-white">
       <Navbar />
       <header className="flex justify-between items-center pt-20 px-8">
         <div>
-          <p className="text-xl font-semibold text-left font-poppins">Studi Anda</p>
+          <p className="text-xl font-semibold text-left font-poppins">Studi Anda &gt; <span className="font-bold">SD</span></p>
         </div>
       </header>
 
-      <main className="grid grid-cols-1 gap-y-8 md:grid-cols-2 md:gap-6 pt-4">
-        {/* Kelas I */}
-        <div className="relative w-full h-56 md:h-64 mx-auto">
-          <Image
-            src="/assets/Class/Card_KelasX.png"
-            alt="Kelas X"
-            fill
-            className="rounded-lg object-cover"
-          />
-          <div className="absolute bottom-4 left-4">
-            <p className="text-white font-bold italic text-3xl lg:text-4xl">Kelas I</p>
-            <button
-              onClick={() => handleButtonClick('kelasI')}
-              className="mt-2 bg-white text-green-500 font-semibold text-sm py-2 px-8 rounded-full"
-            >
-              Lanjut
-            </button>
+      {/* Grid for Kelas I, II, III */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 place-items-center mt-4 mx-auto max-w-3xl translate-y-[20px]">
+        {classesTop.map((cls) => (
+          <div
+            key={cls.name}
+            className={`${cls.color} w-52 h-52 flex items-center justify-center rounded-lg text-white font-bold italic text-xl shadow-lg hover:opacity-80 transition transform hover:scale-105 cursor-pointer`}
+            onClick={() => handleButtonClick(cls.route)}
+          >
+            {cls.name}
           </div>
-        </div>
+        ))}
+      </div>
 
-        {/* Kelas II */}
-        <div className="relative w-full h-56 md:h-64 mx-auto">
-          <Image
-            src="/assets/Class/Card_KelasXI.png"
-            alt="Kelas XI"
-            fill
-            className="rounded-lg object-cover"
-          />
-          <div className="absolute bottom-4 left-4">
-            <p className="text-white font-bold italic text-3xl lg:text-4xl">Kelas II</p>
-            <button
-              onClick={() => handleButtonClick('kelasII')}
-              className="mt-2 bg-white text-pink-500 font-semibold text-sm py-2 px-8 rounded-full"
-            >
-              Lanjut
-            </button>
+      {/* Grid for Kelas IV, V, VI */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 place-items-center mt-6 mx-auto max-w-3xl translate-y-[38px]">
+        {classesBottom.map((cls) => (
+          <div
+            key={cls.name}
+            className={`${cls.color} w-52 h-52 flex items-center justify-center rounded-lg text-white font-bold italic text-xl shadow-lg hover:opacity-80 transition transform hover:scale-105 cursor-pointer`}
+            onClick={() => handleButtonClick(cls.route)}
+          >
+            {cls.name}
           </div>
-        </div>
-
-        {/* Kelas III */}
-        <div className="relative w-full h-56 md:h-64 mx-auto">
-          <Image
-            src="/assets/Class/Card_KelasXII.png"
-            alt="Kelas XII"
-            fill
-            className="rounded-lg object-cover"
-          />
-          <div className="absolute bottom-4 left-4">
-            <p className="text-white font-bold italic text-3xl lg:text-4xl">Kelas III</p>
-            <button
-              onClick={() => handleButtonClick('kelasIII')}
-              className="mt-2 bg-white text-blue-500 font-semibold text-sm py-2 px-8 rounded-full"
-            >
-              Lanjut
-            </button>
-          </div>
-        </div>
-
-        {/* Kelas IV */}
-        <div className="relative w-full h-56 md:h-64 mx-auto">
-          <Image
-            src="/assets/Class/Card_Lainnya.png"
-            alt="Non Akademik"
-            fill
-            className="rounded-lg object-cover"
-          />
-          <div className="absolute bottom-4 left-4">
-            <p className="text-white font-bold italic text-3xl lg:text-4xl">Kelas IV</p>
-            <button
-              onClick={() => handleButtonClick('kelasIV')}
-              className="mt-2 bg-white text-red font-semibold text-sm py-2 px-8 rounded-full"
-            >
-              Lanjut
-            </button>
-          </div>
-        </div>
-
-        {/* Kelas V */}
-        <div className="relative w-full h-56 md:h-64 mx-auto">
-          <Image
-            src="/assets/Class/Card_KelasV.png"
-            alt="Kelas XI"
-            fill
-            className="rounded-lg object-cover"
-          />
-          <div className="absolute bottom-4 left-4">
-            <p className="text-white font-bold italic text-3xl lg:text-4xl">Kelas V</p>
-            <button
-              onClick={() => handleButtonClick('kelasV')}
-              className="mt-2 bg-white text-pink-500 font-semibold text-sm py-2 px-8 rounded-full"
-            >
-              Lanjut
-            </button>
-          </div>
-        </div>
-
-        {/* Kelas VI */}
-        <div className="relative w-full h-56 md:h-64 mx-auto">
-          <Image
-            src="/assets/Class/Card_KelasVI.png"
-            alt="Kelas XII"
-            fill
-            className="rounded-lg object-cover"
-          />
-          <div className="absolute bottom-4 left-4">
-            <p className="text-white font-bold italic text-3xl lg:text-4xl">Kelas VI</p>
-            <button
-              onClick={() => handleButtonClick('kelasVI')}
-              className="mt-2 bg-white text-yellow-700 font-semibold text-sm py-2 px-8 rounded-full"
-            >
-              Lanjut
-            </button>
-          </div>
-        </div>
-      </main>
+        ))}
+      </div>
     </div>
   );
-}
+};
 
 export default HomePage;

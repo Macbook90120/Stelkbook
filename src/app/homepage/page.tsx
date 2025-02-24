@@ -36,21 +36,18 @@ function HomePage() {
   }, [user, router]);
 
   const handleButtonClick = (destination: string) => {
-    switch (destination) {
-      case 'User':
-        router.push('/profile');
-        break;
-      case 'SD':
-        router.push('/SD');
-        break;
-      case 'SMP':
-        router.push('/SMP');
-        break;
-      case 'SMK':
-        router.push('/SMK');
-        break;
-      default:
-        console.error('Unknown destination:', destination);
+    const routes: Record<string, string> = {
+      'User': '/profile',
+      'SD': '/SD',
+      'SMP': '/SMP',
+      'SMA/SMK': '/SMK',
+      'Non Akademik': '/lainnya',
+    };
+
+    if (routes[destination]) {
+      router.push(routes[destination]);
+    } else {
+      console.error('Unknown destination:', destination);
     }
   };
 
@@ -68,82 +65,28 @@ function HomePage() {
         </div>
       </header>
 
-      <main className="grid grid-cols-1 gap-y-8 md:grid-cols-2 md:gap-6 pt-4">
-        {/* SD */}
-        <div className="relative w-full h-56 md:h-64 mx-auto">
-          <Image
-            src="/assets/Class/Card_KelasX.png"
-            alt="Kelas X"
-            fill
-            className="rounded-lg object-cover"
-          />
-          <div className="absolute bottom-4 left-4">
-            <p className="text-white font-bold italic text-3xl lg:text-4xl">SD</p>
-            <button
-              onClick={() => handleButtonClick('SD')}
-              className="mt-2 bg-white text-green-500 font-semibold text-sm py-2 px-8 rounded-full"
-            >
-              Lanjut
-            </button>
+      <main className="grid grid-cols-1 gap-6 md:grid-cols-2 pt-4">
+        {[
+          { title: 'SD', image: '/assets/Homepage-Front/sd.png' },
+          { title: 'SMP', image: '/assets/Homepage-Front/smp.png' },
+          { title: 'SMA/SMK', image: '/assets/Homepage-Front/smk.png' },
+          { title: 'Non Akademik', image: '/assets/Homepage-Front/NonAkademik.png' },
+        ].map(({ title, image }) => (
+          <div key={title} className="flex w-full h-56 md:h-64 bg-OldRed rounded-lg overflow-hidden">
+            <div className="flex flex-col justify-end p-4 w-1/2">
+              <p className="text-white font-bold italic text-3xl lg:text-4xl">{title}</p>
+              <button
+                onClick={() => handleButtonClick(title)}
+                className="mt-2 bg-white text-OldRed font-semibold text-sm py-2 px-8 rounded-full min-w-28 max-w-40"
+              >
+                Lanjut
+              </button>
+            </div>
+            <div className="relative w-1/2 h-full">
+              <Image src={image} alt={title} fill className="object-cover" />
+            </div>
           </div>
-        </div>
-
-        {/* SMP */}
-        <div className="relative w-full h-56 md:h-64 mx-auto">
-          <Image
-            src="/assets/Class/Card_KelasXI.png"
-            alt="Kelas XI"
-            fill
-            className="rounded-lg object-cover"
-          />
-          <div className="absolute bottom-4 left-4">
-            <p className="text-white font-bold italic text-3xl lg:text-4xl">SMP</p>
-            <button
-              onClick={() => handleButtonClick('SMP')}
-              className="mt-2 bg-white text-pink-500 font-semibold text-sm py-2 px-8 rounded-full"
-            >
-              Lanjut
-            </button>
-          </div>
-        </div>
-
-        {/* SMK */}
-        <div className="relative w-full h-56 md:h-64 mx-auto">
-          <Image
-            src="/assets/Class/Card_KelasXII.png"
-            alt="Kelas XII"
-            fill
-            className="rounded-lg object-cover"
-          />
-          <div className="absolute bottom-4 left-4">
-            <p className="text-white font-bold italic text-3xl lg:text-4xl">SMK</p>
-            <button
-              onClick={() => handleButtonClick('SMK')}
-              className="mt-2 bg-white text-blue-500 font-semibold text-sm py-2 px-8 rounded-full"
-            >
-              Lanjut
-            </button>
-          </div>
-        </div>
-
-        {/* Non Akademik */}
-        <div className="relative w-full h-56 md:h-64 mx-auto">
-          <Image
-            src="/assets/Class/Card_Lainnya.png"
-            alt="Non Akademik"
-            fill
-            className="rounded-lg object-cover"
-          />
-          <div className="absolute bottom-4 left-4">
-            <p className="text-white font-bold italic text-3xl lg:text-4xl">Non Akademik</p>
-            <button
-              onClick={() => handleButtonClick('Non Akademik')}
-              className="mt-2 bg-white text-red font-semibold text-sm py-2 px-8 rounded-full"
-            >
-              Lanjut
-            </button>
-          </div>
-        </div>
+        ))}
       </main>
     </div>
   );

@@ -1,6 +1,5 @@
 'use client';
 import React from 'react';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 
@@ -8,90 +7,40 @@ function HomePage() {
   const router = useRouter();
 
   const handleButtonClick = (destination: string) => {
-    switch (destination) {
-      case 'User':
-        router.push('/profile');
-        break;
-      case 'kelasX':
-        router.push('/kelasX');
-        break;
-      case 'kelasXI':
-        router.push('/kelasXI');
-        break;
-      case 'kelasXII':
-        router.push('/kelasXII');
-        break;
-      default:
-        console.error('Unknown destination:', destination);
-    }
+    router.push(`/${destination}`);
   };
 
   return (
     <div className="min-h-screen p-4 bg-white">
       <Navbar />
-      <header className="flex justify-between items-center pt-20 px-8">
-        <div>
-          <p className="text-xl font-semibold text-left font-poppins">Studi Anda</p>
-        </div>
+      <header className="pt-20 px-8">
+        <p className="text-xl font-semibold font-poppins">Studi Anda {'>'} SMA/SMK</p>
       </header>
 
-      <main className="grid grid-cols-1 gap-y-8 md:grid-cols-2 md:gap-6 pt-4">
+      <main className="flex flex-col gap-6 pt-6 items-center">
         {/* Kelas X */}
-        <div className="relative w-full h-56 md:h-64 mx-auto">
-          <Image
-            src="/assets/Class/Card_KelasX.png"
-            alt="Kelas X"
-            fill
-            className="rounded-lg object-cover"
-          />
-          <div className="absolute bottom-4 left-4">
-            <p className="text-white font-bold italic text-3xl lg:text-4xl">Kelas X</p>
-            <button
-              onClick={() => handleButtonClick('kelasX')}
-              className="mt-2 bg-white text-green-500 font-semibold text-sm py-2 px-8 rounded-full"
-            >
-              Lanjut
-            </button>
-          </div>
-        </div>
+        <button
+          onClick={() => handleButtonClick('kelasX')}
+          className="flex flex-col items-center pt-6 space-y- w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] py-12 text-white font-bold italic text-4xl text-center rounded-lg bg-green-500 shadow-lg transition-transform duration-300 transform scale-100 sm:scale-105 md:scale-110 lg:scale-115 hover:scale-125"
+        >
+          Kelas X
+        </button>
 
         {/* Kelas XI */}
-        <div className="relative w-full h-56 md:h-64 mx-auto">
-          <Image
-            src="/assets/Class/Card_KelasXI.png"
-            alt="Kelas XI"
-            fill
-            className="rounded-lg object-cover"
-          />
-          <div className="absolute bottom-4 left-4">
-            <p className="text-white font-bold italic text-3xl lg:text-4xl">Kelas XI</p>
-            <button
-              onClick={() => handleButtonClick('kelasXI')}
-              className="mt-2 bg-white text-pink-500 font-semibold text-sm py-2 px-8 rounded-full"
-            >
-              Lanjut
-            </button>
-          </div>
-        </div>
+        <button
+          onClick={() => handleButtonClick('kelasXI')}
+          className="flex flex-col items-center pt-6 space-y- w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] py-12 text-white font-bold italic text-4xl text-center rounded-lg bg-fuchsia-700 shadow-lg transition-transform duration-300 transform scale-100 sm:scale-105 md:scale-110 lg:scale-115 hover:scale-125"
+        >
+          Kelas XI
+        </button>
 
         {/* Kelas XII */}
-        <div className="relative w-full h-56 md:h-64 mx-auto">
-          <Image
-            src="/assets/Class/Card_KelasXII.png"
-            alt="Kelas XII"
-            fill
-            className="rounded-lg object-cover"
-          />
-          <div className="absolute bottom-4 left-4">
-            <p className="text-white font-bold italic text-3xl lg:text-4xl">Kelas XII</p>
-            <button
-              onClick={() => handleButtonClick('kelasXII')}
-              className="mt-2 bg-white text-blue-500 font-semibold text-sm py-2 px-8 rounded-full"
-            >
-              Lanjut
-            </button>
-          </div>
-        </div>
+        <button
+          onClick={() => handleButtonClick('kelasXII')}
+          className="flex flex-col items-center pt-6 space-y- w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] py-12 text-white font-bold italic text-4xl text-center rounded-lg bg-cyan-600 shadow-lg transition-transform duration-300 transform scale-100 sm:scale-105 md:scale-110 lg:scale-115 hover:scale-125"
+        >
+          Kelas XII
+        </button>
       </main>
     </div>
   );
