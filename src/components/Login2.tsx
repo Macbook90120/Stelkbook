@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { useAuth } from '@/context/authContext'; // Pastikan path import benar
+import { useAuth } from '@/context/authContext'; // Ensure the import path is correct
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import WarningModal from './WarningForgot'; // Import the WarningModal component
@@ -25,7 +25,7 @@ function Login() {
         };
     }, []);
 
-    // Definisikan tipe untuk event (e)
+    // Define type for event (e)
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setForm({
             ...form,
@@ -33,40 +33,20 @@ function Login() {
         });
     };
 
-    // Definisikan tipe untuk event (e)
+    // Define type for event (e)
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setErrorMessage('');
 
         try {
-            const response = await login(form); // Panggil fungsi login dari useAuth
-            if (response?.user) {
-                const { role } = response.user;
-
-                // Redirect berdasarkan role
-                switch (role) {
-                    case 'siswa':
-                        router.push('/homepage');
-                        break;
-                    case 'guru':
-                        router.push('/homepage_guru');
-                        break;
-                    case 'perpus':
-                        router.push('/perpustakaan');
-                        break;
-                    case 'admin':
-                        router.push('/admin');
-                        break;
-                    default:
-                        setErrorMessage('Role tidak valid.');
-                }
-            }
+            await login(form); // Call login function from useAuth
+            router.push('/homepage'); // Redirect to homepage after successful login
         } catch (error) {
             setErrorMessage('Login gagal. Periksa kembali kode atau password.');
         }
     };
 
-    // Definisikan tipe untuk event (e)
+    // Define type for event (e)
     const handleForgotPasswordClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
         e.preventDefault();
         setShowWarningModal(true); // Show the warning modal

@@ -10,13 +10,9 @@ function page() {
 
       {/* Login Section */}
       <section>
-<<<<<<< HEAD
-        {/* <Login/> */}
         <Login2/>
-=======
-        <Login/>
-        {/* <Login2/> */}
->>>>>>> c61259810454d6ca7bdd0ffadd9d7a5553950080
+        
+
       </section>
       {/* end Login Section */}
 

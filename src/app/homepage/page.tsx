@@ -4,37 +4,23 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import { useAuth } from '@/context/authContext';
-import useAuthMiddleware from '@/hooks/auth';
-
-
+import useAuthMiddleware from '@/hooks/auth'
 function HomePage() {
-  useAuthMiddleware(); // Pastikan useAuthMiddleware sudah diimplementasikan dengan benar
+  useAuthMiddleware();
   const router = useRouter();
-  const { user } = useAuth();
+  const {user} = useAuth()
 
   useEffect(() => {
-    if (!user) return; // Pastikan user sudah diinisialisasi
-
-    // Redirect berdasarkan role
-    switch (user.role) {
-      case 'admin':
-        router.push('/admin'); // Admin diarahkan ke dashboard admin
-        break;
-      case 'perpus':
-        router.push('/perpustakaan'); // Perpus diarahkan ke dashboard perpustakaan
-        break;
-      case 'guru':
-        router.push('/homepage_guru')
-        break;
-      case 'siswa':
-        router.push('/homepage')
-        // Siswa dan guru tetap di halaman ini
-        break;
-      default:
-        router.push('/homepage'); // Role tidak valid, arahkan ke homepage default
-    }
-  }, [user, router]);
-
+    if(user.role==='admin'){
+      router.push('/admin')
+  }else if(user.role==='guru'){
+      router.push('/homepage_guru')
+  }else if (user.role === 'perpus'){
+      router.push('/perpustakaan')
+  } else {
+    router.push('/homepage')
+  }
+  },[])
   const handleButtonClick = (destination: string) => {
     const routes: Record<string, string> = {
       'User': '/profile',
@@ -50,11 +36,6 @@ function HomePage() {
       console.error('Unknown destination:', destination);
     }
   };
-
-  // Jika role adalah admin atau perpus, jangan render konten SD, SMP, SMK
-  if (user?.role === 'admin' || user?.role === 'perpus') {
-    return null; // Atau tampilkan pesan "Anda tidak memiliki akses ke halaman ini"
-  }
 
   return (
     <div className="min-h-screen p-4 bg-white">
