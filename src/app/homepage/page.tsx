@@ -11,11 +11,11 @@ function HomePage() {
   const {user} = useAuth()
 
   useEffect(() => {
-    if(user.role==='admin'){
+    if(user.role==='Admin'){
       router.push('/admin')
-  }else if(user.role==='guru'){
+  }else if(user.role==='Guru'){
       router.push('/homepage_guru')
-  }else if (user.role === 'perpus'){
+  }else if (user.role === 'Perpus'){
       router.push('/perpustakaan')
   } else {
     router.push('/homepage')

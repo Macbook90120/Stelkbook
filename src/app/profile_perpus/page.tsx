@@ -4,9 +4,11 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar_Perpus';
 import WarningModal from '@/app/profile/WarningLogout'; // Import the WarningModal component
+import { useAuth } from '@/context/authContext';
 
 function Page() {
   const router = useRouter();
+  const {user,logout} = useAuth();
   const [showWarningModal, setShowWarningModal] = useState(false); // State to control the modal visibility
 
   const handleChangePasswordClick = () => {
@@ -19,7 +21,7 @@ function Page() {
 
   const handleConfirmLogout = () => {
     // Perform any logout logic here (e.g., clearing session, user data, etc.)
-    router.push('http://localhost:3000/'); // Redirect to the home page
+    router.push('/'); // Redirect to the home page
   };
 
   const handleCloseModal = () => {
@@ -55,7 +57,8 @@ function Page() {
                 <label className="block text-gray-700 text-sm font-medium mb-2">Nama</label>
                 <input
                   type="text"
-                  defaultValue=""
+                  defaultValue={user?.username || ''}
+                  readOnly
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -63,7 +66,16 @@ function Page() {
                 <label className="block text-gray-700 text-sm font-medium mb-2">NIK</label>
                 <input
                   type="text"
-                  defaultValue=""
+                  defaultValue={user?.kode || ''}
+                  readOnly
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700 text-sm font-medium mb-2">Email</label>
+                <input
+                  type="text"
+                  defaultValue={user?.email || ''}
                   readOnly
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
@@ -73,7 +85,7 @@ function Page() {
                   <label className="block text-gray-700 text-sm font-medium mb-2">Status</label>
                   <input
                     type="text"
-                    defaultValue=""
+                    defaultValue={user?.role || ''}
                     readOnly
                     className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
@@ -82,7 +94,7 @@ function Page() {
                   <label className="block text-gray-700 text-sm font-medium mb-2">Gender</label>
                   <input
                     type="text"
-                    defaultValue=""
+                    defaultValue={user?.gender || ''}
                     readOnly
                     className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />

@@ -14,6 +14,7 @@ function Login() {
     });
     const [errorMessage, setErrorMessage] = useState('');
     const [showWarningModal, setShowWarningModal] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false); // Tambahkan state untuk menangani submit ganda
 
     useEffect(() => {
         // Disable scrolling on mount
@@ -25,7 +26,6 @@ function Login() {
         };
     }, []);
 
-    // Define type for event (e)
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setForm({
             ...form,
@@ -33,20 +33,23 @@ function Login() {
         });
     };
 
-    // Define type for event (e)
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        if (isSubmitting) return; // Hindari submit ganda
+
         setErrorMessage('');
+        setIsSubmitting(true); // Set submitting ke true
 
         try {
             await login(form); // Call login function from useAuth
-            router.push('/homepage'); // Redirect to homepage after successful login
+            // Redirect akan dihandle di dalam fungsi login di AuthContext
         } catch (error) {
             setErrorMessage('Login gagal. Periksa kembali kode atau password.');
+        } finally {
+            setIsSubmitting(false); // Set submitting ke false setelah selesai
         }
     };
 
-    // Define type for event (e)
     const handleForgotPasswordClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
         e.preventDefault();
         setShowWarningModal(true); // Show the warning modal
@@ -134,8 +137,9 @@ function Login() {
                             <button
                                 type="submit"
                                 className="w-full py-3 bg-red text-white font-semibold rounded-md hover:bg-red-600 transition duration-200"
+                                disabled={isSubmitting} // Nonaktifkan tombol saat submitting
                             >
-                                Login
+                                {isSubmitting ? 'Loading...' : 'Login'}
                             </button>
                         </div>
                     </form>

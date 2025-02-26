@@ -37,25 +37,38 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (form) => {
-    // Frontend validation: Ensure both kode and password are provided
     if (!form.kode || !form.password) {
       throw new Error("Kode dan password harus diisi.");
     }
-
+  
     try {
       const res = await axios.post('/login', form);
       localStorage.setItem('auth_token', res.data.access_token);
-      setUser(res.data.user);
-      router.push('/homepage');
+      setUser(res.data.user); // Simpan data pengguna
+  
+      // Redirect berdasarkan role
+      switch (res.data.user.role) {
+        case 'Admin':
+          router.push('/admin');
+          break;
+        case 'Guru':
+          router.push('/homepage_guru');
+          break;
+        case 'Perpus':
+          router.push('/perpustakaan');
+          break;
+        default:
+          router.push('/homepage'); // Default fallback
+      }
     } catch (e) {
       console.error("Login gagal:", e.response?.data?.message || e.message);
       throw new Error("Login gagal, periksa kembali kode dan password.");
     }
   };
 
-  const register = async (name, email, password, kode, role, gender, sekolah) => {
+  const register = async (username, email, password, kode, role, gender, sekolah) => {
     try {
-      await axios.post('/register', { name, email, password, kode, role, gender, sekolah });
+      await axios.post('/register', { username, email, password, kode, role, gender, sekolah });
       router.push('/login');
     } catch (e) {
       console.error("Registrasi gagal:", e);
