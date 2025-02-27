@@ -10,8 +10,10 @@ function Page() {
   const { changePassword } = useAuth();
 
   const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showOldPassword, setShowOldPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isPopupVisible, setIsPopupVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -22,7 +24,8 @@ function Page() {
     router.push('/');
   };
 
-  const togglePasswordVisibility = (field: 'newPassword' | 'confirmPassword') => {
+  const togglePasswordVisibility = (field: 'oldPassword' | 'newPassword' | 'confirmPassword') => {
+    if (field === 'oldPassword') setShowOldPassword((prev) => !prev);
     if (field === 'newPassword') setShowNewPassword((prev) => !prev);
     if (field === 'confirmPassword') setShowConfirmPassword((prev) => !prev);
   };
@@ -38,22 +41,20 @@ function Page() {
       return;
     }
 
-    console.log("Mengirim perubahan password...");
-    console.log("Old Password:", oldPassword);
-    console.log("New Password:", newPassword);
-
+    setIsLoading(true);
+    setPasswordError('');
     try {
-      await changePassword(oldPassword, newPassword,confirmPassword);
+      await changePassword(oldPassword, newPassword, confirmPassword);
       setIsPopupVisible(true);
-      setPasswordError('');
     } catch (error: any) {
       console.error("Gagal mengubah password:", error);
-    
       if (error.response?.data?.message) {
         setPasswordError(error.response.data.message);
       } else {
         setPasswordError('Terjadi kesalahan saat mengubah password.');
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -67,6 +68,9 @@ function Page() {
       <header className="flex justify-between items-center mb-4">
         <div className="flex-shrink-0 cursor-pointer" onClick={handleStelkbookClick}>
           <Image src="/assets/Class/Stelk_bookTitle.png" alt="Stelkbook" width={165} height={100} />
+        </div>
+        <div className="flex-shrink-0">
+          <span className="font-semibold text-lg text-red">LOG IN</span>
         </div>
       </header>
 
@@ -86,14 +90,23 @@ function Page() {
           </div>
 
           <div className="grid gap-4">
-            <input 
-              type="password" 
-              placeholder="Masukkan Password Lama" 
-              value={oldPassword} 
-              onChange={(e) => setOldPassword(e.target.value)} 
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-            />
-
+            <div className="relative">
+              <input 
+                type={showOldPassword ? 'text' : 'password'}
+                placeholder="Masukkan Password Lama" 
+                value={oldPassword} 
+                onChange={(e) => setOldPassword(e.target.value)} 
+                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+              />
+              <Image
+              src={showOldPassword ? '/assets/Forgot-password/unhide2.png' : '/assets/Forgot-password/hide.png'}
+              alt="Toggle Visibility"
+              width={20}
+              height={20}
+              className="absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer"
+              onClick={() => togglePasswordVisibility('oldPassword')}
+              />
+            </div>
             <div className="relative">
               <input 
                 type={showNewPassword ? 'text' : 'password'} 
@@ -102,16 +115,15 @@ function Page() {
                 onChange={(e) => setNewPassword(e.target.value)} 
                 className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
               />
-              <Image 
-                src={showNewPassword ? '/assets/Forgot-password/unhide2.png' : '/assets/Forgot-password/hide.png'} 
-                alt="Toggle Visibility" 
-                width={20} 
-                height={20} 
-                className="absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer" 
-                onClick={() => togglePasswordVisibility('newPassword')} 
+              <Image
+              src={showNewPassword ? '/assets/Forgot-password/unhide2.png' : '/assets/Forgot-password/hide.png'}
+              alt="Toggle Visibility"
+              width={20}
+              height={20}
+              className="absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer"
+              onClick={() => togglePasswordVisibility('newPassword')}
               />
             </div>
-
             <div className="relative">
               <input 
                 type={showConfirmPassword ? 'text' : 'password'} 
@@ -120,33 +132,37 @@ function Page() {
                 onChange={(e) => setConfirmPassword(e.target.value)} 
                 className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
               />
-              <Image 
-                src={showConfirmPassword ? '/assets/Forgot-password/unhide2.png' : '/assets/Forgot-password/hide.png'} 
-                alt="Toggle Visibility" 
-                width={20} 
-                height={20} 
-                className="absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer" 
-                onClick={() => togglePasswordVisibility('confirmPassword')} 
+              <Image
+              src={showConfirmPassword ? '/assets/Forgot-password/unhide2.png' : '/assets/Forgot-password/hide.png'}
+              alt="Toggle Visibility"
+              width={20}
+              height={20}
+              className="absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer"
+              onClick={() => togglePasswordVisibility('confirmPassword')}
               />
             </div>
-
             {passwordError && <p className="text-red-500 text-sm mt-2">{passwordError}</p>}
           </div>
+
           <div className='mt-6'>
-          <button 
-  className="w-full bg-red text-white font-semibold py-3 rounded-lg hover:bg-red-600 transition" 
-  onClick={handleChangePassword} 
-  disabled={!oldPassword || !newPassword || !confirmPassword || newPassword !== confirmPassword}
->
-  Ganti Password
-</button>
+            <button 
+              className="w-full bg-red text-white font-semibold py-3 rounded-lg hover:bg-red-700 transition flex justify-center items-center" 
+              onClick={handleChangePassword} 
+              disabled={isLoading || !oldPassword || !newPassword || !confirmPassword || newPassword !== confirmPassword}
+            >
+              {isLoading ? (
+                <div className="animate-spin h-5 w-5 border-4 border-white border-t-transparent rounded-full"></div>
+              ) : (
+                'Ganti Password'
+              )}
+            </button>
           </div>
         </div>
       </div>
 
       {isPopupVisible && (
         <NotificationSuccess 
-          message="Password telah Terganti" 
+          message="Password telah terganti" 
           description="Silahkan Login menggunakan password yang telah diganti." 
           onClose={handleClosePopup} 
         />
@@ -156,15 +172,3 @@ function Page() {
 }
 
 export default Page;
-
-
-
-{/* <div className="mt-6">
-<button
-  className="w-full bg-red text-white font-semibold py-3 rounded-lg hover:bg-red-600 transition"
-  onClick={handleChangePassword}
-  disabled={newPassword !== confirmPassword || !newPassword || !confirmPassword || !oldPassword}
->
-  Ganti Password
-</button>
-</div> */}
