@@ -89,8 +89,28 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const changePassword = async (oldPassword, newPassword,confirmPassword) => {
+    try {
+      const token = localStorage.getItem('auth_token');
+      console.log("Token yang digunakan:", token); // Debugging
+  
+      if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+  
+      const res = await axios.post('/change-password', 
+        { oldPassword, newPassword , confirmPassword },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+  
+      return res.data;
+    } catch (e) {
+      console.error("Gagal mengganti password:", e.response?.data?.message || e.message);
+      throw new Error(e.response?.data?.message || "Gagal mengganti password.");
+    }
+  };
+  
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, register }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, register,changePassword }}>
       {children}
     </AuthContext.Provider>
   );
