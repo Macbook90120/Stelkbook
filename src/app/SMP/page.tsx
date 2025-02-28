@@ -17,11 +17,11 @@ function HomePage() {
         <p className="text-xl font-semibold font-poppins">Studi Anda {'>'} SMP</p>
       </header>
 
-      <main className="flex flex-col gap-6 pt-6 items-center">
+      <main className="flex flex-col gap-10 pt-6 items-center">
         {/* Kelas VII */}
         <button
           onClick={() => handleButtonClick('kelasVII')}
-          className="flex flex-col items-center pt-6 space-y- w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] py-12 text-white font-bold italic text-4xl text-center rounded-lg bg-pink-400 shadow-lg transition-transform duration-300 transform scale-100 sm:scale-105 md:scale-110 lg:scale-115 hover:scale-125"
+          className="flex flex-col items-center pt-8 space-y-4 w-[95%] sm:w-[90%] md:w-[85%] lg:w-[80%] py-16 text-white font-bold italic text-5xl text-center rounded-lg bg-pink-400 shadow-lg transition-transform duration-300 transform scale-100 sm:scale-105 md:scale-110 lg:scale-115 hover:scale-125"
         >
           Kelas VII
         </button>
@@ -29,7 +29,7 @@ function HomePage() {
         {/* Kelas VIII */}
         <button
           onClick={() => handleButtonClick('kelasVIII')}
-          className="flex flex-col items-center pt-6 space-y- w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] py-12 text-white font-bold italic text-4xl text-center rounded-lg bg-blue-500 shadow-lg transition-transform duration-300 transform scale-100 sm:scale-105 md:scale-110 lg:scale-115 hover:scale-125"
+          className="flex flex-col items-center pt-8 space-y-4 w-[95%] sm:w-[90%] md:w-[85%] lg:w-[80%] py-16 text-white font-bold italic text-5xl text-center rounded-lg bg-blue-500 shadow-lg transition-transform duration-300 transform scale-100 sm:scale-105 md:scale-110 lg:scale-115 hover:scale-125"
         >
           Kelas VIII
         </button>
@@ -37,7 +37,7 @@ function HomePage() {
         {/* Kelas IX */}
         <button
           onClick={() => handleButtonClick('kelasIX')}
-          className="flex flex-col items-center pt-6 space-y- w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] py-12 text-white font-bold italic text-4xl text-center rounded-lg bg-teal-500 shadow-lg transition-transform duration-300 transform scale-100 sm:scale-105 md:scale-110 lg:scale-115 hover:scale-125"
+          className="flex flex-col items-center pt-8 space-y-4 w-[95%] sm:w-[90%] md:w-[85%] lg:w-[80%] py-16 text-white font-bold italic text-5xl text-center rounded-lg bg-teal-500 shadow-lg transition-transform duration-300 transform scale-100 sm:scale-105 md:scale-110 lg:scale-115 hover:scale-125"
         >
           Kelas IX
         </button>

@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
@@ -7,7 +7,9 @@ import WarningModal from '@/app/profile/WarningLogout'; // Import the WarningMod
 
 function Page() {
   const router = useRouter();
-  const [showWarningModal, setShowWarningModal] = useState(false); // State to control the modal visibility
+  const [showWarningModal, setShowWarningModal] = useState(false);
+  const [profileImage, setProfileImage] = useState('/assets/Class/Icon_user.png');
+  const fileInputRef = useRef<HTMLInputElement>(null); // Specify the type for useRef
 
   const handleChangePasswordClick = () => {
     router.push('/change-password'); // Navigate to the change password page
@@ -26,6 +28,18 @@ function Page() {
     setShowWarningModal(false); // Close the modal
   };
 
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]; // Use optional chaining to safely access files
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setProfileImage(imageUrl);
+    }
+  };
+
+  const handleEditIconClick = () => {
+    fileInputRef.current?.click(); // Safely access `current` using optional chaining
+  };
+
   return (
     <div className="min-h-screen p-8 bg-gray-50">
       <header className="flex justify-between items-center mb-4">
@@ -37,13 +51,28 @@ function Page() {
       <div className="flex justify-center pt-12 px-8">
         <div className="bg-white border border-gray-300 rounded-lg p-8 shadow-lg w-full max-w-3xl flex flex-col lg:flex-row lg:items-center lg:space-x-8">
           {/* Profile Image */}
-          <div className="flex justify-center lg:justify-start items-center mb-6 lg:mb-0">
+          <div className="flex justify-center lg:justify-start items-center mb-6 lg:mb-0 relative">
             <Image
-              src="/assets/Class/Icon_user.png"
+              src={profileImage}
               alt="Profile Picture"
               width={128}
               height={128}
               className="rounded-full"
+            />
+            <Image
+              src="/assets/Class/Edit_Icon.png"
+              alt="Edit Icon"
+              width={28}
+              height={28}
+              className="absolute bottom-0 right-0 bg-green-400 p-1 rounded-full cursor-pointer"
+              onClick={handleEditIconClick}
+            />
+            <input
+              type="file"
+              ref={fileInputRef}
+              style={{ display: 'none' }}
+              onChange={handleImageChange}
+              accept="image/*"
             />
           </div>
 
@@ -55,7 +84,7 @@ function Page() {
               width={24}
               height={24}
               className="absolute top-4 right-4 translate-x-5 translate-y-[-30px] cursor-pointer"
-              onClick={() => router.push('/profile_guru/edit-profile-guru')}
+              onClick={() => console.log('Edit clicked')}
             />
 
             {/* Input Fields */}

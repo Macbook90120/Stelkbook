@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import Navbar from '@/components/Navbar_Perpus';
+import Navbar from '@/components/Navbar';
 import WarningModal from '@/app/profile/WarningLogout'; // Import the WarningModal component
 
 function Page() {
@@ -10,7 +10,7 @@ function Page() {
   const [showWarningModal, setShowWarningModal] = useState(false); // State to control the modal visibility
 
   const handleChangePasswordClick = () => {
-    router.push('/change-password-perpus'); // Navigate to the change password page
+    router.push('/change-password'); // Navigate to the change password page
   };
 
   const handleLogoutClick = () => {
@@ -48,7 +48,16 @@ function Page() {
           </div>
 
           {/* Profile Details */}
-          <div className="flex flex-col w-full">
+          <div className="flex flex-col w-full relative">
+            <Image
+              src="/assets/Class/Edit_Icon.png"
+              alt="Edit Icon"
+              width={24}
+              height={24}
+              className="absolute top-4 right-4 translate-x-5 translate-y-[-30px] cursor-pointer"
+              onClick={() => router.push('/profile_perpus/edit-profile-perpus')}
+            />
+
             {/* Input Fields */}
             <div className="grid gap-6">
               <div>
@@ -61,6 +70,15 @@ function Page() {
               </div>
               <div>
                 <label className="block text-gray-700 text-sm font-medium mb-2">NIK</label>
+                <input
+                  type="text"
+                  defaultValue=""
+                  readOnly
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700 text-sm font-medium mb-2">Sekolah</label>
                 <input
                   type="text"
                   defaultValue=""

@@ -13,7 +13,7 @@ function HomePage() {
         router.push('/profile');
         break;
       case 'Siswa':
-        router.push('/admin/Data_Siswa');
+        router.push('/admin/Sekolah_Siswa');
         break;
       case 'Guru':
         router.push('/admin/Data_Guru');

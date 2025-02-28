@@ -48,7 +48,16 @@ function Page() {
           </div>
 
           {/* Profile Details */}
-          <div className="flex flex-col w-full">
+          <div className="flex flex-col w-full relative">
+            <Image
+              src="/assets/Class/Edit_Icon.png"
+              alt="Edit Icon"
+              width={24}
+              height={24}
+              className="absolute top-4 right-4 translate-x-5 translate-y-[-30px] cursor-pointer"
+              onClick={() => router.push('/profile/edit-profile')}
+            />
+
             {/* Input Fields */}
             <div className="grid gap-6">
               <div>

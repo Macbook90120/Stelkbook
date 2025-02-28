@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import Navbar from '@/components/Navbar';
+import Navbar from '@/components/Navbar_Admin';
 
 function HomePage() {
   const router = useRouter();
@@ -14,32 +14,32 @@ function HomePage() {
     <div className="min-h-screen p-4 bg-white">
       <Navbar />
       <header className="pt-20 px-8">
-        <p className="text-xl font-semibold font-poppins">Studi Anda {'>'} SMA/SMK</p>
+        <p className="text-xl font-semibold font-poppins">Database anda {'>'} Siswa</p>
       </header>
 
       <main className="flex flex-col gap-10 pt-6 items-center">
-        {/* Kelas X */}
+        {/* SD */}
         <button
-          onClick={() => handleButtonClick('kelasX')}
+          onClick={() => handleButtonClick('admin/Sekolah_Siswa/Data_SD')}
           className="flex flex-col items-center pt-8 space-y-4 w-[95%] sm:w-[90%] md:w-[85%] lg:w-[80%] py-16 text-white font-bold italic text-5xl text-center rounded-lg bg-green-500 shadow-lg transition-transform duration-300 transform scale-100 sm:scale-105 md:scale-110 lg:scale-115 hover:scale-125"
         >
-          Kelas X
+          SD
         </button>
 
-        {/* Kelas XI */}
+        {/* SMP */}
         <button
-          onClick={() => handleButtonClick('kelasXI')}
+          onClick={() => handleButtonClick('admin/Sekolah_Siswa/Data_SMP')}
           className="flex flex-col items-center pt-8 space-y-4 w-[95%] sm:w-[90%] md:w-[85%] lg:w-[80%] py-16 text-white font-bold italic text-5xl text-center rounded-lg bg-fuchsia-700 shadow-lg transition-transform duration-300 transform scale-100 sm:scale-105 md:scale-110 lg:scale-115 hover:scale-125"
         >
-          Kelas XI
+          SMP
         </button>
 
-        {/* Kelas XII */}
+        {/* SMK */}
         <button
-          onClick={() => handleButtonClick('kelasXII')}
+          onClick={() => handleButtonClick('admin/Sekolah_Siswa/Data_SMK')}
           className="flex flex-col items-center pt-8 space-y-4 w-[95%] sm:w-[90%] md:w-[85%] lg:w-[80%] py-16 text-white font-bold italic text-5xl text-center rounded-lg bg-cyan-600 shadow-lg transition-transform duration-300 transform scale-100 sm:scale-105 md:scale-110 lg:scale-115 hover:scale-125"
         >
-          Kelas XII
+          SMK
         </button>
       </main>
     </div>
