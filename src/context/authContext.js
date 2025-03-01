@@ -69,7 +69,7 @@ export const AuthProvider = ({ children }) => {
   const register = async (username, email, password, kode, role, gender, sekolah) => {
     try {
       await axios.post('/register', { username, email, password, kode, role, gender, sekolah });
-      router.push('/login');
+      router.push('/');
     } catch (e) {
       console.error("Registrasi gagal:", e);
     }
