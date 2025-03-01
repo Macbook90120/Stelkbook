@@ -19,7 +19,8 @@ function Page() {
     setShowWarningModal(true); // Show the warning modal when logout is clicked
   };
 
-  const handleConfirmLogout = () => {
+  const handleConfirmLogout =async () => {
+    await logout()
     // Perform any logout logic here (e.g., clearing session, user data, etc.)
     router.push('/'); // Redirect to the home page
   };
