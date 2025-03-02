@@ -1,22 +1,36 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 
 type ConfirmationModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  user: { name: string; nis: string };
+  user: { id: string; name: string; nis: string };
+  onConfirm: (userId: string) => void; // Prop untuk handle penghapusan
 };
 
 const HapusUserModal: React.FC<ConfirmationModalProps> = ({
   isOpen,
   onClose,
   user,
+  onConfirm,
 }) => {
-  const handleConfirm = () => {
-    console.log(`Deleting user: ${user.name} with NIS: ${user.nis}`);
-    // Implement the delete logic here
-    onClose(); // Close the modal after confirmation
+  const [isLoading, setIsLoading] = useState(false); // State untuk loading
+  const [error, setError] = useState<string | null>(null); // State untuk error
+
+  const handleConfirm = async () => {
+    setIsLoading(true); // Set loading ke true
+    setError(null); // Reset error
+
+    try {
+      await onConfirm(user.id); // Panggil fungsi onConfirm dengan user.id
+      onClose(); // Tutup modal setelah berhasil
+    } catch (err) {
+      setError('Gagal menghapus user. Silakan coba lagi.'); // Set pesan error
+      console.error('Error deleting user:', err);
+    } finally {
+      setIsLoading(false); // Set loading ke false
+    }
   };
 
   if (!isOpen) return null;
@@ -30,10 +44,10 @@ const HapusUserModal: React.FC<ConfirmationModalProps> = ({
         <div className="flex items-center justify-center space-x-4 mb-4">
           <div className="relative w-12 h-12 translate-x-[-75px] translate-y-[-5px]">
             <Image
-              src="/assets/Class/icon_user.png" // Path to the image
+              src="/assets/Class/icon_user.png"
               alt="User Icon"
-              width={38} // Explicitly set the width
-              height={38} // Explicitly set the height
+              width={38}
+              height={38}
               className="rounded-full"
             />
           </div>
@@ -42,16 +56,28 @@ const HapusUserModal: React.FC<ConfirmationModalProps> = ({
             <p className="text-gray-500 translate-x-[-100px] translate-y-[-5px]">{user.nis}</p>
           </div>
         </div>
+
+        {/* Tampilkan pesan error jika ada */}
+        {error && (
+          <p className="text-red-500 text-sm mb-4">{error}</p>
+        )}
+
         <div className="flex justify-around mt-4">
           <button
             onClick={handleConfirm}
-            className="px-10 py-2 text-white bg-green-500 rounded-lg hover:bg-green-600"
+            disabled={isLoading} // Nonaktifkan tombol saat loading
+            className={`px-10 py-2 text-white bg-green-500 rounded-lg hover:bg-green-600 ${
+              isLoading ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
           >
-            Ya
+            {isLoading ? 'Menghapus...' : 'Ya'}
           </button>
           <button
             onClick={onClose}
-            className="px-8 py-2 text-white bg-red rounded-lg hover:bg-red"
+            disabled={isLoading} // Nonaktifkan tombol saat loading
+            className={`px-8 py-2 text-white bg-red rounded-lg hover:bg-red ${
+              isLoading ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
           >
             Tidak
           </button>
