@@ -1,33 +1,36 @@
 'use client';
 import React, { useState } from 'react';
 import Image from 'next/image';
+import { useAuth } from '@/context/authContext'; // Impor useAuth
 
 type ConfirmationModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  user: { id: string; name: string; nip: string };
-  onConfirm: (userId: string) => void; // Prop untuk handle penghapusan
+  perpus: { id: string; name: string; nip: string };
 };
 
 const HapusUserModal: React.FC<ConfirmationModalProps> = ({
   isOpen,
   onClose,
-  user,
-  onConfirm,
+  perpus,
 }) => {
   const [isLoading, setIsLoading] = useState(false); // State untuk loading
   const [error, setError] = useState<string | null>(null); // State untuk error
+  const { deletePerpus, fetchPerpus} = useAuth(); // Ambil fungsi deleteGuru dan fetchGuru dari useAuth
 
   const handleConfirm = async () => {
     setIsLoading(true); // Set loading ke true
     setError(null); // Reset error
 
     try {
-      await onConfirm(user.id); // Panggil fungsi onConfirm dengan user.id
+      console.log("Menghapus perpus dengan ID:", perpus.id); // Log ID yang dikirim
+      await deletePerpus(perpus.id); // Panggil fungsi deleteGuru dengan ID guru
+      console.log("Perpus berhasil dihapus"); // Log keberhasilan
+      await fetchPerpus(); // Refresh data guru setelah penghapusan
       onClose(); // Tutup modal setelah berhasil
     } catch (err) {
-      setError('Gagal menghapus user. Silakan coba lagi.'); // Set pesan error
-      console.error('Error deleting user:', err);
+      console.error('Error deleting perpus:', err); // Log error
+      setError('Gagal menghapus perpus. Silakan coba lagi.'); // Set pesan error
     } finally {
       setIsLoading(false); // Set loading ke false
     }
@@ -38,11 +41,11 @@ const HapusUserModal: React.FC<ConfirmationModalProps> = ({
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="bg-white rounded-lg shadow-lg p-6 w-[400px] text-center">
-        <p className="text-lg font-semibold mb-4 translate-y-[-14px]">
-          Apakah Anda yakin <br></br> ingin menghapus user ini?
+        <p className="text-lg font-semibold mb-4">
+          Apakah Anda yakin ingin menghapus perpus ini?
         </p>
         <div className="flex items-center justify-center space-x-4 mb-4">
-          <div className="relative w-12 h-12 translate-x-[-75px] translate-y-[-5px]">
+          <div className="relative w-12 h-12">
             <Image
               src="/assets/Class/icon_user.png"
               alt="User Icon"
@@ -52,8 +55,8 @@ const HapusUserModal: React.FC<ConfirmationModalProps> = ({
             />
           </div>
           <div>
-            <p className="font-bold translate-x-[-90px] translate-y-[-5px]">{user.name}</p>
-            <p className="text-gray-500 translate-x-[-100px] translate-y-[-5px]">{user.nip}</p>
+            <p className="font-bold">{perpus.name}</p>
+            <p className="text-gray-500">{perpus.nip}</p>
           </div>
         </div>
 

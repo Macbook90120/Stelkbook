@@ -119,7 +119,7 @@ function Page() {
             <div>
               <label className="block text-gray-700 text-sm font-medium mb-2">NIS/NIK</label>
               <input
-                type="number"
+                type="text"
                 value={kode}
                 onChange={(e) => setKode(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
@@ -136,7 +136,7 @@ function Page() {
                 <option value="">Pilih Status</option>
                 <option value="Siswa">Siswa</option>
                 <option value="Guru">Guru</option>
-                <option value="Staff Perpus">Perpus</option>
+                <option value="Perpus">Perpus</option>
                 <option value="Admin">Admin</option>
               </select>
             </div>

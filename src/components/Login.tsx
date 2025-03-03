@@ -116,7 +116,7 @@ function Login() {
                                 value={nisNik}
                                 onChange={(e) => setNisNik(e.target.value)}
                                 className="w-full px-4 py-2 bg-gray-200 text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
-                                placeholder="NIS/NIK"
+                                placeholder="NIS/NIP"
                                 required
                             />
                         </div>

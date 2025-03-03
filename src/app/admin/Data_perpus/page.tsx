@@ -2,58 +2,42 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import ConfirmationModal from "./hapus_user";
+import HapusUserModal from "./hapus_user";
 import Navbar from "@/components/Navbar_Admin";
 import { useAuth } from "@/context/authContext";
 
-// Definisi tipe Siswa
+// Definisi tipe Guru
 interface Perpus {
   id: string;
   user_id: string;
-  username: string;
+  username: string; // Gunakan ini sebagai `name`
   nip: string;
   gender: string;
 }
 
 function Page() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState({ id: "", name: "", nip: "" });
-  const { fetchPerpus, deleteUser, perpusData } = useAuth();
+  const [selectedPerpus, setSelectedPerpus] = useState({ id: "", name: "", nip: "" });
+  const { fetchPerpus, perpusData, deletePerpus } = useAuth(); // Ambil fetchGuru, guruData, dan deleteGuru dari useAuth
   const router = useRouter();
 
+  // Ambil data guru saat komponen dimuat
   useEffect(() => {
     const getPerpusData = async () => {
       try {
-        const data = await fetchPerpus();
-        console.log("Data siswa dari backend:", data);
+        await fetchPerpus();
       } catch (error) {
-        console.error("Gagal mengambil data siswa:", error);
+        console.error("Gagal mengambil data guru:", error);
       }
     };
 
     getPerpusData();
   }, [fetchPerpus]);
 
-  const handleButtonClick = (action: string) => {
-    if (action === "User") {
-      router.push("/profile_admin");
-    } else if (action === "Edit_user") {
-      router.push("/admin/Data_Siswa/Edit_user");
-    }
-  };
-
-  const handleDeleteUser = (user: { id: string; name: string; nip: string }) => {
-    setSelectedUser(user);
+  // Fungsi untuk membuka modal hapus user
+  const handleDeleteUser = (perpus:Perpus) => {
+    setSelectedPerpus({ id: perpus.id, name: perpus.username, nip: perpus.nip });
     setIsModalOpen(true);
-  };
-
-  const confirmDeleteUser = async () => {
-    try {
-      await deleteUser(selectedUser.id);
-      setIsModalOpen(false);
-    } catch (error) {
-      console.error("Gagal menghapus user:", error);
-    }
   };
 
   return (
@@ -76,12 +60,12 @@ function Page() {
           />
         </div>
         <p className="text-xl font-semibold text-left font-poppins translate-y-[-15px]">
-          Siswa
+          Perpus
         </p>
       </div>
 
       <div className="bg-white rounded-lg shadow p-4">
-        {perpusData?.map((perpus: Perpus) => (
+        {perpusData?.map((perpus:Perpus) => (
           <div
             key={perpus.id}
             className="grid grid-cols-12 gap-4 items-center py-4 border-b"
@@ -100,9 +84,10 @@ function Page() {
               </div>
             </div>
             <div className="col-span-8 flex justify-end space-x-2">
+              {/* Tombol Edit User */}
               <button
                 className="flex flex-col items-center justify-center w-12 h-12 md:w-auto md:h-auto md:flex-row md:px-8 md:py-2 text-white bg-green-500 rounded-lg hover:bg-green-600"
-                onClick={() => handleButtonClick("Edit_user")}
+                onClick={() => router.push(`/admin/Data_Guru/Edit_user_perpus`)}
               >
                 <Image
                   src="/assets/Admin/Edit_user.png"
@@ -113,11 +98,11 @@ function Page() {
                 />
                 <span className="hidden md:block">Edit User</span>
               </button>
+
+              {/* Tombol Hapus User */}
               <button
                 className="flex flex-col items-center justify-center w-12 h-12 md:w-auto md:h-auto md:flex-row md:px-8 md:py-2 text-white bg-red rounded-lg hover:bg-red-600"
-                onClick={() =>
-                  handleDeleteUser({ id: perpus.id, name: perpus.username, nip: perpus.nip })
-                }
+                onClick={() => handleDeleteUser(perpus)}
               >
                 <Image
                   src="/assets/Admin/Delete_user.png"
@@ -133,12 +118,12 @@ function Page() {
         ))}
       </div>
 
+      {/* Modal Hapus User */}
       {isModalOpen && (
-        <ConfirmationModal
+        <HapusUserModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          onConfirm={confirmDeleteUser}
-          user={selectedUser}
+          perpus={selectedPerpus}
         />
       )}
     </div>

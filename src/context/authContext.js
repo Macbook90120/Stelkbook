@@ -13,6 +13,7 @@ export const AuthProvider = ({ children }) => {
   const [perpusData, setPerpusData] = useState(null);
   const router = useRouter();
 
+  // Fetch user data on initial load
   useEffect(() => {
     const fetchUser = async () => {
       const token = localStorage.getItem('auth_token');
@@ -38,12 +39,13 @@ export const AuthProvider = ({ children }) => {
     fetchUser();
   }, []);
 
+  // Fetch siswa data
   const fetchSiswa = async () => {
     try {
       const token = localStorage.getItem('auth_token');
       if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
-  
-      const res = await axios.get('siswa', {
+
+      const res = await axios.get('/siswa', {
         headers: { Authorization: `Bearer ${token}` },
       });
       setSiswaData(res.data);
@@ -52,12 +54,13 @@ export const AuthProvider = ({ children }) => {
       throw new Error(e.response?.data?.message || "Gagal mengambil data siswa.");
     }
   };
-  
+
+  // Fetch guru data
   const fetchGuru = async () => {
     try {
       const token = localStorage.getItem('auth_token');
       if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
-  
+
       const res = await axios.get('/guru', {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -67,12 +70,13 @@ export const AuthProvider = ({ children }) => {
       throw new Error(e.response?.data?.message || "Gagal mengambil data guru.");
     }
   };
-  
+
+  // Fetch perpus data
   const fetchPerpus = async () => {
     try {
       const token = localStorage.getItem('auth_token');
       if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
-  
+
       const res = await axios.get('/perpus', {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -83,6 +87,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Login function
   const login = async (form) => {
     if (!form.kode || !form.password) {
       throw new Error("Kode dan password harus diisi.");
@@ -113,15 +118,18 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Register function
   const register = async (username, email, password, kode, role, gender, sekolah) => {
     try {
       await axios.post('/register', { username, email, password, kode, role, gender, sekolah });
       router.push('/');
     } catch (e) {
       console.error("Registrasi gagal:", e);
+      throw new Error(e.response?.data?.message || "Registrasi gagal.");
     }
   };
 
+  // Logout function
   const logout = async () => {
     try {
       await axios.post('/logout', null, {
@@ -136,6 +144,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Change password function
   const changePassword = async (oldPassword, newPassword, confirmPassword) => {
     try {
       const token = localStorage.getItem('auth_token');
@@ -153,38 +162,82 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const deleteUser = async (id) => {
-    try {
-      const token = localStorage.getItem('auth_token');
-      if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
-  
-      // Kirim permintaan penghapusan user dengan ID tertentu
-      await axios.delete(`/delete-user/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-  
-      return { message: "User berhasil dihapus." };
-    } catch (e) {
-      console.error("Gagal menghapus user:", e.response?.data?.message || e.message);
-      throw new Error(e.response?.data?.message || "Gagal menghapus user.");
-    }
-  };
+// context/authContext.js
+const deleteUser = async (id) => {
+  try {
+    const token = localStorage.getItem('auth_token');
+    if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
 
+    const response = await axios.delete(`/delete/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data; // Pastikan backend mengembalikan respons yang sesuai
+  } catch (e) {
+    console.error("Gagal menghapus user:", e.response?.data?.message || e.message);
+    throw new Error(e.response?.data?.message || "Gagal menghapus user.");
+  }
+};
+
+const deleteSiswa = async (id) => {
+  try {
+    const token = localStorage.getItem('auth_token');
+    if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+
+    const response = await axios.delete(`/siswa/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data; // Pastikan backend mengembalikan respons yang sesuai
+  } catch (e) {
+    console.error("Gagal menghapus siswa:", e.response?.data?.message || e.message);
+    throw new Error(e.response?.data?.message || "Gagal menghapus siswa.");
+  }
+};
+
+const deleteGuru = async (id) => {
+  try {
+    const token = localStorage.getItem('auth_token');
+    if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+
+    const response = await axios.delete(`/guru/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data; // Pastikan backend mengembalikan respons yang sesuai
+  } catch (e) {
+    console.error("Gagal menghapus guru:", e.response?.data?.message || e.message);
+    throw new Error(e.response?.data?.message || "Gagal menghapus guru.");
+  }
+};
+
+const deletePerpus = async (id) => {
+  try {
+    const token = localStorage.getItem('auth_token');
+    if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+
+    const response = await axios.delete(`/perpus/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data; // Pastikan backend mengembalikan respons yang sesuai
+  } catch (e) {
+    console.error("Gagal menghapus perpus:", e.response?.data?.message || e.message);
+    throw new Error(e.response?.data?.message || "Gagal menghapus perpus.");
+  }
+};
+
+  // Update user function
   const updateUser = async (id, form) => {
     try {
       const token = localStorage.getItem('auth_token');
       if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
-  
-      // Kirim permintaan pembaruan user dengan ID tertentu
-      const res = await axios.post(`/update-user/${id}`, form, {
+
+      const res = await axios.post(`/update/${id}`, form, {
         headers: { Authorization: `Bearer ${token}` },
       });
-  
+
       // Jika user yang diperbarui adalah user yang sedang login, perbarui state user
       if (user.id === id) {
         setUser(res.data.user);
       }
-  
+
       return res.data;
     } catch (e) {
       console.error("Gagal memperbarui user:", e.response?.data?.message || e.message);
@@ -204,6 +257,9 @@ export const AuthProvider = ({ children }) => {
       register, 
       changePassword, 
       deleteUser, 
+      deleteSiswa,
+      deleteGuru,
+      deletePerpus,
       updateUser, 
       fetchSiswa, 
       fetchGuru, 
