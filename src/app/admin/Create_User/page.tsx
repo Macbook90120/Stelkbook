@@ -8,6 +8,7 @@ function Page() {
   const router = useRouter();
   const { register } = useAuth();
   const [showSekolahField, setShowSekolahField] = useState(false);
+  const [showKelasField, setShowKelasField] = useState(false);
   const [status, setStatus] = useState('');
   const [sekolah, setSekolah] = useState('');
   const [kelas, setKelas] = useState('');
@@ -38,8 +39,10 @@ function Page() {
 
     if (selectedRole === 'Siswa' || selectedRole === 'Guru') {
       setShowSekolahField(true);
+      setShowKelasField(selectedRole === 'Siswa'); // Hanya tampilkan kelas jika Siswa
     } else {
       setShowSekolahField(false);
+      setShowKelasField(false);
     }
   };
 
@@ -187,7 +190,7 @@ function Page() {
               </div>
             )}
 
-            {showSekolahField && sekolah && (
+            {showKelasField && sekolah && (
               <div>
                 <label className="block text-gray-700 text-sm font-medium mb-2">Kelas</label>
                 <select
