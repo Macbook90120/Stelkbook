@@ -87,7 +87,7 @@ function Page() {
               {/* Tombol Edit User */}
               <button
                 className="flex flex-col items-center justify-center w-12 h-12 md:w-auto md:h-auto md:flex-row md:px-8 md:py-2 text-white bg-green-500 rounded-lg hover:bg-green-600"
-                onClick={() => router.push(`/admin/Data_Guru/Edit_user_perpus`)}
+                onClick={() => router.push(`/admin/Data_perpus/Edit_user_perpus`)}
               >
                 <Image
                   src="/assets/Admin/Edit_user.png"
