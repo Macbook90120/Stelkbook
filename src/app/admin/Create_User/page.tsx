@@ -10,6 +10,7 @@ function Page() {
   const [showSekolahField, setShowSekolahField] = useState(false);
   const [status, setStatus] = useState('');
   const [sekolah, setSekolah] = useState('');
+  const [kelas, setKelas] = useState('');
   const [gender, setGender] = useState('');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -23,7 +24,7 @@ function Page() {
 
   const handleSelesaiClick = async () => {
     try {
-      await register(username, email, password, kode, role, gender, sekolah);
+      await register(username, email, password, kode, role, gender, sekolah, kelas);
       router.push('/admin');
     } catch (error) {
       console.error("Registrasi gagal:", error);
@@ -40,6 +41,35 @@ function Page() {
     } else {
       setShowSekolahField(false);
     }
+  };
+
+  const handleSekolahChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    const selectedSekolah = e.target.value;
+    setSekolah(selectedSekolah);
+    setKelas(''); // Reset kelas ketika sekolah berubah
+  };
+
+  const renderKelasOptions = () => {
+    if (sekolah === 'SD') {
+      return ['I', 'II', 'III', 'IV', 'V', 'VI'].map((kelasOption) => (
+        <option key={kelasOption} value={kelasOption}>
+          {kelasOption}
+        </option>
+      ));
+    } else if (sekolah === 'SMP') {
+      return ['VII', 'VIII', 'IX'].map((kelasOption) => (
+        <option key={kelasOption} value={kelasOption}>
+          {kelasOption}
+        </option>
+      ));
+    } else if (sekolah === 'SMK') {
+      return ['X', 'XI', 'XII'].map((kelasOption) => (
+        <option key={kelasOption} value={kelasOption}>
+          {kelasOption}
+        </option>
+      ));
+    }
+    return null;
   };
 
   return (
@@ -117,7 +147,7 @@ function Page() {
             </div>
 
             <div>
-              <label className="block text-gray-700 text-sm font-medium mb-2">NIS/NIK</label>
+              <label className="block text-gray-700 text-sm font-medium mb-2">NIS/NIP</label>
               <input
                 type="text"
                 value={kode}
@@ -146,13 +176,27 @@ function Page() {
                 <label className="block text-gray-700 text-sm font-medium mb-2">Sekolah</label>
                 <select
                   value={sekolah}
-                  onChange={(e) => setSekolah(e.target.value)}
+                  onChange={handleSekolahChange}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
                 >
                   <option value="">Pilih Sekolah</option>
                   <option value="SD">SD</option>
                   <option value="SMP">SMP</option>
                   <option value="SMK">SMK</option>
+                </select>
+              </div>
+            )}
+
+            {showSekolahField && sekolah && (
+              <div>
+                <label className="block text-gray-700 text-sm font-medium mb-2">Kelas</label>
+                <select
+                  value={kelas}
+                  onChange={(e) => setKelas(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
+                >
+                  <option value="">Pilih Kelas</option>
+                  {renderKelasOptions()}
                 </select>
               </div>
             )}

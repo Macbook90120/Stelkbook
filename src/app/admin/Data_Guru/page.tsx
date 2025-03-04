@@ -46,6 +46,10 @@ function Page() {
   const guruSMP = guruData?.filter((guru: Guru) => guru.sekolah.includes("SMP"));
   const guruSMK = guruData?.filter((guru: Guru) => guru.sekolah.includes("SMK"));
 
+
+  const handleEditUser = (guru: Guru) => {
+    router.push(`/admin/Data_Guru/Edit_user_guru?id=${guru.id}`);
+  };
   return (
     <div className="min-h-screen p-8 bg-gray-50 overflow-y-auto">
       <header className="flex justify-between items-center mb-4 pt-20 px-8">
@@ -95,7 +99,7 @@ function Page() {
             <div className="col-span-8 flex justify-end space-x-2">
               <button
                 className="flex flex-col items-center justify-center w-12 h-12 md:w-auto md:h-auto md:flex-row md:px-8 md:py-2 text-white bg-green-500 rounded-lg hover:bg-green-600"
-                onClick={() => router.push(`/admin/Data_Guru/Edit_user_guru`)}
+                onClick={() => handleEditUser(guru)}
               >
                 <Image
                   src="/assets/Admin/Edit_user.png"
@@ -203,7 +207,7 @@ function Page() {
             <div className="col-span-8 flex justify-end space-x-2">
               <button
                 className="flex flex-col items-center justify-center w-12 h-12 md:w-auto md:h-auto md:flex-row md:px-8 md:py-2 text-white bg-green-500 rounded-lg hover:bg-green-600"
-                onClick={() => router.push(`/admin/Data_Guru/Edit_user_guru`)}
+                onClick={() => handleEditUser(guru)}
               >
                 <Image
                   src="/assets/Admin/Edit_user.png"

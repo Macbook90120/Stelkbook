@@ -14,11 +14,12 @@ interface Siswa {
   nis: string;
   gender: string;
   sekolah: string;
+  kelas:string;
 }
 
 function Page() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedSiswa, setSelectedSiswa] = useState({ id: "", name: "", sekolah: "", nis: "" });
+  const [selectedSiswa, setSelectedSiswa] = useState({ id: "", name: "", sekolah: "", nis: "",kelas:"" });
   const { fetchSiswa, siswaData, deleteSiswa } = useAuth(); // Ambil deleteSiswa dari useAuth
   const router = useRouter();
 
@@ -37,7 +38,7 @@ function Page() {
 
   // Fungsi untuk membuka modal hapus user
   const handleDeleteUser = (siswa: Siswa) => {
-    setSelectedSiswa({ id: siswa.id, name: siswa.username, sekolah: siswa.sekolah, nis: siswa.nis });
+    setSelectedSiswa({ id: siswa.id, name: siswa.username, sekolah: siswa.sekolah, nis: siswa.nis , kelas:siswa.kelas });
     setIsModalOpen(true);
   };
 
@@ -46,6 +47,10 @@ function Page() {
   const siswaSMP = siswaData?.filter((siswa: Siswa) => siswa.sekolah.includes("SMP"));
   const siswaSMK = siswaData?.filter((siswa: Siswa) => siswa.sekolah.includes("SMK"));
 
+  const handleEditUser = (siswa: Siswa) => {
+    router.push(`/admin/Data_Siswa/Edit_user?id=${siswa.id}`);
+  };
+  
   return (
     <div className="min-h-screen p-8 bg-gray-50 overflow-y-auto">
       <header className="flex justify-between items-center mb-4 pt-20 px-8">
@@ -90,12 +95,13 @@ function Page() {
                 <p className="font-semibold">{siswa.username}</p>
                 <p className="font-semibold text-sm text-OldRed">{siswa.sekolah}</p>
                 <p className="text-sm text-gray-500">{siswa.nis}</p>
+                <p className="text-sm text-gray-500">Kelas {siswa.kelas}</p>
               </div>
             </div>
             <div className="col-span-8 flex justify-end space-x-2">
               <button
                 className="flex flex-col items-center justify-center w-12 h-12 md:w-auto md:h-auto md:flex-row md:px-8 md:py-2 text-white bg-green-500 rounded-lg hover:bg-green-600"
-                onClick={() => router.push(`/admin/Data_Siswa/Edit_user`)}
+                onClick={() => handleEditUser(siswa)}
               >
                 <Image
                   src="/assets/Admin/Edit_user.png"
@@ -141,15 +147,16 @@ function Page() {
                 className="rounded-full mr-3"
               />
               <div>
-                <p className="font-semibold">{siswa.username}</p>
+              <p className="font-semibold">{siswa.username}</p>
                 <p className="font-semibold text-sm text-OldRed">{siswa.sekolah}</p>
                 <p className="text-sm text-gray-500">{siswa.nis}</p>
+                <p className="text-sm text-gray-500">Kelas {siswa.kelas}</p>
               </div>
             </div>
             <div className="col-span-8 flex justify-end space-x-2">
               <button
                 className="flex flex-col items-center justify-center w-12 h-12 md:w-auto md:h-auto md:flex-row md:px-8 md:py-2 text-white bg-green-500 rounded-lg hover:bg-green-600"
-                onClick={() => router.push(`/admin/Data_Siswa/Edit_user`)}
+                onClick={() => handleEditUser(siswa)}
               >
                 <Image
                   src="/assets/Admin/Edit_user.png"
@@ -195,15 +202,16 @@ function Page() {
                 className="rounded-full mr-3"
               />
               <div>
-                <p className="font-semibold">{siswa.username}</p>
+              <p className="font-semibold">{siswa.username}</p>
                 <p className="font-semibold text-sm text-OldRed">{siswa.sekolah}</p>
                 <p className="text-sm text-gray-500">{siswa.nis}</p>
+                <p className="text-sm text-gray-500"> Kelas {siswa.kelas}</p>
               </div>
             </div>
             <div className="col-span-8 flex justify-end space-x-2">
               <button
                 className="flex flex-col items-center justify-center w-12 h-12 md:w-auto md:h-auto md:flex-row md:px-8 md:py-2 text-white bg-green-500 rounded-lg hover:bg-green-600"
-                onClick={() => router.push(`/admin/Data_Siswa/Edit_user`)}
+                onClick={() =>handleEditUser(siswa)}
               >
                 <Image
                   src="/assets/Admin/Edit_user.png"

@@ -119,9 +119,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Register function
-  const register = async (username, email, password, kode, role, gender, sekolah) => {
+  const register = async (username, email, password, kode, role, gender, sekolah, kelas) => {
     try {
-      await axios.post('/register', { username, email, password, kode, role, gender, sekolah });
+      await axios.post('/register', { username, email, password, kode, role, gender, sekolah, kelas });
       router.push('/');
     } catch (e) {
       console.error("Registrasi gagal:", e);
@@ -162,66 +162,69 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-// context/authContext.js
-const deleteUser = async (id) => {
-  try {
-    const token = localStorage.getItem('auth_token');
-    if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+  // Delete user function
+  const deleteUser = async (id) => {
+    try {
+      const token = localStorage.getItem('auth_token');
+      if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
 
-    const response = await axios.delete(`/delete/${id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    return response.data; // Pastikan backend mengembalikan respons yang sesuai
-  } catch (e) {
-    console.error("Gagal menghapus user:", e.response?.data?.message || e.message);
-    throw new Error(e.response?.data?.message || "Gagal menghapus user.");
-  }
-};
+      const response = await axios.delete(`/delete/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return response.data;
+    } catch (e) {
+      console.error("Gagal menghapus user:", e.response?.data?.message || e.message);
+      throw new Error(e.response?.data?.message || "Gagal menghapus user.");
+    }
+  };
 
-const deleteSiswa = async (id) => {
-  try {
-    const token = localStorage.getItem('auth_token');
-    if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+  // Delete siswa function
+  const deleteSiswa = async (id) => {
+    try {
+      const token = localStorage.getItem('auth_token');
+      if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
 
-    const response = await axios.delete(`/siswa/${id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    return response.data; // Pastikan backend mengembalikan respons yang sesuai
-  } catch (e) {
-    console.error("Gagal menghapus siswa:", e.response?.data?.message || e.message);
-    throw new Error(e.response?.data?.message || "Gagal menghapus siswa.");
-  }
-};
+      const response = await axios.delete(`/siswa/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return response.data;
+    } catch (e) {
+      console.error("Gagal menghapus siswa:", e.response?.data?.message || e.message);
+      throw new Error(e.response?.data?.message || "Gagal menghapus siswa.");
+    }
+  };
 
-const deleteGuru = async (id) => {
-  try {
-    const token = localStorage.getItem('auth_token');
-    if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+  // Delete guru function
+  const deleteGuru = async (id) => {
+    try {
+      const token = localStorage.getItem('auth_token');
+      if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
 
-    const response = await axios.delete(`/guru/${id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    return response.data; // Pastikan backend mengembalikan respons yang sesuai
-  } catch (e) {
-    console.error("Gagal menghapus guru:", e.response?.data?.message || e.message);
-    throw new Error(e.response?.data?.message || "Gagal menghapus guru.");
-  }
-};
+      const response = await axios.delete(`/guru/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return response.data;
+    } catch (e) {
+      console.error("Gagal menghapus guru:", e.response?.data?.message || e.message);
+      throw new Error(e.response?.data?.message || "Gagal menghapus guru.");
+    }
+  };
 
-const deletePerpus = async (id) => {
-  try {
-    const token = localStorage.getItem('auth_token');
-    if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+  // Delete perpus function
+  const deletePerpus = async (id) => {
+    try {
+      const token = localStorage.getItem('auth_token');
+      if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
 
-    const response = await axios.delete(`/perpus/${id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    return response.data; // Pastikan backend mengembalikan respons yang sesuai
-  } catch (e) {
-    console.error("Gagal menghapus perpus:", e.response?.data?.message || e.message);
-    throw new Error(e.response?.data?.message || "Gagal menghapus perpus.");
-  }
-};
+      const response = await axios.delete(`/perpus/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return response.data;
+    } catch (e) {
+      console.error("Gagal menghapus perpus:", e.response?.data?.message || e.message);
+      throw new Error(e.response?.data?.message || "Gagal menghapus perpus.");
+    }
+  };
 
   // Update user function
   const updateUser = async (id, form) => {
@@ -245,6 +248,72 @@ const deletePerpus = async (id) => {
     }
   };
 
+  // Update siswa function
+  const updateSiswa = async (id, form) => {
+    try {
+      const token = localStorage.getItem('auth_token');
+      if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+
+      const res = await axios.post(`/update-siswa/${id}`, form, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      // Jika siswa yang diperbarui adalah siswa yang sedang login, perbarui state siswa
+      if (siswaData?.id === id) {
+        setSiswaData(res.data.siswa);
+      }
+
+      return res.data;
+    } catch (e) {
+      console.error("Gagal memperbarui siswa:", e.response?.data?.message || e.message);
+      throw new Error(e.response?.data?.message || "Gagal memperbarui siswa.");
+    }
+  };
+
+  // Update guru function
+  const updateGuru = async (id, form) => {
+    try {
+      const token = localStorage.getItem('auth_token');
+      if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+
+      const res = await axios.post(`/update-guru/${id}`, form, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      // Jika guru yang diperbarui adalah guru yang sedang login, perbarui state guru
+      if (guruData?.id === id) {
+        setGuruData(res.data.guru);
+      }
+
+      return res.data;
+    } catch (e) {
+      console.error("Gagal memperbarui guru:", e.response?.data?.message || e.message);
+      throw new Error(e.response?.data?.message || "Gagal memperbarui guru.");
+    }
+  };
+
+  // Update perpus function
+  const updatePerpus = async (id, form) => {
+    try {
+      const token = localStorage.getItem('auth_token');
+      if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+
+      const res = await axios.post(`/update-perpus/${id}`, form, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      // Jika perpus yang diperbarui adalah perpus yang sedang login, perbarui state perpus
+      if (perpusData?.id === id) {
+        setPerpusData(res.data.perpus);
+      }
+
+      return res.data;
+    } catch (e) {
+      console.error("Gagal memperbarui perpus:", e.response?.data?.message || e.message);
+      throw new Error(e.response?.data?.message || "Gagal memperbarui perpus.");
+    }
+  };
+
   return (
     <AuthContext.Provider value={{ 
       user, 
@@ -261,6 +330,9 @@ const deletePerpus = async (id) => {
       deleteGuru,
       deletePerpus,
       updateUser, 
+      updateSiswa,
+      updateGuru,
+      updatePerpus,
       fetchSiswa, 
       fetchGuru, 
       fetchPerpus 

@@ -6,7 +6,7 @@ import { useAuth } from '@/context/authContext'; // Impor useAuth
 type ConfirmationModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  siswa: { id: string; name: string; sekolah: string; nis: string };
+  siswa: { id: string; name: string; sekolah: string; nis: string, kelas:string;};
 };
 
 const HapusUserModal: React.FC<ConfirmationModalProps> = ({
@@ -58,6 +58,7 @@ const HapusUserModal: React.FC<ConfirmationModalProps> = ({
             <p className="font-bold">{siswa.name}</p>
             <p className="font-bold text-sm text-OldRed">{siswa.sekolah}</p>
             <p className="text-gray-500">{siswa.nis}</p>
+            <p className="text-gray-500">Kelas {siswa.kelas}</p>
           </div>
         </div>
 
