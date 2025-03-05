@@ -1,61 +1,87 @@
 'use client';
-import React, { useState } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/authContext';
 
 function Page() {
   const router = useRouter();
+  const { register } = useAuth();
   const [showSekolahField, setShowSekolahField] = useState(false);
+  const [showKelasField, setShowKelasField] = useState(false);
   const [status, setStatus] = useState('');
   const [sekolah, setSekolah] = useState('');
+  const [kelas, setKelas] = useState('');
   const [gender, setGender] = useState('');
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [kode, setKode] = useState('');
+  const [role, setRole] = useState('');
 
   const handleStelkbookClick = () => {
-    router.push('/admin'); // Navigate to the admin page
-  };
-
-  const handleSelesaiClick = () => {
-    // Navigate to the target page after clicking 'Selesai'
     router.push('/admin');
   };
 
-  const handleStatusChange = (e) => {
-    const role = e.target.value;
-    setStatus(role);
-    if (role === 'Siswa' || role === 'Guru') {
+  const handleSelesaiClick = async () => {
+    try {
+      await register(username, email, password, kode, role, gender, sekolah, kelas);
+      router.push('/admin');
+    } catch (error) {
+      console.error("Registrasi gagal:", error);
+    }
+  };
+
+  const handleStatusChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    const selectedRole = e.target.value;
+    setStatus(selectedRole);
+    setRole(selectedRole);
+
+    if (selectedRole === 'Siswa' || selectedRole === 'Guru') {
       setShowSekolahField(true);
+      setShowKelasField(selectedRole === 'Siswa'); // Hanya tampilkan kelas jika Siswa
     } else {
       setShowSekolahField(false);
+      setShowKelasField(false);
     }
+  };
+
+  const handleSekolahChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    const selectedSekolah = e.target.value;
+    setSekolah(selectedSekolah);
+    setKelas(''); // Reset kelas ketika sekolah berubah
+  };
+
+  const renderKelasOptions = () => {
+    if (sekolah === 'SD') {
+      return ['I', 'II', 'III', 'IV', 'V', 'VI'].map((kelasOption) => (
+        <option key={kelasOption} value={kelasOption}>
+          {kelasOption}
+        </option>
+      ));
+    } else if (sekolah === 'SMP') {
+      return ['VII', 'VIII', 'IX'].map((kelasOption) => (
+        <option key={kelasOption} value={kelasOption}>
+          {kelasOption}
+        </option>
+      ));
+    } else if (sekolah === 'SMK') {
+      return ['X', 'XI', 'XII'].map((kelasOption) => (
+        <option key={kelasOption} value={kelasOption}>
+          {kelasOption}
+        </option>
+      ));
+    }
+    return null;
   };
 
   return (
     <div className="min-h-screen p-8 bg-gray-50">
       <header className="flex justify-between items-center mb-4">
-        {/* Stelkbook Title */}
         <div className="flex-shrink-0 cursor-pointer" onClick={handleStelkbookClick}>
           <Image src="/assets/Class/Stelk_bookTitle.png" alt="Stelkbook" width={165} height={100} />
         </div>
 
-        {/* Search Bar */}
-        <div className="mx-4 flex-grow max-w-md relative">
-          <input
-            type="text"
-            placeholder="Pencarian disini"
-            className="w-full rounded-lg border border-gray-300 pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          {/* Icon-Image */}
-          <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-            <Image
-              src="/assets/Class/Search_icon.png"
-              alt="Search Icon"
-              width={20}
-              height={20}
-            />
-          </div>
-        </div>
-
-        {/* Icon user */}
         <div className="flex-shrink-0 cursor-pointer">
           <Image
             src="/assets/Class/icon_user.png"
@@ -67,21 +93,12 @@ function Page() {
         </div>
       </header>
 
-      {/* Header Line */}
       <div className="mb-8">
-        <Image
-          src="/assets/Class/Lines.png"
-          alt="Header Line"
-          width={3000}
-          height={100}
-        />
+        <Image src="/assets/Class/Lines.png" alt="Header Line" width={3000} height={100} />
       </div>
 
-      {/* Studi Anda Text */}
       <div className="mb-8 flex items-center space-x-2">
         <p className="text-lg font-semibold text-gray-700">Database Anda</p>
-
-        {/* Arrow Icon */}
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="h-5 w-5 text-gray-500"
@@ -92,84 +109,77 @@ function Page() {
         >
           <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
         </svg>
-
-        {/* "Profil" Text */}
         <p className="text-lg font-medium text-gray-900 font-poppins">Membuat User</p>
       </div>
 
-      {/* Profile Section */}
       <div className="flex justify-center">
         <div className="bg-white border border-gray-300 rounded-lg p-8 shadow-lg max-w-4xl w-full flex items-center space-x-8">
-          {/* Profile Image */}
           <div className="flex-shrink-0">
             <div className="w-24 h-24 sm:w-32 sm:h-32 bg-gray-300 rounded-full flex-shrink-0"></div>
           </div>
 
-          {/* Profile Details */}
           <div className="grid gap-4 w-full">
-            {/* Username Field */}
             <div>
               <label className="block text-gray-700 text-sm font-medium mb-2">Username</label>
               <input
                 type="text"
-                defaultValue=""
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
               />
             </div>
 
-            {/* Email Field */}
             <div>
               <label className="block text-gray-700 text-sm font-medium mb-2">Email</label>
               <input
                 type="text"
-                defaultValue=""
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
               />
             </div>
 
-            {/* Password Field */}
             <div>
               <label className="block text-gray-700 text-sm font-medium mb-2">Password</label>
               <input
-                type="text"
-                defaultValue=""
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
               />
             </div>
 
-            {/* NIS/NIK Field */}
             <div>
-              <label className="block text-gray-700 text-sm font-medium mb-2">NIS/NIK</label>
+              <label className="block text-gray-700 text-sm font-medium mb-2">NIS/NIP</label>
               <input
-                type="email"
-                defaultValue=""
+                type="text"
+                value={kode}
+                onChange={(e) => setKode(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
               />
             </div>
 
-            {/* Status Field */}
             <div>
               <label className="block text-gray-700 text-sm font-medium mb-2">Status</label>
               <select
-                value={status}
+                value={role}
                 onChange={handleStatusChange}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
               >
                 <option value="">Pilih Status</option>
                 <option value="Siswa">Siswa</option>
                 <option value="Guru">Guru</option>
-                <option value="Staff Perpus">Perpus</option>
+                <option value="Perpus">Perpus</option>
                 <option value="Admin">Admin</option>
               </select>
             </div>
 
-            {/* Sekolah Field */}
             {showSekolahField && (
               <div>
                 <label className="block text-gray-700 text-sm font-medium mb-2">Sekolah</label>
                 <select
                   value={sekolah}
-                  onChange={(e) => setSekolah(e.target.value)}
+                  onChange={handleSekolahChange}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
                 >
                   <option value="">Pilih Sekolah</option>
@@ -180,7 +190,20 @@ function Page() {
               </div>
             )}
 
-            {/* Gender Field */}
+            {showKelasField && sekolah && (
+              <div>
+                <label className="block text-gray-700 text-sm font-medium mb-2">Kelas</label>
+                <select
+                  value={kelas}
+                  onChange={(e) => setKelas(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
+                >
+                  <option value="">Pilih Kelas</option>
+                  {renderKelasOptions()}
+                </select>
+              </div>
+            )}
+
             <div>
               <label className="block text-gray-700 text-sm font-medium mb-2">Gender</label>
               <select
@@ -189,16 +212,15 @@ function Page() {
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
               >
                 <option value="">Pilih Gender</option>
-                <option value="Laki-laki">Laki-laki</option>
+                <option value="Laki-Laki">Laki-Laki</option>
                 <option value="Perempuan">Perempuan</option>
               </select>
             </div>
 
-            {/* Submit Button */}
             <div className="flex justify-center mt-8">
               <button
                 className="bg-red text-white px-6 py-2 rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 translate-x-[-50px]"
-                onClick={handleSelesaiClick} // Trigger the route change on click
+                onClick={handleSelesaiClick}
               >
                 Selesai
               </button>

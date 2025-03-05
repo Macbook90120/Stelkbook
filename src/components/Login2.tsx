@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { useAuth } from '@/context/authContext'; // Pastikan path import benar
+import { useAuth } from '@/context/authContext'; // Ensure the import path is correct
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import WarningModal from './WarningForgot'; // Import the WarningModal component
@@ -14,6 +14,7 @@ function Login() {
     });
     const [errorMessage, setErrorMessage] = useState('');
     const [showWarningModal, setShowWarningModal] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false); // Tambahkan state untuk menangani submit ganda
 
     useEffect(() => {
         // Disable scrolling on mount
@@ -25,7 +26,6 @@ function Login() {
         };
     }, []);
 
-    // Definisikan tipe untuk event (e)
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setForm({
             ...form,
@@ -33,40 +33,23 @@ function Login() {
         });
     };
 
-    // Definisikan tipe untuk event (e)
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        if (isSubmitting) return; // Hindari submit ganda
+
         setErrorMessage('');
+        setIsSubmitting(true); // Set submitting ke true
 
         try {
-            const response = await login(form); // Panggil fungsi login dari useAuth
-            if (response?.user) {
-                const { role } = response.user;
-
-                // Redirect berdasarkan role
-                switch (role) {
-                    case 'siswa':
-                        router.push('/homepage');
-                        break;
-                    case 'guru':
-                        router.push('/homepage_guru');
-                        break;
-                    case 'perpus':
-                        router.push('/perpustakaan');
-                        break;
-                    case 'admin':
-                        router.push('/admin');
-                        break;
-                    default:
-                        setErrorMessage('Role tidak valid.');
-                }
-            }
+            await login(form); // Call login function from useAuth
+            // Redirect akan dihandle di dalam fungsi login di AuthContext
         } catch (error) {
             setErrorMessage('Login gagal. Periksa kembali kode atau password.');
+        } finally {
+            setIsSubmitting(false); // Set submitting ke false setelah selesai
         }
     };
 
-    // Definisikan tipe untuk event (e)
     const handleForgotPasswordClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
         e.preventDefault();
         setShowWarningModal(true); // Show the warning modal
@@ -129,7 +112,7 @@ function Login() {
                                 value={form.kode}
                                 onChange={handleChange}
                                 className="w-full px-4 py-2 bg-gray-200 text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
-                                placeholder="NIS/NIK"
+                                placeholder="NIS/NIP"
                                 required
                             />
                         </div>
@@ -154,8 +137,9 @@ function Login() {
                             <button
                                 type="submit"
                                 className="w-full py-3 bg-red text-white font-semibold rounded-md hover:bg-red-600 transition duration-200"
+                                disabled={isSubmitting} // Nonaktifkan tombol saat submitting
                             >
-                                Login
+                                {isSubmitting ? 'Loading...' : 'Login'}
                             </button>
                         </div>
                     </form>

@@ -1,19 +1,76 @@
 'use client';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/authContext'; // Import useAuth
 
 function Page() {
   const router = useRouter();
+  const { fetchPerpus, perpusDetail, updatePerpus } = useAuth(); // Ambil fungsi dan state dari AuthContext
+  const [form, setForm] = useState({
+    id: '',
+    username: '',
+    email: '',
+    password: '',
+    nip: '',
+    gender: '',
+  });
+
+  // Ambil ID dari query parameter
+  const searchParams = new URLSearchParams(window.location.search);
+  const id = searchParams.get('id');
+
+  // Ambil data siswa berdasarkan ID saat komponen dimuat
+  useEffect(() => {
+    if (id) {
+      fetchPerpus(id); // Ambil data siswa spesifik berdasarkan ID
+    }
+  }, [id,fetchPerpus]);
+
+  // Isi form dengan data siswa saat siswaDetail berubah
+  useEffect(() => {
+    if (perpusDetail) {
+      setForm({
+        id: perpusDetail.id || '',
+        username: perpusDetail.username || '',
+        email: perpusDetail.email || '',
+        password: perpusDetail.password||'', // Biarkan kosong untuk keamanan
+        nip: perpusDetail.nip || '',
+        gender: perpusDetail.gender || '',
+      });
+    }
+  }, [perpusDetail]);
+
+  // Handle perubahan input
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // Handle submit form
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      if (id) {
+        await updatePerpus(id,form); // Update data siswa
+        alert('Data Perpus berhasil diperbarui!');
+        router.push('/admin/Data_perpus'); // Redirect ke halaman data siswa
+      }
+    } catch (error: any) {
+      alert('Gagal memperbarui data perpus: ' + error.message);
+    }
+  };
+
+  // Fungsi untuk menghasilkan pilihan kelas berdasarkan jenjang sekolah
+ 
 
   const handleStelkbookClick = () => {
-    router.push('/admin'); // navigasi untuk perpustakaan homepage
+    router.push('/admin'); // Navigasi ke homepage admin
   };
-
-  const handleSelesaiClick = () => {
-    // Navigate to the target page after clicking 'Selesai'
-    router.push('/admin/Data_perpus');
-  };
+  
 
   return (
     <div className="min-h-screen p-8 bg-gray-50">
@@ -79,7 +136,7 @@ function Page() {
           <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
         </svg>
 
-        {/* "Perpus" Text */}
+        {/* "Guru" Text */}
         <p className="text-lg font-semibold text-gray-600">Perpus</p>
 
         {/* Second Arrow Icon */}
@@ -107,14 +164,16 @@ function Page() {
           </div>
 
           {/* Profile Details */}
-          <div className="grid gap-4 w-full">
+          <form onSubmit={handleSubmit} className="grid gap-4 w-full">
             {/* Username Field */}
             <div>
               <label className="block text-gray-700 text-sm font-medium mb-2">Username</label>
               <input
                 type="text"
-                defaultValue=""
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                name="username"
+                value={form.username}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
               />
             </div>
 
@@ -123,8 +182,10 @@ function Page() {
               <label className="block text-gray-700 text-sm font-medium mb-2">Email</label>
               <input
                 type="text"
-                defaultValue=""
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                name="email"
+                value={form.email}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
               />
             </div>
 
@@ -132,21 +193,27 @@ function Page() {
             <div>
               <label className="block text-gray-700 text-sm font-medium mb-2">Password</label>
               <input
-                type="text"
-                defaultValue=""
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                type="password"
+                name="password"
+                value={form.password}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
               />
             </div>
 
             {/* NIS/NIK Field */}
             <div>
-              <label className="block text-gray-700 text-sm font-medium mb-2">NIS/NIK</label>
+              <label className="block text-gray-700 text-sm font-medium mb-2">NIS/NIP</label>
               <input
-                type="email"
-                defaultValue=""
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                type="text"
+                name="nis"
+                value={form.nip}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
               />
             </div>
+
+          
 
             {/* Status and Gender Fields */}
             <div className="flex space-x-4">
@@ -155,30 +222,38 @@ function Page() {
                 <label className="block text-gray-700 text-sm font-medium mb-2">Status</label>
                 <input
                   type="text"
-                  defaultValue="Siswa"
+                  value="Perpus"
                   readOnly
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
                 />
               </div>
 
               {/* Gender Field */}
               <div className="w-1/2">
                 <label className="block text-gray-700 text-sm font-medium mb-2">Gender</label>
-                <input
-                  type="text"
-                  defaultValue=""
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+                <select
+                name='gender'
+                value={form.gender}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
+              >
+                <option value="">Pilih Gender</option>
+                <option value="Laki-Laki">Laki-Laki</option>
+                <option value="Perempuan">Perempuan</option>
+              </select>
               </div>
             </div>
 
             {/* Submit Button */}
             <div className="flex justify-center mt-8">
-              <button className="bg-red text-white px-6 py-2 rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 translate-x-[-50px]" onClick={handleSelesaiClick}>
+              <button
+                type="submit"
+                className="bg-red text-white px-6 py-2 rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 translate-x-[-50px]"
+              >
                 Selesai
               </button>
             </div>
-          </div>
+          </form>
         </div>
       </div>
     </div>
