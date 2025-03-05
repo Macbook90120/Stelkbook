@@ -16,7 +16,7 @@ const HapusUserModal: React.FC<ConfirmationModalProps> = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false); // State untuk loading
   const [error, setError] = useState<string | null>(null); // State untuk error
-  const { deletePerpus, fetchPerpus} = useAuth(); // Ambil fungsi deleteGuru dan fetchGuru dari useAuth
+  const { deletePerpus, fetchAllPerpus} = useAuth(); // Ambil fungsi deleteGuru dan fetchGuru dari useAuth
 
   const handleConfirm = async () => {
     setIsLoading(true); // Set loading ke true
@@ -26,7 +26,7 @@ const HapusUserModal: React.FC<ConfirmationModalProps> = ({
       console.log("Menghapus perpus dengan ID:", perpus.id); // Log ID yang dikirim
       await deletePerpus(perpus.id); // Panggil fungsi deleteGuru dengan ID guru
       console.log("Perpus berhasil dihapus"); // Log keberhasilan
-      await fetchPerpus(); // Refresh data guru setelah penghapusan
+      await fetchAllPerpus(); // Refresh data guru setelah penghapusan
       onClose(); // Tutup modal setelah berhasil
     } catch (err) {
       console.error('Error deleting perpus:', err); // Log error

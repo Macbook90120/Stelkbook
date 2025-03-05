@@ -18,28 +18,30 @@ interface Perpus {
 function Page() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPerpus, setSelectedPerpus] = useState({ id: "", name: "", nip: "" });
-  const { fetchPerpus, perpusData, deletePerpus } = useAuth(); // Ambil fetchGuru, guruData, dan deleteGuru dari useAuth
+  const { fetchAllPerpus, perpusData, deletePerpus } = useAuth(); // Ambil fetchGuru, guruData, dan deleteGuru dari useAuth
   const router = useRouter();
 
   // Ambil data guru saat komponen dimuat
   useEffect(() => {
     const getPerpusData = async () => {
       try {
-        await fetchPerpus();
+        await fetchAllPerpus();
       } catch (error) {
         console.error("Gagal mengambil data guru:", error);
       }
     };
 
     getPerpusData();
-  }, [fetchPerpus]);
+  }, [fetchAllPerpus]);
 
   // Fungsi untuk membuka modal hapus user
   const handleDeleteUser = (perpus:Perpus) => {
     setSelectedPerpus({ id: perpus.id, name: perpus.username, nip: perpus.nip });
     setIsModalOpen(true);
   };
-
+  const handleEditUser = (perpus: Perpus) => {
+    router.push(`/admin/Data_perpus/Edit_user_perpus?id=${perpus.id}`);
+  };
   return (
     <div className="min-h-screen p-8 bg-gray-50 overflow-y-auto">
       <header className="flex justify-between items-center mb-4 pt-20 px-8">
@@ -87,7 +89,7 @@ function Page() {
               {/* Tombol Edit User */}
               <button
                 className="flex flex-col items-center justify-center w-12 h-12 md:w-auto md:h-auto md:flex-row md:px-8 md:py-2 text-white bg-green-500 rounded-lg hover:bg-green-600"
-                onClick={() => router.push(`/admin/Data_perpus/Edit_user_perpus`)}
+                onClick={() => handleEditUser(perpus)}
               >
                 <Image
                   src="/assets/Admin/Edit_user.png"

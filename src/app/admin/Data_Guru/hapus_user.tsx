@@ -16,7 +16,7 @@ const HapusUserModal: React.FC<ConfirmationModalProps> = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false); // State untuk loading
   const [error, setError] = useState<string | null>(null); // State untuk error
-  const { deleteGuru, fetchGuru } = useAuth(); // Ambil fungsi deleteGuru dan fetchGuru dari useAuth
+  const { deleteGuru, fetchAllGuru } = useAuth(); // Ambil fungsi deleteGuru dan fetchGuru dari useAuth
 
   const handleConfirm = async () => {
     setIsLoading(true); // Set loading ke true
@@ -26,7 +26,7 @@ const HapusUserModal: React.FC<ConfirmationModalProps> = ({
       console.log("Menghapus guru dengan ID:", guru.id); // Log ID yang dikirim
       await deleteGuru(guru.id); // Panggil fungsi deleteGuru dengan ID guru
       console.log("Guru berhasil dihapus"); // Log keberhasilan
-      await fetchGuru(); // Refresh data guru setelah penghapusan
+      await fetchAllGuru(); // Refresh data guru setelah penghapusan
       onClose(); // Tutup modal setelah berhasil
     } catch (err) {
       console.error('Error deleting guru:', err); // Log error

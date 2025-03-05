@@ -20,21 +20,21 @@ interface Siswa {
 function Page() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedSiswa, setSelectedSiswa] = useState({ id: "", name: "", sekolah: "", nis: "",kelas:"" });
-  const { fetchSiswa, siswaData, deleteSiswa } = useAuth(); // Ambil deleteSiswa dari useAuth
+  const { fetchAllSiswa, siswaData, deleteSiswa } = useAuth(); // Ambil deleteSiswa dari useAuth
   const router = useRouter();
 
   // Ambil data siswa saat komponen dimuat
   useEffect(() => {
     const getSiswaData = async () => {
       try {
-        await fetchSiswa();
+        await fetchAllSiswa();
       } catch (error) {
         console.error("Gagal mengambil data siswa:", error);
       }
     };
 
     getSiswaData();
-  }, [fetchSiswa]);
+  }, [fetchAllSiswa]);
 
   // Fungsi untuk membuka modal hapus user
   const handleDeleteUser = (siswa: Siswa) => {

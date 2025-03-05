@@ -19,21 +19,21 @@ interface Guru {
 function Page() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedGuru, setSelectedGuru] = useState({ id: "", name: "", sekolah: "", nip: "" });
-  const { fetchGuru, guruData, deleteGuru } = useAuth(); // Ambil fetchGuru, guruData, dan deleteGuru dari useAuth
+  const { fetchAllGuru, guruData, deleteGuru } = useAuth(); // Ambil fetchGuru, guruData, dan deleteGuru dari useAuth
   const router = useRouter();
 
   // Ambil data guru saat komponen dimuat
   useEffect(() => {
     const getGuruData = async () => {
       try {
-        await fetchGuru();
+        await fetchAllGuru();
       } catch (error) {
         console.error("Gagal mengambil data guru:", error);
       }
     };
 
     getGuruData();
-  }, [fetchGuru]);
+  }, [fetchAllGuru]);
 
   // Fungsi untuk membuka modal hapus user
   const handleDeleteUser = (guru: Guru) => {
@@ -153,7 +153,7 @@ function Page() {
             <div className="col-span-8 flex justify-end space-x-2">
               <button
                 className="flex flex-col items-center justify-center w-12 h-12 md:w-auto md:h-auto md:flex-row md:px-8 md:py-2 text-white bg-green-500 rounded-lg hover:bg-green-600"
-                onClick={() => router.push(`/admin/Data_Guru/Edit_user_guru`)}
+                onClick={() => handleEditUser(guru)}
               >
                 <Image
                   src="/assets/Admin/Edit_user.png"

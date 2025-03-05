@@ -1,5 +1,5 @@
 'use client';
-import { createContext, useState, useEffect, useContext } from "react";
+import { createContext, useState, useEffect, useContext,useCallback } from "react";
 import axios from "../utils/axios";
 import { useRouter } from "next/navigation";
 
@@ -11,6 +11,9 @@ export const AuthProvider = ({ children }) => {
   const [siswaData, setSiswaData] = useState(null);
   const [guruData, setGuruData] = useState(null);
   const [perpusData, setPerpusData] = useState(null);
+  const [siswaDetail, setSiswaDetail] = useState(null); // State untuk data siswa spesifik
+  const [guruDetail, setGuruDetail] = useState(null); // State untuk data guru spesifik
+  const [perpusDetail, setPerpusDetail] = useState(null); // State untuk data perpus spesifik
   const router = useRouter();
 
   // Fetch user data on initial load
@@ -39,53 +42,113 @@ export const AuthProvider = ({ children }) => {
     fetchUser();
   }, []);
 
-  // Fetch siswa data
-  const fetchSiswa = async () => {
-    try {
-      const token = localStorage.getItem('auth_token');
-      if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+ // Fetch siswa data by ID
+ const fetchSiswa = useCallback(async (id) => {
+  if (!id) throw new Error("ID siswa harus diberikan.");
 
-      const res = await axios.get('/siswa', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setSiswaData(res.data);
-    } catch (e) {
-      console.error("Gagal mengambil data siswa:", e.response?.data?.message || e.message);
-      throw new Error(e.response?.data?.message || "Gagal mengambil data siswa.");
-    }
-  };
+  try {
+    const token = localStorage.getItem('auth_token');
+    if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
 
-  // Fetch guru data
-  const fetchGuru = async () => {
-    try {
-      const token = localStorage.getItem('auth_token');
-      if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+    const res = await axios.get(`/siswa/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
-      const res = await axios.get('/guru', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setGuruData(res.data);
-    } catch (e) {
-      console.error("Gagal mengambil data guru:", e.response?.data?.message || e.message);
-      throw new Error(e.response?.data?.message || "Gagal mengambil data guru.");
-    }
-  };
+    setSiswaDetail(res.data); // Simpan data spesifik ke state siswaDetail
+  } catch (e) {
+    console.error("Gagal mengambil data siswa:", e.response?.data?.message || e.message);
+    throw new Error(e.response?.data?.message || "Gagal mengambil data siswa.");
+  }
+}, []);
 
-  // Fetch perpus data
-  const fetchPerpus = async () => {
-    try {
-      const token = localStorage.getItem('auth_token');
-      if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+// Fetch guru data by ID
+const fetchGuru = useCallback(async (id) => {
+  if (!id) throw new Error("ID guru harus diberikan.");
 
-      const res = await axios.get('/perpus', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setPerpusData(res.data);
-    } catch (e) {
-      console.error("Gagal mengambil data perpus:", e.response?.data?.message || e.message);
-      throw new Error(e.response?.data?.message || "Gagal mengambil data perpus.");
-    }
-  };
+  try {
+    const token = localStorage.getItem('auth_token');
+    if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+
+    const res = await axios.get(`/guru/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    setGuruDetail(res.data); // Simpan data spesifik ke state guruDetail
+  } catch (e) {
+    console.error("Gagal mengambil data guru:", e.response?.data?.message || e.message);
+    throw new Error(e.response?.data?.message || "Gagal mengambil data guru.");
+  }
+},[]); 
+
+// Fetch perpus data by ID
+const fetchPerpus = useCallback(async (id) => {
+  if (!id) throw new Error("ID perpus harus diberikan.");
+
+  try {
+    const token = localStorage.getItem('auth_token');
+    if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+
+    const res = await axios.get(`/perpus/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    setPerpusDetail(res.data); // Simpan data spesifik ke state perpusDetail
+  } catch (e) {
+    console.error("Gagal mengambil data perpus:", e.response?.data?.message || e.message);
+    throw new Error(e.response?.data?.message || "Gagal mengambil data perpus.");
+  }
+},[]); 
+
+// Fetch all siswa data
+const fetchAllSiswa = useCallback(async () => {
+  try {
+    const token = localStorage.getItem('auth_token');
+    if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+
+    const res = await axios.get('/siswa', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    setSiswaData(res.data); // Simpan semua data ke state siswaData
+  } catch (e) {
+    console.error("Gagal mengambil data siswa:", e.response?.data?.message || e.message);
+    throw new Error(e.response?.data?.message || "Gagal mengambil data siswa.");
+  }
+},[]);
+
+// Fetch all guru data
+const fetchAllGuru = useCallback(async () => {
+  try {
+    const token = localStorage.getItem('auth_token');
+    if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+
+    const res = await axios.get('/guru', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    setGuruData(res.data); // Simpan semua data ke state guruData
+  } catch (e) {
+    console.error("Gagal mengambil data guru:", e.response?.data?.message || e.message);
+    throw new Error(e.response?.data?.message || "Gagal mengambil data guru.");
+  }
+},[]);
+
+// Fetch all perpus data
+const fetchAllPerpus = useCallback(async () => {
+  try {
+    const token = localStorage.getItem('auth_token');
+    if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+
+    const res = await axios.get('/perpus', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    setPerpusData(res.data); // Simpan semua data ke state perpusData
+  } catch (e) {
+    console.error("Gagal mengambil data perpus:", e.response?.data?.message || e.message);
+    throw new Error(e.response?.data?.message || "Gagal mengambil data perpus.");
+  }
+},[]); 
 
   // Login function
   const login = async (form) => {
@@ -258,10 +321,8 @@ export const AuthProvider = ({ children }) => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      // Jika siswa yang diperbarui adalah siswa yang sedang login, perbarui state siswa
-      if (siswaData?.id === id) {
-        setSiswaData(res.data.siswa);
-      }
+      // Perbarui state siswaDetail dengan data yang baru
+      setSiswaDetail(res.data.siswa);
 
       return res.data;
     } catch (e) {
@@ -281,9 +342,7 @@ export const AuthProvider = ({ children }) => {
       });
 
       // Jika guru yang diperbarui adalah guru yang sedang login, perbarui state guru
-      if (guruData?.id === id) {
-        setGuruData(res.data.guru);
-      }
+      setGuruDetail(res.data.guru);
 
       return res.data;
     } catch (e) {
@@ -303,9 +362,7 @@ export const AuthProvider = ({ children }) => {
       });
 
       // Jika perpus yang diperbarui adalah perpus yang sedang login, perbarui state perpus
-      if (perpusData?.id === id) {
-        setPerpusData(res.data.perpus);
-      }
+      setPerpusDetail(res.data.perpus);
 
       return res.data;
     } catch (e) {
@@ -321,6 +378,9 @@ export const AuthProvider = ({ children }) => {
       siswaData, 
       guruData, 
       perpusData, 
+      siswaDetail, 
+      guruDetail, 
+      perpusDetail, 
       login, 
       logout, 
       register, 
@@ -335,7 +395,10 @@ export const AuthProvider = ({ children }) => {
       updatePerpus,
       fetchSiswa, 
       fetchGuru, 
-      fetchPerpus 
+      fetchPerpus,
+      fetchAllSiswa, 
+      fetchAllGuru, 
+      fetchAllPerpus 
     }}>
       {children}
     </AuthContext.Provider>
