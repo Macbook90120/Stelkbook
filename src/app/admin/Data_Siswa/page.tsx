@@ -20,7 +20,7 @@ interface Siswa {
 function Page() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedSiswa, setSelectedSiswa] = useState({ id: "", name: "", sekolah: "", nis: "",kelas:"" });
-  const { fetchAllSiswa, siswaData, deleteSiswa } = useAuth(); // Ambil deleteSiswa dari useAuth
+  const { fetchAllSiswa, siswaData, } = useAuth(); // Ambil deleteSiswa dari useAuth
   const router = useRouter();
 
   // Ambil data siswa saat komponen dimuat

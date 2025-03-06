@@ -16,26 +16,27 @@ function Page() {
     gender: '',
     sekolah: '',
   });
+  const [showPassword, setShowPassword] = useState(false); // State untuk toggle password visibility
 
   // Ambil ID dari query parameter
   const searchParams = new URLSearchParams(window.location.search);
   const id = searchParams.get('id');
 
-  // Ambil data siswa berdasarkan ID saat komponen dimuat
+  // Ambil data guru berdasarkan ID saat komponen dimuat
   useEffect(() => {
     if (id) {
-      fetchGuru(id); // Ambil data siswa spesifik berdasarkan ID
+      fetchGuru(id); // Ambil data guru spesifik berdasarkan ID
     }
-  }, [id,fetchGuru]);
+  }, [id, fetchGuru]);
 
-  // Isi form dengan data siswa saat siswaDetail berubah
+  // Isi form dengan data guru saat guruDetail berubah
   useEffect(() => {
     if (guruDetail) {
       setForm({
         id: guruDetail.id || '',
         username: guruDetail.username || '',
         email: guruDetail.email || '',
-        password: guruDetail.password||'', // Biarkan kosong untuk keamanan
+        password: guruDetail.password || '', // Biarkan kosong untuk keamanan
         nip: guruDetail.nip || '',
         gender: guruDetail.gender || '',
         sekolah: guruDetail.sekolah || '',
@@ -57,17 +58,19 @@ function Page() {
     e.preventDefault();
     try {
       if (id) {
-        await updateGuru(id,form); // Update data siswa
+        await updateGuru(id, form); // Update data guru
         alert('Data Guru berhasil diperbarui!');
-        router.push('/admin/Data_Guru'); // Redirect ke halaman data siswa
+        router.push('/admin/Data_Guru'); // Redirect ke halaman data guru
       }
     } catch (error: any) {
-      alert('Gagal memperbarui data guru: ' + error.message);
+      alert('Gagal memperbarui data guru: ' + (error.message || 'Terjadi kesalahan'));
     }
   };
 
-  // Fungsi untuk menghasilkan pilihan kelas berdasarkan jenjang sekolah
- 
+  // Toggle password visibility
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
 
   const handleStelkbookClick = () => {
     router.push('/admin'); // Navigasi ke homepage admin
@@ -191,23 +194,31 @@ function Page() {
             </div>
 
             {/* Password Field */}
-            <div>
+            <div className="relative">
               <label className="block text-gray-700 text-sm font-medium mb-2">Password</label>
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 name="password"
                 value={form.password}
                 onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red pr-10"
+              />
+              <Image
+                src={showPassword ? '/assets/Forgot-password/unhide2.png' : '/assets/Forgot-password/hide.png'}
+                alt="Toggle Visibility"
+                width={20}
+                height={20}
+                className="absolute top-1/2 right-3 transform -translate-y-[-6px] cursor-pointer"
+                onClick={togglePasswordVisibility}
               />
             </div>
 
-            {/* NIS/NIK Field */}
+            {/* NIP Field */}
             <div>
-              <label className="block text-gray-700 text-sm font-medium mb-2">NIS/NIP</label>
+              <label className="block text-gray-700 text-sm font-medium mb-2">NIP</label>
               <input
                 type="text"
-                name="nis"
+                name="nip"
                 value={form.nip}
                 onChange={handleInputChange}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
@@ -230,7 +241,6 @@ function Page() {
               </select>
             </div>
 
-
             {/* Status and Gender Fields */}
             <div className="flex space-x-4">
               {/* Status Field */}
@@ -248,15 +258,15 @@ function Page() {
               <div className="w-1/2">
                 <label className="block text-gray-700 text-sm font-medium mb-2">Gender</label>
                 <select
-                name='gender'
-                value={form.gender}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
-              >
-                <option value="">Pilih Gender</option>
-                <option value="Laki-Laki">Laki-Laki</option>
-                <option value="Perempuan">Perempuan</option>
-              </select>
+                  name="gender"
+                  value={form.gender}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
+                >
+                  <option value="">Pilih Gender</option>
+                  <option value="Laki-Laki">Laki-Laki</option>
+                  <option value="Perempuan">Perempuan</option>
+                </select>
               </div>
             </div>
 

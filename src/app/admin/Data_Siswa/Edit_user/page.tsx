@@ -17,6 +17,7 @@ function Page() {
     sekolah: '',
     kelas: '',
   });
+  const [showPassword, setShowPassword] = useState(false); // State untuk toggle password visibility
 
   // Ambil ID dari query parameter
   const searchParams = new URLSearchParams(window.location.search);
@@ -27,7 +28,7 @@ function Page() {
     if (id) {
       fetchSiswa(id); // Ambil data siswa spesifik berdasarkan ID
     }
-  }, [id,fetchSiswa]);
+  }, [id, fetchSiswa]);
 
   // Isi form dengan data siswa saat siswaDetail berubah
   useEffect(() => {
@@ -36,7 +37,7 @@ function Page() {
         id: siswaDetail.id || '',
         username: siswaDetail.username || '',
         email: siswaDetail.email || '',
-        password: siswaDetail.password||'', // Biarkan kosong untuk keamanan
+        password: siswaDetail.password || '', // Biarkan kosong untuk keamanan
         nis: siswaDetail.nis || '',
         gender: siswaDetail.gender || '',
         sekolah: siswaDetail.sekolah || '',
@@ -59,12 +60,12 @@ function Page() {
     e.preventDefault();
     try {
       if (id) {
-        await updateSiswa(id,form); // Update data siswa
+        await updateSiswa(id, form); // Update data siswa
         alert('Data siswa berhasil diperbarui!');
         router.push('/admin/Data_Siswa'); // Redirect ke halaman data siswa
       }
     } catch (error: any) {
-      alert('Gagal memperbarui data siswa: ' + error.message);
+      alert('Gagal memperbarui data siswa: ' + (error.message || 'Terjadi kesalahan'));
     }
   };
 
@@ -84,6 +85,11 @@ function Page() {
 
   const handleStelkbookClick = () => {
     router.push('/admin'); // Navigasi ke homepage admin
+  };
+
+  // Toggle password visibility
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
   };
 
   return (
@@ -204,14 +210,22 @@ function Page() {
             </div>
 
             {/* Password Field */}
-            <div>
+            <div className="relative">
               <label className="block text-gray-700 text-sm font-medium mb-2">Password</label>
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 name="password"
                 value={form.password}
                 onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red pr-10"
+              />
+              <Image
+                src={showPassword ? '/assets/Forgot-password/unhide2.png' : '/assets/Forgot-password/hide.png'}
+                alt="Toggle Visibility"
+                width={20}
+                height={20}
+                className="absolute top-1/2 right-3 transform -translate-y-[-6px] cursor-pointer"
+                onClick={togglePasswordVisibility}
               />
             </div>
 
@@ -278,13 +292,16 @@ function Page() {
               {/* Gender Field */}
               <div className="w-1/2">
                 <label className="block text-gray-700 text-sm font-medium mb-2">Gender</label>
-                <input
-                  type="text"
+                <select
                   name="gender"
                   value={form.gender}
                   onChange={handleInputChange}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
-                />
+                >
+                  <option value="">Pilih Gender</option>
+                  <option value="Laki-laki">Laki-laki</option>
+                  <option value="Perempuan">Perempuan</option>
+                </select>
               </div>
             </div>
 

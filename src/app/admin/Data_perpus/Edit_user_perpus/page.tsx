@@ -15,26 +15,27 @@ function Page() {
     nip: '',
     gender: '',
   });
+  const [showPassword, setShowPassword] = useState(false); // State untuk toggle password visibility
 
   // Ambil ID dari query parameter
   const searchParams = new URLSearchParams(window.location.search);
   const id = searchParams.get('id');
 
-  // Ambil data siswa berdasarkan ID saat komponen dimuat
+  // Ambil data perpus berdasarkan ID saat komponen dimuat
   useEffect(() => {
     if (id) {
-      fetchPerpus(id); // Ambil data siswa spesifik berdasarkan ID
+      fetchPerpus(id); // Ambil data perpus spesifik berdasarkan ID
     }
-  }, [id,fetchPerpus]);
+  }, [id, fetchPerpus]);
 
-  // Isi form dengan data siswa saat siswaDetail berubah
+  // Isi form dengan data perpus saat perpusDetail berubah
   useEffect(() => {
     if (perpusDetail) {
       setForm({
         id: perpusDetail.id || '',
         username: perpusDetail.username || '',
         email: perpusDetail.email || '',
-        password: perpusDetail.password||'', // Biarkan kosong untuk keamanan
+        password: perpusDetail.password || '', // Biarkan kosong untuk keamanan
         nip: perpusDetail.nip || '',
         gender: perpusDetail.gender || '',
       });
@@ -55,22 +56,23 @@ function Page() {
     e.preventDefault();
     try {
       if (id) {
-        await updatePerpus(id,form); // Update data siswa
+        await updatePerpus(id, form); // Update data perpus
         alert('Data Perpus berhasil diperbarui!');
-        router.push('/admin/Data_perpus'); // Redirect ke halaman data siswa
+        router.push('/admin/Data_perpus'); // Redirect ke halaman data perpus
       }
     } catch (error: any) {
-      alert('Gagal memperbarui data perpus: ' + error.message);
+      alert('Gagal memperbarui data perpus: ' + (error.message || 'Terjadi kesalahan'));
     }
   };
 
-  // Fungsi untuk menghasilkan pilihan kelas berdasarkan jenjang sekolah
- 
+  // Toggle password visibility
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
 
   const handleStelkbookClick = () => {
     router.push('/admin'); // Navigasi ke homepage admin
   };
-  
 
   return (
     <div className="min-h-screen p-8 bg-gray-50">
@@ -136,7 +138,7 @@ function Page() {
           <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
         </svg>
 
-        {/* "Guru" Text */}
+        {/* "Perpus" Text */}
         <p className="text-lg font-semibold text-gray-600">Perpus</p>
 
         {/* Second Arrow Icon */}
@@ -190,30 +192,36 @@ function Page() {
             </div>
 
             {/* Password Field */}
-            <div>
+            <div className="relative">
               <label className="block text-gray-700 text-sm font-medium mb-2">Password</label>
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 name="password"
                 value={form.password}
                 onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red pr-10"
+              />
+              <Image
+                src={showPassword ? '/assets/Forgot-password/unhide2.png' : '/assets/Forgot-password/hide.png'}
+                alt="Toggle Visibility"
+                width={20}
+                height={20}
+                className="absolute top-1/2 right-3 transform -translate-y-[-6px] cursor-pointer "
+                onClick={togglePasswordVisibility}
               />
             </div>
 
-            {/* NIS/NIK Field */}
+            {/* NIP Field */}
             <div>
-              <label className="block text-gray-700 text-sm font-medium mb-2">NIS/NIP</label>
+              <label className="block text-gray-700 text-sm font-medium mb-2">NIP</label>
               <input
                 type="text"
-                name="nis"
+                name="nip"
                 value={form.nip}
                 onChange={handleInputChange}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
               />
             </div>
-
-          
 
             {/* Status and Gender Fields */}
             <div className="flex space-x-4">
@@ -232,15 +240,15 @@ function Page() {
               <div className="w-1/2">
                 <label className="block text-gray-700 text-sm font-medium mb-2">Gender</label>
                 <select
-                name='gender'
-                value={form.gender}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
-              >
-                <option value="">Pilih Gender</option>
-                <option value="Laki-Laki">Laki-Laki</option>
-                <option value="Perempuan">Perempuan</option>
-              </select>
+                  name="gender"
+                  value={form.gender}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
+                >
+                  <option value="">Pilih Gender</option>
+                  <option value="Laki-Laki">Laki-Laki</option>
+                  <option value="Perempuan">Perempuan</option>
+                </select>
               </div>
             </div>
 

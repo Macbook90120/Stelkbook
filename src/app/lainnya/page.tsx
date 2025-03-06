@@ -2,7 +2,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import Navbar from '@/components/Navbar';
+import Navbar_Lainnya from '@/components/Navbar_Lainnya';
 
 const BookCard = ({ imageSrc, altText, title, onClick }: any) => (
   <div
@@ -25,7 +25,7 @@ function Page() {
   return (
     <div className="min-h-screen bg-white">
       {/* Navbar */}
-      <Navbar />
+      <Navbar_Lainnya />
 
       <main className="pt-20 px-8"></main> {/* Added padding to avoid overlap with navbar */}
 
