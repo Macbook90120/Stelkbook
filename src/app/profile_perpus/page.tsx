@@ -8,7 +8,7 @@ import { useAuth } from '@/context/authContext';
 
 function Page() {
   const router = useRouter();
-  const {user,logout} = useAuth();
+  const { user, logout } = useAuth();
   const [showWarningModal, setShowWarningModal] = useState(false); // State to control the modal visibility
 
   const handleChangePasswordClick = () => {
@@ -19,9 +19,8 @@ function Page() {
     setShowWarningModal(true); // Show the warning modal when logout is clicked
   };
 
-  const handleConfirmLogout =async () => {
-    await logout()
-    // Perform any logout logic here (e.g., clearing session, user data, etc.)
+  const handleConfirmLogout = async () => {
+    await logout();
     router.push('/'); // Redirect to the home page
   };
 
@@ -51,16 +50,7 @@ function Page() {
           </div>
 
           {/* Profile Details */}
-          <div className="flex flex-col w-full relative">
-            <Image
-              src="/assets/Class/Edit_Icon.png"
-              alt="Edit Icon"
-              width={24}
-              height={24}
-              className="absolute top-4 right-4 translate-x-5 translate-y-[-30px] cursor-pointer"
-              onClick={() => router.push('/profile_perpus/edit-profile-perpus')}
-            />
-
+          <div className="flex flex-col w-full">
             {/* Input Fields */}
             <div className="grid gap-6">
               <div>
