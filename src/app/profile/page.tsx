@@ -51,16 +51,7 @@ function Page() {
           </div>
 
           {/* Profile Details */}
-          <div className="flex flex-col w-full relative">
-            <Image
-              src="/assets/Class/Edit_Icon.png"
-              alt="Edit Icon"
-              width={24}
-              height={24}
-              className="absolute top-4 right-4 translate-x-5 translate-y-[-30px] cursor-pointer"
-              onClick={() => router.push('/profile/edit-profile')}
-            />
-
+          <div className="flex flex-col w-full">
             {/* Input Fields */}
             <div className="grid gap-6">
               <div>
@@ -73,7 +64,7 @@ function Page() {
                 />
               </div>
               <div>
-                <label className="block text-gray-700 text-sm font-medium mb-2">NIS</label>
+                <label className="block text-gray-700 text-sm font-medium mb-2">NIK</label>
                 <input
                   type="text"
                   defaultValue={user?.kode || ''}
