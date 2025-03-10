@@ -5,8 +5,10 @@ import Image from "next/image";
 import Navbar from "@/components/Navbar_Guru";
 import { useRouter } from "next/navigation";
 import { useBook } from "@/context/bookContext";
+import useAuthMiddleware from "@/hooks/auth";
 
 function Page() {
+  useAuthMiddleware();
   const router = useRouter();
 
   const handleBookClick = (bookPath: string) => {

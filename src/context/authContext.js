@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [siswaData, setSiswaData] = useState(null);
   const [guruData, setGuruData] = useState(null);
@@ -202,8 +202,9 @@ const fetchAllPerpus = useCallback(async () => {
       console.error("Logout gagal:", e);
     } finally {
       localStorage.removeItem('auth_token');
-      setUser({});
+      setUser(null);
       router.push('/');
+      router.replace('/');
     }
   };
 

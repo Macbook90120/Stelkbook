@@ -5,8 +5,9 @@ import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar_Admin';
 import WarningModal from '@/app/profile/WarningLogout'; // Import the WarningModal component
 import { useAuth } from '@/context/authContext';
-
+import useAuthMiddleware from '@/hooks/auth';
 function Page() {
+    useAuthMiddleware();
   const router = useRouter();
   const {user,logout} = useAuth();
   const [showWarningModal, setShowWarningModal] = useState(false); // State to control the modal visibility
@@ -64,7 +65,7 @@ function Page() {
                 />
               </div>
               <div>
-                <label className="block text-gray-700 text-sm font-medium mb-2">NIK</label>
+                <label className="block text-gray-700 text-sm font-medium mb-2">NIP</label>
                 <input
                   type="text"
                   defaultValue={user?.kode || ''}

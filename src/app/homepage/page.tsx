@@ -4,23 +4,14 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import { useAuth } from '@/context/authContext';
-import useAuthMiddleware from '@/hooks/auth'
+import useAuthMiddleware from '@/hooks/auth';
 function HomePage() {
   useAuthMiddleware();
   const router = useRouter();
-  const {user} = useAuth()
+  const {user} = useAuth();
 
-  useEffect(() => {
-    if(user.role==='Admin'){
-      router.push('/admin')
-  }else if(user.role==='Guru'){
-      router.push('/homepage_guru')
-  }else if (user.role === 'Perpus'){
-      router.push('/perpustakaan')
-  } else {
-    router.push('/homepage')
-  }
-  },[])
+ 
+  
   const handleButtonClick = (destination: string) => {
     const routes: Record<string, string> = {
       'User': '/profile',

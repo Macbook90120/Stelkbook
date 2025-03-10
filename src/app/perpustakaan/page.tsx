@@ -4,7 +4,8 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar_Perpus';
 import { useBook } from '@/context/bookContext'; // Import BookContext (JavaScript)
-
+import useAuthMiddleware from '@/hooks/auth';
+import { useAuth } from '@/context/authContext';
 interface Book {
   id: number;
   judul: string;
@@ -13,9 +14,22 @@ interface Book {
 }
 
 function Page() {
+  useAuthMiddleware();
   const router = useRouter();
   const { perpusBooks, loading, error, fetchPerpusBooks } = useBook(); // Ambil data buku perpustakaan dari context
   const [combinedBooks, setCombinedBooks] = useState<Book[]>([]);
+  const {user} = useAuth();
+    useEffect(() => {
+      if(user.role==='Admin'){
+        router.push('/admin')
+    }else if(user.role==='Guru'){
+        router.push('/homepage_guru')
+    }else if (user.role === 'Perpus'){
+        router.push('/perpustakaan')
+    } else {
+      router.push('/homepage')
+    }
+    },[])
 
   // Data statis untuk "Menambahkan Buku"
   const staticBook: Book = {

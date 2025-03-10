@@ -299,7 +299,7 @@ function Page() {
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
                 >
                   <option value="">Pilih Gender</option>
-                  <option value="Laki-laki">Laki-laki</option>
+                  <option value="Laki-Laki">Laki-laki</option>
                   <option value="Perempuan">Perempuan</option>
                 </select>
               </div>
