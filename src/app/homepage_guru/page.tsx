@@ -4,6 +4,7 @@ import React from "react";
 import Image from "next/image";
 import Navbar from "@/components/Navbar_Guru";
 import { useRouter } from "next/navigation";
+import { useBook } from "@/context/bookContext";
 
 function Page() {
   const router = useRouter();
