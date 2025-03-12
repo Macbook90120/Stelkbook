@@ -114,7 +114,7 @@ const Page: React.FC = () => {
 
             <button
               onClick={() => setShowWarningModal(true)}
-              className="bg-red-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-red-600 flex items-center gap-2"
+              className="bg-red text-white px-4 py-2 rounded-lg shadow-md hover:bg-red flex items-center gap-2"
             >
               <Image src="/assets/Admin/Delete_user.png" alt="Delete Icon" width={16} height={16} />
               <span>Hapus Buku</span>
