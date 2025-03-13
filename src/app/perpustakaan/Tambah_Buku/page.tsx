@@ -3,38 +3,66 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import NotificationSuccessful from './NotificationSuccessful';
 import Navbar from '@/components/Navbar_Perpus';
+import { useBook } from '@/context/bookContext'; // Sesuaikan path-nya
 
 function Page() {
     const [showNotification, setShowNotification] = useState(false);
-    const [pdfName, setPdfName] = useState<string | null>(null);
-    const [coverImage, setCoverImage] = useState<string | null>(null);
+    const [pdfFile, setPdfFile] = useState<File | null>(null);
+    const [coverFile, setCoverFile] = useState<File | null>(null);
+    const [judul, setJudul] = useState('');
+    const [deskripsi, setDeskripsi] = useState('');
     const [penulis, setPenulis] = useState('');
-    const [Tahun, setTahun] = useState('');
+    const [tahun, setTahun] = useState('');
     const [isbn, setIsbn] = useState('');
     const [selectedKelas, setSelectedKelas] = useState('');
     const [selectedSekolah, setSelectedSekolah] = useState('');
     const [kelasOptions, setKelasOptions] = useState<string[]>([]);
+    const [penerbit, setPenerbit] = useState('');
+
+    const { addBook, loading, error } = useBook();
 
     useEffect(() => {
         if (selectedSekolah === 'SD') {
-            setKelasOptions(['I', 'II', 'III', 'IV', 'V', 'VI']);
+            setKelasOptions(['I', 'II', 'III', 'IV', 'V', 'VI',]);
         } else if (selectedSekolah === 'SMP') {
-            setKelasOptions(['VII', 'VIII', 'IX']);
+            setKelasOptions(['VII', 'VIII', 'IX',]);
         } else if (selectedSekolah === 'SMK') {
-            setKelasOptions(['X', 'XI', 'XII']);
+            setKelasOptions(['X', 'XI', 'XII',]);
         } else {
             setKelasOptions([]);
         }
     }, [selectedSekolah]);
 
-    const handleSubmit = (event: React.FormEvent) => {
+    const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-        setShowNotification(true);
+
+        const formData = new FormData();
+        formData.append('judul', judul);
+        formData.append('deskripsi', deskripsi);
+        formData.append('sekolah', selectedSekolah);
+        formData.append('kategori', selectedKelas);
+        formData.append('penerbit', penerbit);
+        formData.append('penulis', penulis);
+        formData.append('tahun', tahun);
+        formData.append('ISBN', isbn);
+        if (coverFile) {
+            formData.append('cover', coverFile);
+        }
+        if (pdfFile) {
+            formData.append('isi', pdfFile);
+        }
+
+        try {
+            await addBook(formData);
+            setShowNotification(true);
+        } catch (err) {
+            console.error('Error adding book:', err);
+        }
     };
 
     const handlePdfUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files?.[0]?.type === 'application/pdf') {
-            setPdfName(event.target.files[0].name);
+            setPdfFile(event.target.files[0]);
         } else {
             alert('Please upload a valid PDF file.');
         }
@@ -42,7 +70,7 @@ function Page() {
 
     const handleCoverUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files?.[0]) {
-            setCoverImage(URL.createObjectURL(event.target.files[0]));
+            setCoverFile(event.target.files[0]);
         }
     };
 
@@ -74,6 +102,8 @@ function Page() {
                                 <label className="block text-gray-700 font-medium mb-2">Judul</label>
                                 <input
                                     type="text"
+                                    value={judul}
+                                    onChange={(e) => setJudul(e.target.value)}
                                     placeholder="(Isi Judul)"
                                     className="w-full border border-gray-300 bg-gray-100 rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 />
@@ -83,7 +113,9 @@ function Page() {
                                 <label className="block text-gray-700 font-medium mb-2">Deskripsi</label>
                                 <input
                                     type="text"
-                                    placeholder="(Isi Judul)"
+                                    value={deskripsi}
+                                    onChange={(e) => setDeskripsi(e.target.value)}
+                                    placeholder="(Isi Deskripsi)"
                                     className="w-full border border-gray-300 bg-gray-100 rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 />
                             </div>
@@ -91,7 +123,7 @@ function Page() {
                             <div className="mb-4">
                                 <label className="block text-gray-700 font-medium mb-2">Sekolah</label>
                                 <div className="flex space-x-4">
-                                    {['SD', 'SMP', 'SMK'].map((Sekolah) => (
+                                    {['SD', 'SMP', 'SMK','NA'].map((Sekolah) => (
                                         <button
                                             key={Sekolah}
                                             type="button"
@@ -128,6 +160,8 @@ function Page() {
                                 <label className="block text-gray-700 font-medium mb-2">Penerbit</label>
                                 <input
                                     type="text"
+                                    value={penerbit}
+                                    onChange={(e) => setPenerbit(e.target.value)}
                                     placeholder="(Isi Penerbit)"
                                     className="w-full border border-gray-300 bg-gray-100 rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 />
@@ -148,7 +182,7 @@ function Page() {
                                 <label className="block text-gray-700 font-medium mb-2">Tahun</label>
                                 <input
                                     type="text"
-                                    value={Tahun}
+                                    value={tahun}
                                     onChange={(e) => setTahun(e.target.value)}
                                     placeholder="(Isi Tahun)"
                                     className="w-full border border-gray-300 bg-gray-100 rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -171,8 +205,8 @@ function Page() {
                             <div className="relative">
                                 <label className="block text-gray-700 font-medium mb-2">Cover Buku</label>
                                 <div className="border border-gray-300 rounded-lg p-6 bg-gray-50 relative">
-                                    {coverImage ? (
-                                        <img src={coverImage} alt="Book Cover" className="w-full h-full object-cover rounded-lg" />
+                                    {coverFile ? (
+                                        <img src={URL.createObjectURL(coverFile)} alt="Book Cover" className="w-full h-full object-cover rounded-lg" />
                                     ) : (
                                         <p className="text-gray-500">Upload dalam format .jpg/.png</p>
                                     )}
@@ -194,14 +228,14 @@ function Page() {
                                         width={48}
                                         height={45}
                                     />
-                                    {!pdfName && <p className="text-gray-500 ml-4">Upload dalam format .pdf</p>}
+                                    {!pdfFile && <p className="text-gray-500 ml-4">Upload dalam format .pdf</p>}
                                     <input
                                         type="file"
                                         accept="application/pdf"
                                         onChange={handlePdfUpload}
                                         className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer"
                                     />
-                                    {pdfName && <p className="mt-2 text-gray-700">{pdfName}</p>}
+                                    {pdfFile && <p className="mt-2 text-gray-700">{pdfFile.name}</p>}
                                 </div>
                             </div>
                         </div>

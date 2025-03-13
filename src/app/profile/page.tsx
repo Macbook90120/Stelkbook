@@ -5,8 +5,10 @@ import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import WarningModal from '@/app/profile/WarningLogout'; // Import the WarningModal component
 import { useAuth } from '@/context/authContext';
+import useAuthMiddleware from '@/hooks/auth';
 
 function Page() {
+  useAuthMiddleware();
   const router = useRouter();
   const {user,logout} = useAuth()
   const [showWarningModal, setShowWarningModal] = useState(false); // State to control the modal visibility
@@ -64,7 +66,7 @@ function Page() {
                 />
               </div>
               <div>
-                <label className="block text-gray-700 text-sm font-medium mb-2">NIK</label>
+                <label className="block text-gray-700 text-sm font-medium mb-2">NIS</label>
                 <input
                   type="text"
                   defaultValue={user?.kode || ''}
@@ -86,6 +88,15 @@ function Page() {
                 <input
                   type="text"
                   defaultValue={user?.sekolah || ''}
+                  readOnly
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700 text-sm font-medium mb-2">Kelas</label>
+                <input
+                  type="text"
+                  defaultValue={user?.kelas || ''}
                   readOnly
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />

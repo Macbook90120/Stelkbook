@@ -2,17 +2,19 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import Navbar from '@/components/Navbar';
+import Navbar from '@/components/Navbar_Perpus';
 import WarningModal from '@/app/profile/WarningLogout'; // Import the WarningModal component
 import { useAuth } from '@/context/authContext';
+import useAuthMiddleware from '@/hooks/auth';
 
 function Page() {
+  useAuthMiddleware();
   const router = useRouter();
   const { user, logout } = useAuth();
   const [showWarningModal, setShowWarningModal] = useState(false); // State to control the modal visibility
 
   const handleChangePasswordClick = () => {
-    router.push('/change-password'); // Navigate to the change password page
+    router.push('/change-password-perpus'); // Navigate to the change password page
   };
 
   const handleLogoutClick = () => {
@@ -63,7 +65,7 @@ function Page() {
                 />
               </div>
               <div>
-                <label className="block text-gray-700 text-sm font-medium mb-2">NIK</label>
+                <label className="block text-gray-700 text-sm font-medium mb-2">NIP</label>
                 <input
                   type="text"
                   defaultValue={user?.kode || ''}
@@ -80,15 +82,7 @@ function Page() {
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
-              <div>
-                <label className="block text-gray-700 text-sm font-medium mb-2">Sekolah</label>
-                <input
-                  type="text"
-                  defaultValue=""
-                  readOnly
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
+            
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-gray-700 text-sm font-medium mb-2">Status</label>
