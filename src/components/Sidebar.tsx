@@ -25,10 +25,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       <aside className="fixed top-16 left-0 w-64 h-[calc(100%-4rem)] bg-red shadow-md z-50 text-white">
         <nav className="p-4">
           <ul className="space-y-6">
-            {/* Kelas X */}
+            {/* SD */}
             <li
               className="flex items-center space-x-2 cursor-pointer hover:opacity-80"
-              onClick={() => handleNavigation("/kelasX")}
+              onClick={() => handleNavigation("/SD")}
             >
               <Image
                 src="/assets/Class/buku.png"
@@ -36,13 +36,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                 width={20}
                 height={20}
               />
-              <span className="text-lg font-semibold">Kelas X</span>
+              <span className="text-lg font-semibold">SD</span>
             </li>
 
-            {/* Kelas XI */}
+            {/* SMP */}
             <li
               className="flex items-center space-x-2 cursor-pointer hover:opacity-80"
-              onClick={() => handleNavigation("/kelasXI")}
+              onClick={() => handleNavigation("/SMP")}
             >
               <Image
                 src="/assets/Class/buku.png"
@@ -50,13 +50,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                 width={20}
                 height={20}
               />
-              <span className="text-lg font-semibold">Kelas XI</span>
+              <span className="text-lg font-semibold">SMP</span>
             </li>
 
-            {/* Kelas XII */}
+            {/* SMK */}
             <li
               className="flex items-center space-x-2 cursor-pointer hover:opacity-80"
-              onClick={() => handleNavigation("/kelasXII")}
+              onClick={() => handleNavigation("/SMK")}
             >
               <Image
                 src="/assets/Class/buku.png"
@@ -64,7 +64,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                 width={20}
                 height={20}
               />
-              <span className="text-lg font-semibold">Kelas XII</span>
+              <span className="text-lg font-semibold">SMK</span>
             </li>
 
             {/* Lainnya */}
