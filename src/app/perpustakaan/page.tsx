@@ -16,9 +16,25 @@ interface Book {
 function Page() {
   useAuthMiddleware();
   const router = useRouter();
+  const {user} = useAuth();
+    
+      useEffect(() => {
+        // Check if user is not null before accessing its properties
+        if (user) {
+          if (user.role === 'Admin') {
+            router.push('/admin');
+          } else if (user.role === 'Guru') {
+            router.push('/homepage_guru');
+          } else if (user.role === 'Perpus') {
+            router.push('/perpustakaan');
+          } else {
+            router.push('/homepage');
+          }
+        }
+      }, [user, router]); 
   const { perpusBooks, loading, error, fetchPerpusBooks } = useBook(); // Ambil data buku perpustakaan dari context
   const [combinedBooks, setCombinedBooks] = useState<Book[]>([]);
-  const {user} = useAuth();
+
   
 
   // Data statis untuk "Menambahkan Buku"

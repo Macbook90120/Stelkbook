@@ -4,12 +4,30 @@ import React from "react";
 import Image from "next/image";
 import Navbar from "@/components/Navbar_Guru";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { useBook } from "@/context/bookContext";
 import useAuthMiddleware from "@/hooks/auth";
+import { useAuth } from "@/context/authContext";
 
 function Page() {
   useAuthMiddleware();
   const router = useRouter();
+   const { user } = useAuth();
+  
+    useEffect(() => {
+      // Check if user is not null before accessing its properties
+      if (user) {
+        if (user.role === 'Admin') {
+          router.push('/admin');
+        } else if (user.role === 'Guru') {
+          router.push('/homepage_guru');
+        } else if (user.role === 'Perpus') {
+          router.push('/perpustakaan');
+        } else {
+          router.push('/homepage');
+        }
+      }
+    }, [user, router]); 
 
   const handleBookClick = (bookPath: string) => {
     router.push(bookPath);

@@ -95,12 +95,6 @@ const Navbar: React.FC = () => {
           </div>
         </div>
       </header>
-
-      {/* Sidebar */}
-      <Sidebar
-        isOpen={isSidebarOpen}
-        onClose={() => setIsSidebarOpen(false)}
-      />
     </>
   );
 };
