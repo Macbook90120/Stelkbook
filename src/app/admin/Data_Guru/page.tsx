@@ -102,7 +102,7 @@ function Page() {
                 onClick={() => handleEditUser(guru)}
               >
                 <Image
-                  src="/assets/Admin/Edit_user.png"
+                  src="/assets/icon/edit.svg"
                   alt="Edit Icon"
                   width={16}
                   height={16}
@@ -115,7 +115,7 @@ function Page() {
                 onClick={() => handleDeleteUser(guru)}
               >
                 <Image
-                  src="/assets/Admin/Delete_user.png"
+                  src="/assets/icon/delete.svg"
                   alt="Delete Icon"
                   width={16}
                   height={16}
@@ -156,7 +156,7 @@ function Page() {
                 onClick={() => handleEditUser(guru)}
               >
                 <Image
-                  src="/assets/Admin/Edit_user.png"
+                  src="/assets/icon/edit.svg"
                   alt="Edit Icon"
                   width={16}
                   height={16}
@@ -169,7 +169,7 @@ function Page() {
                 onClick={() => handleDeleteUser(guru)}
               >
                 <Image
-                  src="/assets/Admin/Delete_user.png"
+                  src="/assets/icon/delete.svg"
                   alt="Delete Icon"
                   width={16}
                   height={16}
@@ -210,7 +210,7 @@ function Page() {
                 onClick={() => handleEditUser(guru)}
               >
                 <Image
-                  src="/assets/Admin/Edit_user.png"
+                  src="/assets/icon/edit.svg"
                   alt="Edit Icon"
                   width={16}
                   height={16}
@@ -223,7 +223,7 @@ function Page() {
                 onClick={() => handleDeleteUser(guru)}
               >
                 <Image
-                  src="/assets/Admin/Delete_user.png"
+                  src="/assets/icon/delete.svg"
                   alt="Delete Icon"
                   width={16}
                   height={16}

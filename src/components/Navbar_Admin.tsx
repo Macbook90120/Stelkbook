@@ -30,7 +30,7 @@ const Navbar: React.FC = () => {
               className="focus:outline-none md:hidden"
             >
               <Image
-                src="/assets/Class/menu.png"
+                src="/assets/icon/menu.svg"
                 alt="Menu"
                 width={20}
                 height={20}
@@ -51,7 +51,7 @@ const Navbar: React.FC = () => {
                 className="block md:hidden"
               />
               <Image
-                src="/assets/Class/Stelk_bookTitle.png"
+                src="/assets/icon/stelkbook-logo-navbar.svg"
                 alt="Logo Full"
                 width={148}
                 height={88}
@@ -64,7 +64,7 @@ const Navbar: React.FC = () => {
           <div className="flex-grow flex justify-center relative">
             <div className="w-full sm:w-3/4 md:w-1/2 lg:w-1/3 flex items-center bg-[#F5F5F5] rounded-full px-4 py-2 shadow-sm">
               <Image
-                src="/assets/Class/Search_icon.png"
+                src="/assets/icon/search.svg"
                 alt="Search Icon"
                 width={20}
                 height={20}

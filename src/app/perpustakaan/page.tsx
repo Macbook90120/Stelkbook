@@ -41,7 +41,7 @@ function Page() {
   const staticBook: Book = {
     id: 0, // ID khusus untuk buku statis
     judul: 'Menambahkan Buku',
-    cover: '/assets/Perpustakaan/Tambahan.png',
+    cover: '/assets/icon/add-file.svg',
     path: '/perpustakaan/Tambah_Buku',
   };
 

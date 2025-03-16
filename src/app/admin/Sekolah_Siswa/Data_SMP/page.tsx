@@ -84,7 +84,7 @@ function Page() {
                   onClick={() => handleButtonClick("Edit_user")}
                 >
                   <Image
-                    src="/assets/Admin/Edit_user.png"
+                    src="/assets/icon/edit.svg"
                     alt="Edit Icon"
                     width={16}
                     height={16}
@@ -99,7 +99,7 @@ function Page() {
                   }
                 >
                   <Image
-                    src="/assets/Admin/Reset_user.png"
+                    src="/assets/icon/reset-pw.svg"
                     alt="Reset Icon"
                     width={16}
                     height={16}
@@ -114,7 +114,7 @@ function Page() {
                   }
                 >
                   <Image
-                    src="/assets/Admin/Delete_user.png"
+                    src="/assets/icon/delete.svg"
                     alt="Delete Icon"
                     width={16}
                     height={16}

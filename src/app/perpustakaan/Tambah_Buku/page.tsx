@@ -223,7 +223,7 @@ function Page() {
                                 <label className="block text-gray-700 font-medium mb-2">Isi Buku</label>
                                 <div className="border border-gray-300 rounded-lg flex items-center justify-center p-6 bg-gray-50 cursor-pointer">
                                     <Image
-                                        src="/assets/Perpustakaan/Format_file.png"
+                                        src="/assets/icon/add-file.svg"
                                         alt="Book Content"
                                         width={48}
                                         height={45}
