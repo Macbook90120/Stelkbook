@@ -83,6 +83,18 @@ export const BookProvider = ({ children }) => {
         }
     };
 
+    const fetchBookById = async (id) => {
+        setLoading(true);
+        try {
+            const response = await axios.get(`/books/${id}`);
+            return response.data;
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     // Fungsi untuk mengambil buku siswa berdasarkan ID
     const fetchSiswaBookById = async (id) => {
         setLoading(true);
@@ -113,7 +125,7 @@ export const BookProvider = ({ children }) => {
     const fetchPerpusBookById = async (id) => {
         setLoading(true);
         try {
-            const response = await axios.get(`/books/perpus/${id}`);
+            const response = await axios.get(`/books-perpus/${id}`);
             return response.data;
         } catch (err) {
             setError(err.message);
@@ -216,6 +228,7 @@ export const BookProvider = ({ children }) => {
                 fetchGuruBookById,
                 fetchPerpusBookById,
                 fetchNonAkademikBookById,
+                fetchBookById,
                 addBook,
                 updateBook,
                 deleteBook,

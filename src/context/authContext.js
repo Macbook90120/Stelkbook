@@ -9,6 +9,12 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [siswaData, setSiswaData] = useState(null);
+  const [siswaSdData, setSiswaSdData] = useState(null); // Data semua siswa SD
+const [siswaSmpData, setSiswaSmpData] = useState(null); // Data semua siswa SMP
+const [siswaSmkData, setSiswaSmkData] = useState(null); // Data semua siswa SMK
+const [siswaSdDetail, setSiswaSdDetail] = useState(null); // Data spesifik siswa SD berdasarkan ID
+const [siswaSmpDetail, setSiswaSmpDetail] = useState(null); // Data spesifik siswa SMP berdasarkan ID
+const [siswaSmkDetail, setSiswaSmkDetail] = useState(null); // Data spesifik siswa SMK berdasarkan ID
   const [guruData, setGuruData] = useState(null);
   const [perpusData, setPerpusData] = useState(null);
   const [siswaDetail, setSiswaDetail] = useState(null); // State untuk data siswa spesifik
@@ -60,6 +66,56 @@ export const AuthProvider = ({ children }) => {
     throw new Error(e.response?.data?.message || "Gagal mengambil data siswa.");
   }
 }, []);
+
+const fetchSiswaSd = useCallback(async (id) => {
+  if (!id) throw new Error("ID siswa harus diberikan.");
+
+  try {
+    const token = localStorage.getItem('auth_token');
+    if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+    const res = await axios.get(`/siswa-sd/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setSiswaSdDetail(res.data);
+  } catch (e) {
+    console.error("Gagal mengambil data siswa SD:", e.response?.data?.message || e.message);
+    throw new Error(e.response?.data?.message || "Gagal mengambil data siswa SD.");
+  }
+}, []);
+
+const fetchSiswaSmp = useCallback(async (id) => {
+  if (!id) throw new Error("ID siswa harus diberikan.");
+
+  try {
+    const token = localStorage.getItem('auth_token');
+    if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+    const res = await axios.get(`/siswa-smp/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setSiswaSmpDetail(res.data);
+  } catch (e) {
+    console.error("Gagal mengambil data siswa SMP:", e.response?.data?.message || e.message);
+    throw new Error(e.response?.data?.message || "Gagal mengambil data siswa SMP.");
+  }
+}, []);
+
+const fetchSiswaSmk = useCallback(async (id) => {
+  if (!id) throw new Error("ID siswa harus diberikan.");
+
+  try {
+    const token = localStorage.getItem('auth_token');
+    if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+    const res = await axios.get(`/siswa-smk/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setSiswaSmkDetail(res.data);
+  } catch (e) {
+    console.error("Gagal mengambil data siswa SMK:", e.response?.data?.message || e.message);
+    throw new Error(e.response?.data?.message || "Gagal mengambil data siswa SMK.");
+  }
+}, []);
+
+
 
 // Fetch guru data by ID
 const fetchGuru = useCallback(async (id) => {
@@ -115,6 +171,48 @@ const fetchAllSiswa = useCallback(async () => {
     throw new Error(e.response?.data?.message || "Gagal mengambil data siswa.");
   }
 },[]);
+
+const fetchAllSiswaSd = useCallback(async () => {
+  try {
+    const token = localStorage.getItem('auth_token');
+    if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+    const res = await axios.get('/siswa-sd', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setSiswaSdData(res.data);
+  } catch (e) {
+    console.error("Gagal mengambil data siswa SD:", e.response?.data?.message || e.message);
+    throw new Error(e.response?.data?.message || "Gagal mengambil data siswa SD.");
+  }
+}, []);
+
+const fetchAllSiswaSmp = useCallback(async () => {
+  try {
+    const token = localStorage.getItem('auth_token');
+    if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+    const res = await axios.get('/siswa-smp', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setSiswaSmpData(res.data);
+  } catch (e) {
+    console.error("Gagal mengambil data siswa SMP:", e.response?.data?.message || e.message);
+    throw new Error(e.response?.data?.message || "Gagal mengambil data siswa SMP.");
+  }
+}, []);
+
+const fetchAllSiswaSmk = useCallback(async () => {
+  try {
+    const token = localStorage.getItem('auth_token');
+    if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+    const res = await axios.get('/siswa-smk', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setSiswaSmkData(res.data);
+  } catch (e) {
+    console.error("Gagal mengambil data siswa SMK:", e.response?.data?.message || e.message);
+    throw new Error(e.response?.data?.message || "Gagal mengambil data siswa SMK.");
+  }
+}, []);
 
 // Fetch all guru data
 const fetchAllGuru = useCallback(async () => {
@@ -258,6 +356,48 @@ const fetchAllPerpus = useCallback(async () => {
     }
   };
 
+  const deleteSiswaSd = async (id) => {
+    try {
+      const token = localStorage.getItem('auth_token');
+      if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+      const res = await axios.delete(`/siswa-sd/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return res.data;
+    } catch (e) {
+      console.error("Gagal menghapus siswa SD:", e.response?.data?.message || e.message);
+      throw new Error(e.response?.data?.message || "Gagal menghapus siswa SD.");
+    }
+  };
+  
+  const deleteSiswaSmp = async (id) => {
+    try {
+      const token = localStorage.getItem('auth_token');
+      if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+      const res = await axios.delete(`/siswa-smp/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return res.data;
+    } catch (e) {
+      console.error("Gagal menghapus siswa SMP:", e.response?.data?.message || e.message);
+      throw new Error(e.response?.data?.message || "Gagal menghapus siswa SMP.");
+    }
+  };
+  
+  const deleteSiswaSmk = async (id) => {
+    try {
+      const token = localStorage.getItem('auth_token');
+      if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+      const res = await axios.delete(`/siswa-smk/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return res.data;
+    } catch (e) {
+      console.error("Gagal menghapus siswa SMK:", e.response?.data?.message || e.message);
+      throw new Error(e.response?.data?.message || "Gagal menghapus siswa SMK.");
+    }
+  };
+
   // Delete guru function
   const deleteGuru = async (id) => {
     try {
@@ -332,6 +472,51 @@ const fetchAllPerpus = useCallback(async () => {
     }
   };
 
+  const updateSiswaSd = async (id, form) => {
+    try {
+      const token = localStorage.getItem('auth_token');
+      if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+      const res = await axios.post(`/update-siswa-sd/${id}`, form, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setSiswaSdDetail(res.data);
+      return res.data;
+    } catch (e) {
+      console.error("Gagal memperbarui siswa SD:", e.response?.data?.message || e.message);
+      throw new Error(e.response?.data?.message || "Gagal memperbarui siswa SD.");
+    }
+  };
+  
+  const updateSiswaSmp = async (id, form) => {
+    try {
+      const token = localStorage.getItem('auth_token');
+      if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+      const res = await axios.post(`/update-siswa-smp/${id}`, form, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setSiswaSmpDetail(res.data);
+      return res.data;
+    } catch (e) {
+      console.error("Gagal memperbarui siswa SMP:", e.response?.data?.message || e.message);
+      throw new Error(e.response?.data?.message || "Gagal memperbarui siswa SMP.");
+    }
+  };
+  
+  const updateSiswaSmk = async (id, form) => {
+    try {
+      const token = localStorage.getItem('auth_token');
+      if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+      const res = await axios.post(`/update-siswa-smk/${id}`, form, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setSiswaSmkDetail(res.data);
+      return res.data;
+    } catch (e) {
+      console.error("Gagal memperbarui siswa SMK:", e.response?.data?.message || e.message);
+      throw new Error(e.response?.data?.message || "Gagal memperbarui siswa SMK.");
+    }
+  };
+
   // Update guru function
   const updateGuru = async (id, form) => {
     try {
@@ -376,10 +561,16 @@ const fetchAllPerpus = useCallback(async () => {
     <AuthContext.Provider value={{ 
       user, 
       loading, 
-      siswaData, 
+      siswaData,
+      siswaSdData,
+      siswaSmpData,
+      siswaSmkData, 
       guruData, 
       perpusData, 
       siswaDetail, 
+      siswaSdDetail,
+      siswaSmpDetail,
+      siswaSmkDetail,
       guruDetail, 
       perpusDetail, 
       login, 
@@ -388,18 +579,30 @@ const fetchAllPerpus = useCallback(async () => {
       changePassword, 
       deleteUser, 
       deleteSiswa,
+      deleteSiswaSd,
+      deleteSiswaSmp,
+      deleteSiswaSmk,
       deleteGuru,
       deletePerpus,
       updateUser, 
       updateSiswa,
+      updateSiswaSd,
+      updateSiswaSmp,
+      updateSiswaSmk,
       updateGuru,
       updatePerpus,
       fetchSiswa, 
+      fetchSiswaSd,
+      fetchSiswaSmp,
+      fetchSiswaSmk,
       fetchGuru, 
       fetchPerpus,
       fetchAllSiswa, 
       fetchAllGuru, 
-      fetchAllPerpus 
+      fetchAllPerpus,
+      fetchAllSiswaSd,
+      fetchAllSiswaSmp,
+      fetchAllSiswaSmk,
     }}>
       {children}
     </AuthContext.Provider>
