@@ -77,7 +77,8 @@ function Page() {
       {/* Div untuk Guru SD */}
       <div className="bg-white rounded-lg shadow p-4 mb-8">
         <h2 className="text-xl text-OldRed font-semibold mb-4">SD</h2>
-        {guruSD?.map((guru: Guru) => (
+        {guruSD?.length > 0 ? (
+        guruSD?.map((guru: Guru) => (
           <div
             key={guru.id}
             className="grid grid-cols-12 gap-4 items-center py-4 border-b"
@@ -102,7 +103,7 @@ function Page() {
                 onClick={() => handleEditUser(guru)}
               >
                 <Image
-                  src="/assets/Admin/Edit_user.png"
+                  src="/assets/icon/edit.svg"
                   alt="Edit Icon"
                   width={16}
                   height={16}
@@ -115,7 +116,7 @@ function Page() {
                 onClick={() => handleDeleteUser(guru)}
               >
                 <Image
-                  src="/assets/Admin/Delete_user.png"
+                  src="/assets/icon/delete.svg"
                   alt="Delete Icon"
                   width={16}
                   height={16}
@@ -125,13 +126,17 @@ function Page() {
               </button>
             </div>
           </div>
-        ))}
+        )) 
+      ) : (
+          <p className="text-gray-500 text-center py-4">Tidak ada data guru tersedia.</p>
+        )}
       </div>
 
       {/* Div untuk Guru SMP */}
       <div className="bg-white rounded-lg shadow p-4 mb-8">
         <h2 className="text-xl text-OldRed font-semibold mb-4">SMP</h2>
-        {guruSMP?.map((guru: Guru) => (
+        {guruSMP?.length > 0 ? (
+        guruSMP?.map((guru: Guru) => (
           <div
             key={guru.id}
             className="grid grid-cols-12 gap-4 items-center py-4 border-b"
@@ -156,7 +161,7 @@ function Page() {
                 onClick={() => handleEditUser(guru)}
               >
                 <Image
-                  src="/assets/Admin/Edit_user.png"
+                  src="/assets/icon/edit.svg"
                   alt="Edit Icon"
                   width={16}
                   height={16}
@@ -169,7 +174,7 @@ function Page() {
                 onClick={() => handleDeleteUser(guru)}
               >
                 <Image
-                  src="/assets/Admin/Delete_user.png"
+                  src="/assets/icon/delete.svg"
                   alt="Delete Icon"
                   width={16}
                   height={16}
@@ -179,13 +184,16 @@ function Page() {
               </button>
             </div>
           </div>
-        ))}
+        )) ) : (
+          <p className="text-gray-500 text-center py-4">Tidak ada data guru tersedia.</p>
+        )}
       </div>
 
       {/* Div untuk Guru SMK */}
       <div className="bg-white rounded-lg shadow p-4 mb-8">
         <h2 className="text-xl text-OldRed font-semibold mb-4">SMK</h2>
-        {guruSMK?.map((guru: Guru) => (
+        {guruSMK?.length > 0 ? (
+        guruSMK?.map((guru: Guru) => (
           <div
             key={guru.id}
             className="grid grid-cols-12 gap-4 items-center py-4 border-b"
@@ -210,7 +218,7 @@ function Page() {
                 onClick={() => handleEditUser(guru)}
               >
                 <Image
-                  src="/assets/Admin/Edit_user.png"
+                  src="/assets/icon/edit.svg"
                   alt="Edit Icon"
                   width={16}
                   height={16}
@@ -223,7 +231,7 @@ function Page() {
                 onClick={() => handleDeleteUser(guru)}
               >
                 <Image
-                  src="/assets/Admin/Delete_user.png"
+                  src="/assets/icon/delete.svg"
                   alt="Delete Icon"
                   width={16}
                   height={16}
@@ -233,7 +241,9 @@ function Page() {
               </button>
             </div>
           </div>
-        ))}
+        ))) : (
+          <p className="text-gray-500 text-center py-4">Tidak ada data guru tersedia.</p>
+        )}
       </div>
 
       {/* Modal Hapus User */}

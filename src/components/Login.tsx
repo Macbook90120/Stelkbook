@@ -94,18 +94,18 @@ function Login() {
                 <div className="w-full h-full max-w-md p-8 bg-white rounded-lg">
                     <div className="text-center mb-8">
                         <Image
-                            src="/assets/Stelkbook_logo.png"
+                            src="/assets/icon/stelkbook-logo.svg"
                             alt="StelkBook Logo"
                             width={100}
                             height={100}
-                            className="mx-auto mb-4"
+                            className="mx-auto mb-4 opacity-90"
                         />
                         <Image
-                            src="/assets/Title_Text.png"
+                            src="/assets/icon/stelkbook-wordmark.svg"
                             alt="Title Text"
                             width={200}
                             height={50}
-                            className="mx-auto"
+                            className="mx-auto opacity-60"
                         />
                     </div>
                     <form onSubmit={handleSubmit}>

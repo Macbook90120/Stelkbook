@@ -30,7 +30,7 @@ const Navbar: React.FC = () => {
               className="focus:outline-none md:hidden"
             >
               <Image
-                src="/assets/Class/menu.png"
+                src="/assets/icon/menu.svg"
                 alt="Menu"
                 width={20}
                 height={20}
@@ -44,14 +44,14 @@ const Navbar: React.FC = () => {
             >
               {/* Use different logos based on screen size */}
               <Image
-                src="/assets/Class/iconstelkbook.png"
+                src="/assets/icon/stelkbook-logo.svg"
                 alt="Logo Small"
                 width={50}
                 height={50}
                 className="block md:hidden"
               />
               <Image
-                src="/assets/Class/Stelk_bookTitle.png"
+                src="/assets/icon/stelkbook-logo-navbar.svg"
                 alt="Logo Full"
                 width={148}
                 height={88}

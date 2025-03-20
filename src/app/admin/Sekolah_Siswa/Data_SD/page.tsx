@@ -1,4 +1,3 @@
-
 'use client'
 import React, { useState, useEffect } from "react";
 import { useAuth } from "@/context/authContext";
@@ -11,14 +10,14 @@ interface Siswa {
   id: string;
   username: string;
   nis: string;
-  sekolah:string;
+  sekolah: string;
   kelas: string;
 }
 
 const DataSiswaSD: React.FC = () => {
   const { siswaSdData, fetchAllSiswaSd } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedSiswa, setSelectedSiswa] = useState<Siswa>({ id: "", username: "", nis: "",sekolah:"",kelas:""});
+  const [selectedSiswa, setSelectedSiswa] = useState<Siswa | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -53,7 +52,8 @@ const DataSiswaSD: React.FC = () => {
         </p>
       </div>
       <div className="bg-white rounded-lg shadow p-4">
-        {siswaSdData?.map((siswa:Siswa) => (
+      {siswaSdData?.length > 0 ? (
+        siswaSdData?.map((siswa: Siswa) => (
           <div key={siswa.id} className="grid grid-cols-12 gap-4 items-center py-4 border-b">
             <div className="col-span-4 flex items-center">
               <Image
@@ -66,9 +66,8 @@ const DataSiswaSD: React.FC = () => {
               <div>
                 <p className="font-semibold">{siswa.username}</p>
                 <p className="font-semibold text-OldRed">{siswa.sekolah}</p>
-                <p className=" font-semibold text-OldRed">Kelas {siswa.kelas}</p>
+                <p className="font-semibold text-OldRed">Kelas {siswa.kelas}</p>
                 <p className="text-sm text-gray-500">{siswa.nis}</p>
-
               </div>
             </div>
             <div className="col-span-8 flex justify-end space-x-2">
@@ -86,8 +85,8 @@ const DataSiswaSD: React.FC = () => {
                 <span className="hidden md:block">Edit Siswa</span>
               </button>
               <button
-                className="flex flex-col items-center justify-center w-12 h-12 md:w-auto md:h-auto md:flex-row md:px-8 md:py-2 text-white bg-red rounded-lg hover:bg-red-600"
-                onClick={() => handleDeleteSiswa({ id: siswa.id, username: siswa.username, nis: siswa.nis,sekolah:siswa.sekolah,kelas:siswa.kelas})}
+                className="flex flex-col items-center justify-center w-12 h-12 md:w-auto md:h-auto md:flex-row md:px-8 md:py-2 text-white bg-red rounded-lg hover:bg-red"
+                onClick={() => handleDeleteSiswa(siswa)}
               >
                 <Image
                   src="/assets/Admin/Delete_user.png"
@@ -100,9 +99,12 @@ const DataSiswaSD: React.FC = () => {
               </button>
             </div>
           </div>
-        ))}
+        ))
+      ) : (
+        <p className="text-gray-500 text-center py-4">Tidak ada data siswa tersedia.</p>
+      )}
       </div>
-      {isModalOpen && (
+      {isModalOpen && selectedSiswa && (
         <ConfirmationModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}

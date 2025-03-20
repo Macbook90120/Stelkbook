@@ -27,7 +27,7 @@ function Page() {
       try {
         await fetchAllPerpus();
       } catch (error) {
-        console.error("Gagal mengambil data guru:", error);
+        console.error("Gagal mengambil data perpus:", error);
       }
     };
 
@@ -67,7 +67,8 @@ function Page() {
       </div>
 
       <div className="bg-white rounded-lg shadow p-4">
-        {perpusData?.map((perpus:Perpus) => (
+      {perpusData?.length > 0 ? (
+        perpusData?.map((perpus:Perpus) => (
           <div
             key={perpus.id}
             className="grid grid-cols-12 gap-4 items-center py-4 border-b"
@@ -92,7 +93,7 @@ function Page() {
                 onClick={() => handleEditUser(perpus)}
               >
                 <Image
-                  src="/assets/Admin/Edit_user.png"
+                  src="/assets/icon/edit.svg"
                   alt="Edit Icon"
                   width={16}
                   height={16}
@@ -107,7 +108,7 @@ function Page() {
                 onClick={() => handleDeleteUser(perpus)}
               >
                 <Image
-                  src="/assets/Admin/Delete_user.png"
+                  src="/assets/icon/delete.svg"
                   alt="Delete Icon"
                   width={16}
                   height={16}
@@ -117,7 +118,9 @@ function Page() {
               </button>
             </div>
           </div>
-        ))}
+        ))  ) : (
+          <p className="text-gray-500 text-center py-4">Tidak ada data pengurus perpus tersedia.</p>
+        )}
       </div>
 
       {/* Modal Hapus User */}

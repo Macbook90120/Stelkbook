@@ -222,7 +222,7 @@ function Page() {
 
             {/* NIS/NIK Field */}
             <div>
-              <label className="block text-gray-700 text-sm font-medium mb-2">NIS/NIP</label>
+              <label className="block text-gray-700 text-sm font-medium mb-2">NIS</label>
               <input
                 type="text"
                 name="nis"

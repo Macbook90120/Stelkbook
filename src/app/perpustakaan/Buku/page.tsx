@@ -107,7 +107,7 @@ const Page: React.FC = () => {
               onClick={() => router.push(`/perpustakaan/Edit_Buku/${book.id}`)}
               className="bg-green-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-600 flex items-center gap-2"
             >
-              <Image src="/assets/Admin/Edit_user.png" alt="Edit Icon" width={16} height={16} />
+              <Image src="/assets/icon/edit.svg" alt="Edit Icon" width={16} height={16} />
               <span>Edit Buku</span>
             </button>
 
