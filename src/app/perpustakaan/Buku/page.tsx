@@ -24,17 +24,24 @@ const Page: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const bookId = parseInt(searchParams.get("id") || "0", 10);
-  const { perpusBooks, fetchPerpusBooks, deleteBook } = useBook();
+  const { fetchPerpusBookById, deleteBook } = useBook();
+  const [book, setBook] = useState<Book | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
-      await fetchPerpusBooks();
-      setLoading(false);
+      try {
+        const data = await fetchPerpusBookById(bookId);
+        setBook(data);
+      } catch (error) {
+        console.error("Error fetching book:", error);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchData();
-  }, [fetchPerpusBooks]);
+  }, [bookId, fetchPerpusBookById]);
 
   const handleDeleteBook = async (id: number) => {
     try {
@@ -47,13 +54,15 @@ const Page: React.FC = () => {
     }
   };
 
-  const book: Book | undefined = perpusBooks.find((b: Book) => b.id === bookId);
-
-  if (!book) {
-    return <div className="h-screen flex items-center justify-center text-lg text-red-500">Buku tidak ditemukan.</div>;
+  if (loading) {
+    return <div>Loading...</div>;
   }
 
-  // Buat URL lengkap jika hanya nama file yang diberikan
+  if (!book) {
+    return null;
+  }
+
+  // Buat URL lengkap jika properti "isi" hanya nama file
   const pdfUrl = book.isi.startsWith("http")
     ? book.isi
     : `http://localhost:8000/storage/${book.isi}`;
@@ -70,9 +79,21 @@ const Page: React.FC = () => {
       {/* Breadcrumb */}
       <div className="mb-8 flex items-center">
         <p className="text-xl font-semibold font-poppins">Studi Anda</p>
-        <Image src="/assets/Kelas_X/Primary_Direct.png" alt="Breadcrumb Divider" width={10} height={16} className="mx-2" />
+        <Image
+          src="/assets/Kelas_X/Primary_Direct.png"
+          alt="Breadcrumb Divider"
+          width={10}
+          height={16}
+          className="mx-2"
+        />
         <p className="text-xl font-semibold font-poppins">{book.kategori}</p>
-        <Image src="/assets/Kelas_X/Primary_Direct.png" alt="Breadcrumb Divider" width={10} height={16} className="mx-2" />
+        <Image
+          src="/assets/Kelas_X/Primary_Direct.png"
+          alt="Breadcrumb Divider"
+          width={10}
+          height={16}
+          className="mx-2"
+        />
         <p className="text-xl font-semibold font-poppins">{book.penerbit}</p>
       </div>
 
@@ -87,17 +108,25 @@ const Page: React.FC = () => {
             height={280}
             className="rounded-lg shadow-md mb-6"
             onError={(e) => {
-              e.currentTarget.src = "/assets/default-cover.png"; // Gambar fallback jika tidak ada
+              e.currentTarget.src = "/assets/default-cover.png";
             }}
           />
 
           <div className="text-center lg:text-left">
             <h2 className="text-lg font-bold">{book.penerbit}</h2>
             <ul className="mt-2 text-sm space-y-1">
-              <li><strong>Penerbit:</strong> {book.penerbit}</li>
-              <li><strong>Penulis:</strong> {book.penulis}</li>
-              <li><strong>Tahun:</strong> {book.tahun}</li>
-              <li><strong>ISBN:</strong> {book.ISBN}</li>
+              <li>
+                <strong>Penerbit:</strong> {book.penerbit}
+              </li>
+              <li>
+                <strong>Penulis:</strong> {book.penulis}
+              </li>
+              <li>
+                <strong>Tahun:</strong> {book.tahun}
+              </li>
+              <li>
+                <strong>ISBN:</strong> {book.ISBN}
+              </li>
             </ul>
           </div>
 
@@ -107,7 +136,12 @@ const Page: React.FC = () => {
               onClick={() => router.push(`/perpustakaan/Edit_Buku/${book.id}`)}
               className="bg-green-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-600 flex items-center gap-2"
             >
-              <Image src="/assets/icon/edit.svg" alt="Edit Icon" width={16} height={16} />
+              <Image
+                src="/assets/icon/edit.svg"
+                alt="Edit Icon"
+                width={16}
+                height={16}
+              />
               <span>Edit Buku</span>
             </button>
 
@@ -115,7 +149,12 @@ const Page: React.FC = () => {
               onClick={() => setShowWarningModal(true)}
               className="bg-red text-white px-4 py-2 rounded-lg shadow-md hover:bg-red flex items-center gap-2"
             >
-              <Image src="/assets/Admin/Delete_user.png" alt="Delete Icon" width={16} height={16} />
+              <Image
+                src="/assets/Admin/Delete_user.png"
+                alt="Delete Icon"
+                width={16}
+                height={16}
+              />
               <span>Hapus Buku</span>
             </button>
           </div>

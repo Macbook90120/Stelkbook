@@ -16,9 +16,15 @@ const [siswaSdDetail, setSiswaSdDetail] = useState(null); // Data spesifik siswa
 const [siswaSmpDetail, setSiswaSmpDetail] = useState(null); // Data spesifik siswa SMP berdasarkan ID
 const [siswaSmkDetail, setSiswaSmkDetail] = useState(null); // Data spesifik siswa SMK berdasarkan ID
   const [guruData, setGuruData] = useState(null);
+  const [guruSdData, setGuruSdData] = useState(null); // Data semua guru SD
+const [guruSmpData, setGuruSmpData] = useState(null); // Data semua guru SMP
+const [guruSmkData, setGuruSmkData] = useState(null); // Data semua guru SMK
   const [perpusData, setPerpusData] = useState(null);
   const [siswaDetail, setSiswaDetail] = useState(null); // State untuk data siswa spesifik
   const [guruDetail, setGuruDetail] = useState(null); // State untuk data guru spesifik
+  const [guruSdDetail, setGuruSdDetail] = useState(null); // Data spesifik guru SD berdasarkan ID
+const [guruSmpDetail, setGuruSmpDetail] = useState(null); // Data spesifik guru SMP berdasarkan ID
+const [guruSmkDetail, setGuruSmkDetail] = useState(null); // Data spesifik guru SMK berdasarkan ID
   const [perpusDetail, setPerpusDetail] = useState(null); // State untuk data perpus spesifik
   const router = useRouter();
 
@@ -136,6 +142,62 @@ const fetchGuru = useCallback(async (id) => {
   }
 },[]); 
 
+const fetchGuruSd = useCallback(async (id) => {
+  if (!id) throw new Error("ID guru SD harus diberikan.");
+
+  try {
+    const token = localStorage.getItem('auth_token');
+    if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+
+    const res = await axios.get(`/guru-sd/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    setGuruSdDetail(res.data);
+  } catch (e) {
+    console.error("Gagal mengambil data guru SD:", e.response?.data?.message || e.message);
+    throw new Error(e.response?.data?.message || "Gagal mengambil data guru SD.");
+  }
+}, []);
+
+// Fetch guru SMP data by ID
+const fetchGuruSmp = useCallback(async (id) => {
+  if (!id) throw new Error("ID guru SMP harus diberikan.");
+
+  try {
+    const token = localStorage.getItem('auth_token');
+    if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+
+    const res = await axios.get(`/guru-smp/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    setGuruSmpDetail(res.data);
+  } catch (e) {
+    console.error("Gagal mengambil data guru SMP:", e.response?.data?.message || e.message);
+    throw new Error(e.response?.data?.message || "Gagal mengambil data guru SMP.");
+  }
+}, []);
+
+// Fetch guru SMK data by ID
+const fetchGuruSmk = useCallback(async (id) => {
+  if (!id) throw new Error("ID guru SMK harus diberikan.");
+
+  try {
+    const token = localStorage.getItem('auth_token');
+    if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+
+    const res = await axios.get(`/guru-smk/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    setGuruSmkDetail(res.data);
+  } catch (e) {
+    console.error("Gagal mengambil data guru SMK:", e.response?.data?.message || e.message);
+    throw new Error(e.response?.data?.message || "Gagal mengambil data guru SMK.");
+  }
+}, []);
+
 // Fetch perpus data by ID
 const fetchPerpus = useCallback(async (id) => {
   if (!id) throw new Error("ID perpus harus diberikan.");
@@ -230,6 +292,56 @@ const fetchAllGuru = useCallback(async () => {
     throw new Error(e.response?.data?.message || "Gagal mengambil data guru.");
   }
 },[]);
+
+const fetchAllGuruSd = useCallback(async () => {
+  try {
+    const token = localStorage.getItem('auth_token');
+    if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+
+    const res = await axios.get('/guru-sd', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    setGuruSdData(res.data);
+  } catch (e) {
+    console.error("Gagal mengambil data guru SD:", e.response?.data?.message || e.message);
+    throw new Error(e.response?.data?.message || "Gagal mengambil data guru SD.");
+  }
+}, []);
+
+// Fetch all guru SMP data
+const fetchAllGuruSmp = useCallback(async () => {
+  try {
+    const token = localStorage.getItem('auth_token');
+    if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+
+    const res = await axios.get('/guru-smp', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    setGuruSmpData(res.data);
+  } catch (e) {
+    console.error("Gagal mengambil data guru SMP:", e.response?.data?.message || e.message);
+    throw new Error(e.response?.data?.message || "Gagal mengambil data guru SMP.");
+  }
+}, []);
+
+// Fetch all guru SMK data
+const fetchAllGuruSmk = useCallback(async () => {
+  try {
+    const token = localStorage.getItem('auth_token');
+    if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+
+    const res = await axios.get('/guru-smk', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    setGuruSmkData(res.data);
+  } catch (e) {
+    console.error("Gagal mengambil data guru SMK:", e.response?.data?.message || e.message);
+    throw new Error(e.response?.data?.message || "Gagal mengambil data guru SMK.");
+  }
+}, []);
 
 // Fetch all perpus data
 const fetchAllPerpus = useCallback(async () => {
@@ -414,6 +526,54 @@ const fetchAllPerpus = useCallback(async () => {
     }
   };
 
+  // Delete guru SD function
+const deleteGuruSd = async (id) => {
+  try {
+    const token = localStorage.getItem('auth_token');
+    if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+
+    const response = await axios.delete(`/guru-sd/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  } catch (e) {
+    console.error("Gagal menghapus guru SD:", e.response?.data?.message || e.message);
+    throw new Error(e.response?.data?.message || "Gagal menghapus guru SD.");
+  }
+};
+
+// Delete guru SMP function
+const deleteGuruSmp = async (id) => {
+  try {
+    const token = localStorage.getItem('auth_token');
+    if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+
+    const response = await axios.delete(`/guru-smp/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  } catch (e) {
+    console.error("Gagal menghapus guru SMP:", e.response?.data?.message || e.message);
+    throw new Error(e.response?.data?.message || "Gagal menghapus guru SMP.");
+  }
+};
+
+// Delete guru SMK function
+const deleteGuruSmk = async (id) => {
+  try {
+    const token = localStorage.getItem('auth_token');
+    if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+
+    const response = await axios.delete(`/guru-smk/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  } catch (e) {
+    console.error("Gagal menghapus guru SMK:", e.response?.data?.message || e.message);
+    throw new Error(e.response?.data?.message || "Gagal menghapus guru SMK.");
+  }
+};
+
   // Delete perpus function
   const deletePerpus = async (id) => {
     try {
@@ -537,6 +697,60 @@ const fetchAllPerpus = useCallback(async () => {
     }
   };
 
+  // Update guru SD function
+const updateGuruSd = async (id, form) => {
+  try {
+    const token = localStorage.getItem('auth_token');
+    if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+
+    const res = await axios.post(`/update-guru-sd/${id}`, form, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    setGuruSdDetail(res.data);
+    return res.data;
+  } catch (e) {
+    console.error("Gagal memperbarui guru SD:", e.response?.data?.message || e.message);
+    throw new Error(e.response?.data?.message || "Gagal memperbarui guru SD.");
+  }
+};
+
+// Update guru SMP function
+const updateGuruSmp = async (id, form) => {
+  try {
+    const token = localStorage.getItem('auth_token');
+    if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+
+    const res = await axios.post(`/update-guru-smp/${id}`, form, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    setGuruSmpDetail(res.data);
+    return res.data;
+  } catch (e) {
+    console.error("Gagal memperbarui guru SMP:", e.response?.data?.message || e.message);
+    throw new Error(e.response?.data?.message || "Gagal memperbarui guru SMP.");
+  }
+};
+
+// Update guru SMK function
+const updateGuruSmk = async (id, form) => {
+  try {
+    const token = localStorage.getItem('auth_token');
+    if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+
+    const res = await axios.post(`/update-guru-smk/${id}`, form, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    setGuruSmkDetail(res.data);
+    return res.data;
+  } catch (e) {
+    console.error("Gagal memperbarui guru SMK:", e.response?.data?.message || e.message);
+    throw new Error(e.response?.data?.message || "Gagal memperbarui guru SMK.");
+  }
+};
+
   // Update perpus function
   const updatePerpus = async (id, form) => {
     try {
@@ -565,13 +779,19 @@ const fetchAllPerpus = useCallback(async () => {
       siswaSdData,
       siswaSmpData,
       siswaSmkData, 
-      guruData, 
+      guruData,
+      guruSdData,
+      guruSmpData,
+      guruSmkData, 
       perpusData, 
       siswaDetail, 
       siswaSdDetail,
       siswaSmpDetail,
       siswaSmkDetail,
       guruDetail, 
+      guruSdDetail,
+      guruSmpDetail,
+      guruSmkDetail,
       perpusDetail, 
       login, 
       logout, 
@@ -583,6 +803,9 @@ const fetchAllPerpus = useCallback(async () => {
       deleteSiswaSmp,
       deleteSiswaSmk,
       deleteGuru,
+      deleteGuruSd,
+      deleteGuruSmp,
+      deleteGuruSmk,
       deletePerpus,
       updateUser, 
       updateSiswa,
@@ -590,12 +813,18 @@ const fetchAllPerpus = useCallback(async () => {
       updateSiswaSmp,
       updateSiswaSmk,
       updateGuru,
+      updateGuruSd,
+      updateGuruSmp,
+      updateGuruSmk,
       updatePerpus,
       fetchSiswa, 
       fetchSiswaSd,
       fetchSiswaSmp,
       fetchSiswaSmk,
       fetchGuru, 
+      fetchGuruSd,
+      fetchGuruSmp,
+      fetchGuruSmk,
       fetchPerpus,
       fetchAllSiswa, 
       fetchAllGuru, 
@@ -603,6 +832,9 @@ const fetchAllPerpus = useCallback(async () => {
       fetchAllSiswaSd,
       fetchAllSiswaSmp,
       fetchAllSiswaSmk,
+      fetchAllGuruSd,
+      fetchAllGuruSmp,
+      fetchAllGuruSmk,
     }}>
       {children}
     </AuthContext.Provider>

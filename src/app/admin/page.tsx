@@ -34,7 +34,7 @@ function HomePage() {
         router.push('/admin/Sekolah_Siswa');
         break;
       case 'Guru':
-        router.push('/admin/Data_Guru');
+        router.push('/admin/Sekolah_Guru');
         break;
       case 'Pengurus Perpus':
         router.push('/admin/Data_perpus');
