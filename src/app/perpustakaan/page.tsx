@@ -32,7 +32,7 @@ function Page() {
           }
         }
       }, [user, router]); 
-  const { perpusBooks, loading, error, fetchPerpusBooks } = useBook(); // Ambil data buku perpustakaan dari context
+  const { books, loading, error, fetchBooks } = useBook(); // Ambil data buku perpustakaan dari context
   const [combinedBooks, setCombinedBooks] = useState<Book[]>([]);
 
   
@@ -47,24 +47,24 @@ function Page() {
 
   // Gabungkan data buku perpustakaan dengan data statis
   useEffect(() => {
-    fetchPerpusBooks(); // Ambil data buku perpustakaan dari server
-  }, [fetchPerpusBooks]);
+    fetchBooks(); // Ambil data buku perpustakaan dari server
+  }, [fetchBooks]);
 
   useEffect(() => {
-    if (perpusBooks.length > 0) {
-      const mappedBooks: Book[] = perpusBooks.map((book: Book) => {
-        const coverUrl = book.cover ? `http://localhost:8000/storage/${book.cover}` : '/assets/default-cover.png';
-        console.log(`Cover URL for Book ID ${book.id}:`, coverUrl); // Debugging
-        return {
-          id: book.id,
-          judul: book.judul,
-          cover: coverUrl,
-          path: `/perpustakaan/Buku?id=${book.id}`,
-        };
-      });
-      setCombinedBooks([staticBook, ...mappedBooks]);
-    }
-  }, [perpusBooks]);
+    const mappedBooks: Book[] = books.map((book: Book) => {
+      const coverUrl = book.cover ? `http://localhost:8000/storage/${book.cover}` : '/assets/default-cover.png';
+      console.log(`Cover URL for Book ID ${book.id}:`, coverUrl); // Debugging
+      return {
+        id: book.id,
+        judul: book.judul,
+        cover: coverUrl,
+        path: `/perpustakaan/Buku?id=${book.id}`,
+      };
+    });
+  
+    setCombinedBooks([staticBook, ...mappedBooks]); // Pastikan staticBook selalu ada
+  }, [books]);
+  
 
   // Fungsi untuk navigasi
   const handleNavigationClick = (path: string) => {

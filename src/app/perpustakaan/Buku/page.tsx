@@ -10,6 +10,7 @@ import { useBook } from "@/context/bookContext";
 
 interface Book {
   id: number;
+  judul: string;
   penerbit: string;
   penulis: string;
   tahun: string;
@@ -24,14 +25,14 @@ const Page: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const bookId = parseInt(searchParams.get("id") || "0", 10);
-  const { fetchPerpusBookById, deleteBook } = useBook();
+  const { fetchBookById, deleteBook } = useBook();
   const [book, setBook] = useState<Book | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await fetchPerpusBookById(bookId);
+        const data = await fetchBookById(bookId);
         setBook(data);
       } catch (error) {
         console.error("Error fetching book:", error);
@@ -41,7 +42,7 @@ const Page: React.FC = () => {
     };
 
     fetchData();
-  }, [bookId, fetchPerpusBookById]);
+  }, [bookId, fetchBookById]);
 
   const handleDeleteBook = async (id: number) => {
     try {
@@ -94,7 +95,7 @@ const Page: React.FC = () => {
           height={16}
           className="mx-2"
         />
-        <p className="text-xl font-semibold font-poppins">{book.penerbit}</p>
+        <p className="text-xl font-semibold font-poppins">{book.judul}</p>
       </div>
 
       {/* Konten Buku */}
@@ -113,7 +114,7 @@ const Page: React.FC = () => {
           />
 
           <div className="text-center lg:text-left">
-            <h2 className="text-lg font-bold">{book.penerbit}</h2>
+            <h2 className="text-lg font-bold">{book.judul}</h2>
             <ul className="mt-2 text-sm space-y-1">
               <li>
                 <strong>Penerbit:</strong> {book.penerbit}
@@ -133,7 +134,7 @@ const Page: React.FC = () => {
           {/* Tombol Edit & Hapus */}
           <div className="mt-4 flex flex-col gap-2">
             <button
-              onClick={() => router.push(`/perpustakaan/Edit_Buku/${book.id}`)}
+              onClick={() => router.push(`/perpustakaan/Buku/Edit_Buku?id=${book.id}`)}
               className="bg-green-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-600 flex items-center gap-2"
             >
               <Image
@@ -167,13 +168,14 @@ const Page: React.FC = () => {
       </div>
 
       {/* Modal Hapus Buku */}
-      {showWarningModal && (
-        <WarningModalBuku
-          isVisible={showWarningModal}
-          onConfirm={() => handleDeleteBook(book.id)}
-          onCancel={() => setShowWarningModal(false)}
-        />
-      )}
+     
+{showWarningModal && (
+  <WarningModalBuku
+    isVisible={showWarningModal}
+    onClose={() => setShowWarningModal(false)}
+    book={book}
+  />
+)}
     </div>
   );
 };

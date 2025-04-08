@@ -83,7 +83,7 @@ export const BookProvider = ({ children }) => {
         }
     };
 
-    const fetchBookById = async (id) => {
+    const fetchBookById = useCallback(async (id) => {
         setLoading(true);
         try {
             const response = await axios.get(`/books/${id}`);
@@ -93,7 +93,7 @@ export const BookProvider = ({ children }) => {
         } finally {
             setLoading(false);
         }
-    };
+    }); 
 
     // Fungsi untuk mengambil buku siswa berdasarkan ID
     const fetchSiswaBookById = async (id) => {
@@ -122,7 +122,7 @@ export const BookProvider = ({ children }) => {
     };
 
     // Fungsi untuk mengambil buku perpus berdasarkan ID
-    const fetchPerpusBookById = async (id) => {
+    const fetchPerpusBookById = useCallback(async (id) => {
         setLoading(true);
         try {
             const response = await axios.get(`/books-perpus/${id}`);
@@ -132,7 +132,7 @@ export const BookProvider = ({ children }) => {
         } finally {
             setLoading(false);
         }
-    };
+    });
 
     // Fungsi untuk mengambil buku non akademik berdasarkan ID
     const fetchNonAkademikBookById = async (id) => {
