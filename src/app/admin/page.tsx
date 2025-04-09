@@ -3,11 +3,11 @@ import React from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar_Admin';
-import useAuthMiddleware from '@/hooks/auth';
+// import useAuthMiddleware from '@/hooks/auth';
 import { useAuth } from '@/context/authContext';
 import { useEffect } from 'react';
 function HomePage() {
-  useAuthMiddleware();
+  // useAuthMiddleware();
   const router = useRouter();
   const {user} = useAuth();
    useEffect(() => {
@@ -52,7 +52,7 @@ function HomePage() {
       <Navbar />
       <header className="flex justify-between items-center pt-20 px-8">
         <div>
-          <p className="text-xl font-semibold text-left font-poppins">Studi Anda</p>
+          <p className="text-xl font-semibold text-left font-poppins">Database Anda</p>
         </div>
       </header>
 

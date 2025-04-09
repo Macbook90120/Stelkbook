@@ -14,7 +14,6 @@ const BookCard = ({ imageSrc, altText, title, onClick }: any) => (
   </div>
 );
 
-
 function Page() {
   const router = useRouter();
 
@@ -22,17 +21,26 @@ function Page() {
     router.push(`/kelasVIII/${bookName}_VIII`);
   };
 
+  const handleStudiAndaClick = () => {
+    router.push('/SMP'); // Ganti sesuai route aslinya kalau bukan /SD
+  };
+
   return (
     <div className="min-h-screen bg-white">
       {/* Navbar */}
       <Navbar />
 
-      <main className="pt-20 px-8"></main> {/* Added padding to avoid overlap with navbar */}
+      <main className="pt-20 px-8"></main> {/* Padding to avoid navbar overlap */}
 
       {/* Page Header */}
       <div className="p-8">
         <div className="flex items-center space-x-2 mb-6">
-          <h1 className="text-xl font-bold text-gray-800">Studi Anda</h1>
+          <h1
+            className="text-xl font-bold text-gray-800 cursor-pointer hover:underline"
+            onClick={handleStudiAndaClick}
+          >
+            Studi Anda
+          </h1>
           <Image src="/assets/Kelas_X/Primary_Direct.png" alt="Divider Icon" width={10} height={16} />
           <h2 className="text-xl font-bold text-gray-800">Kelas VIII</h2>
         </div>

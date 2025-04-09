@@ -14,7 +14,6 @@ const BookCard = ({ imageSrc, altText, title, onClick }: any) => (
   </div>
 );
 
-
 function Page() {
   const router = useRouter();
 
@@ -22,17 +21,26 @@ function Page() {
     router.push(`/kelasXI/${bookName}_XI`);
   };
 
+  const handleStudiClick = () => {
+    router.push('/SMK');
+  };
+
   return (
     <div className="min-h-screen bg-white">
       {/* Navbar */}
       <Navbar />
 
-      <main className="pt-20 px-8"></main> {/* Added padding to avoid overlap with navbar */}
+      <main className="pt-20 px-8"></main>
 
       {/* Page Header */}
       <div className="p-8">
         <div className="flex items-center space-x-2 mb-6">
-          <h1 className="text-xl font-bold text-gray-800">Studi Anda</h1>
+          <h1
+            className="text-xl font-bold text-gray-800 cursor-pointer hover:underline"
+            onClick={handleStudiClick}
+          >
+            Studi Anda
+          </h1>
           <Image src="/assets/Kelas_X/Primary_Direct.png" alt="Divider Icon" width={10} height={16} />
           <h2 className="text-xl font-bold text-gray-800">Kelas XI</h2>
         </div>
@@ -59,7 +67,7 @@ function Page() {
           />
           <BookCard
             imageSrc="/assets/Kelas_XI/Buku_Sejarah.png"
-            altText="Sejarah SMA Kelas X"
+            altText="Sejarah SMA Kelas XI"
             title="Buku paket Sejarah Kelas XI"
             onClick={() => navigateToBook('Sejarah')}
           />

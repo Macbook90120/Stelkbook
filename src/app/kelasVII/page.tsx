@@ -14,7 +14,6 @@ const BookCard = ({ imageSrc, altText, title, onClick }: any) => (
   </div>
 );
 
-
 function Page() {
   const router = useRouter();
 
@@ -22,17 +21,26 @@ function Page() {
     router.push(`/kelasVII/${bookName}_VII`);
   };
 
+  const handleStudiAndaClick = () => {
+    router.push('/SMP'); // Adjust route if needed
+  };
+
   return (
     <div className="min-h-screen bg-white">
       {/* Navbar */}
       <Navbar />
 
-      <main className="pt-20 px-8"></main> {/* Added padding to avoid overlap with navbar */}
+      <main className="pt-20 px-8"></main> {/* Padding to avoid navbar overlap */}
 
       {/* Page Header */}
       <div className="p-8">
         <div className="flex items-center space-x-2 mb-6">
-          <h1 className="text-xl font-bold text-gray-800">Studi Anda</h1>
+          <h1
+            className="text-xl font-bold text-gray-800 cursor-pointer hover:underline"
+            onClick={handleStudiAndaClick}
+          >
+            Studi Anda
+          </h1>
           <Image src="/assets/Kelas_X/Primary_Direct.png" alt="Divider Icon" width={10} height={16} />
           <h2 className="text-xl font-bold text-gray-800">Kelas VII</h2>
         </div>
@@ -47,49 +55,49 @@ function Page() {
           />
           <BookCard
             imageSrc="/assets/Kelas_XII/Buku_Matematika.png"
-            altText="Matematika SMA Kelas VII"
+            altText="Matematika SMA Kelas XII"
             title="Buku paket Matematika Kelas VII"
             onClick={() => navigateToBook('Matematika')}
           />
           <BookCard
             imageSrc="/assets/Kelas_XII/Buku_Bahasa_Indonesia.png"
-            altText="Bahasa Indonesia SMA Kelas VII"
+            altText="Bahasa Indonesia SMA Kelas XII"
             title="Buku paket Bahasa Indonesia Kelas VII"
             onClick={() => navigateToBook('BahasaIndonesia')}
           />
           <BookCard
             imageSrc="/assets/Kelas_XII/Buku_Sejarah.png"
-            altText="Sejarah SMA Kelas VII"
+            altText="Sejarah SMA Kelas XII"
             title="Buku paket Sejarah Kelas VII"
             onClick={() => navigateToBook('Sejarah')}
           />
           <BookCard
             imageSrc="/assets/Kelas_XII/Buku_Fisika.png"
-            altText="Fisika SMA Kelas VII"
+            altText="Fisika SMA Kelas XII"
             title="Buku paket Fisika Kelas VII"
             onClick={() => navigateToBook('Fisika')}
           />
           <BookCard
             imageSrc="/assets/Kelas_XII/Buku_Kimia.png"
-            altText="Kimia SMA Kelas VII"
+            altText="Kimia SMA Kelas XII"
             title="Buku paket Kimia Kelas VII"
             onClick={() => navigateToBook('Kimia')}
           />
           <BookCard
             imageSrc="/assets/Kelas_XII/Buku_Geografi.png"
-            altText="Geografi SMA Kelas VII"
+            altText="Geografi SMA Kelas XII"
             title="Buku paket Geografi Kelas VII"
             onClick={() => navigateToBook('Geografi')}
           />
           <BookCard
             imageSrc="/assets/Kelas_XII/Buku_Pancasila.png"
-            altText="Pancasila SMA Kelas VII"
+            altText="Pancasila SMA Kelas XII"
             title="Buku paket Pancasila Kelas VII"
             onClick={() => navigateToBook('Pancasila')}
           />
-                    <BookCard
+          <BookCard
             imageSrc="/assets/Kelas_XII/Buku_Agama.png"
-            altText="Pancasila SMA Kelas VII"
+            altText="Agama SMA Kelas XII"
             title="Buku Agama Kelas VII"
             onClick={() => navigateToBook('Agama')}
           />

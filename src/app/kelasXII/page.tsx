@@ -14,7 +14,6 @@ const BookCard = ({ imageSrc, altText, title, onClick }: any) => (
   </div>
 );
 
-
 function Page() {
   const router = useRouter();
 
@@ -22,17 +21,26 @@ function Page() {
     router.push(`/kelasXII/${bookName}_XII`);
   };
 
+  const handleStudiClick = () => {
+    router.push('/SMK');
+  };
+
   return (
     <div className="min-h-screen bg-white">
       {/* Navbar */}
       <Navbar />
 
-      <main className="pt-20 px-8"></main> {/* Added padding to avoid overlap with navbar */}
+      <main className="pt-20 px-8"></main>
 
       {/* Page Header */}
       <div className="p-8">
         <div className="flex items-center space-x-2 mb-6">
-          <h1 className="text-xl font-bold text-gray-800">Studi Anda</h1>
+          <h1
+            className="text-xl font-bold text-gray-800 cursor-pointer hover:underline"
+            onClick={handleStudiClick}
+          >
+            Studi Anda
+          </h1>
           <Image src="/assets/Kelas_X/Primary_Direct.png" alt="Divider Icon" width={10} height={16} />
           <h2 className="text-xl font-bold text-gray-800">Kelas XII</h2>
         </div>
@@ -87,9 +95,9 @@ function Page() {
             title="Buku paket Pancasila Kelas XII"
             onClick={() => navigateToBook('Pancasila')}
           />
-                    <BookCard
+          <BookCard
             imageSrc="/assets/Kelas_XII/Buku_Agama.png"
-            altText="Pancasila SMA Kelas XII"
+            altText="Agama SMA Kelas XII"
             title="Buku Agama Kelas XII"
             onClick={() => navigateToBook('Agama')}
           />

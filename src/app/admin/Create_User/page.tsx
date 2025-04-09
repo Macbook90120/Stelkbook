@@ -52,6 +52,10 @@ function Page() {
     setKelas(''); // Reset kelas ketika sekolah berubah
   };
 
+  const handleButtonClick = (destination: string) => {
+    router.push(`/${destination}`);
+  };
+
   const renderKelasOptions = () => {
     if (sekolah === 'SD') {
       return ['I', 'II', 'III', 'IV', 'V', 'VI'].map((kelasOption) => (
@@ -98,7 +102,11 @@ function Page() {
       </div>
 
       <div className="mb-8 flex items-center space-x-2">
-        <p className="text-lg font-semibold text-gray-700">Database Anda</p>
+        <p className="text-lg font-semibold text-gray-700 hover:underline cursor-pointer"
+        onClick={() => handleButtonClick('admin/')}>
+
+          Database Anda
+          </p>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="h-5 w-5 text-gray-500"

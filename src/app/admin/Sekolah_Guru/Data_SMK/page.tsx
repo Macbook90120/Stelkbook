@@ -29,13 +29,18 @@ const DataGuruSMK: React.FC = () => {
     setIsModalOpen(true);
   };
 
+  const handleButtonClick = (destination: string) => {
+    router.push(`/${destination}`);
+  };
+
   return (
     <div className="min-h-screen p-8 bg-gray-50 overflow-y-auto">
       <header className="flex justify-between items-center mb-4 pt-20 px-8">
         <Navbar />
       </header>
       <div className="mb-8 flex items-center">
-        <p className="text-xl font-semibold font-poppins -translate-y-2">
+        <p className="text-xl font-semibold font-poppins -translate-y-2 hover:underline cursor-pointer"
+        onClick={() => handleButtonClick('admin/Sekolah_Guru')}>
           Database Anda
         </p>
         <div className="mx-2">

@@ -16,26 +16,26 @@ interface Book {
 function Page() {
   useAuthMiddleware();
   const router = useRouter();
-  const {user} = useAuth();
-    
-      useEffect(() => {
-        // Check if user is not null before accessing its properties
-        if (user) {
-          if (user.role === 'Admin') {
-            router.push('/admin');
-          } else if (user.role === 'Guru') {
-            router.push('/homepage_guru');
-          } else if (user.role === 'Perpus') {
-            router.push('/perpustakaan');
-          } else {
-            router.push('/homepage');
-          }
-        }
-      }, [user, router]); 
+  const { user } = useAuth();
+
+  useEffect(() => {
+    // Check if user is not null before accessing its properties
+    if (user) {
+      if (user.role === 'Admin') {
+        router.push('/admin');
+      } else if (user.role === 'Guru') {
+        router.push('/homepage_guru');
+      } else if (user.role === 'Perpus') {
+        router.push('/perpustakaan');
+      } else {
+        router.push('/homepage');
+      }
+    }
+  }, [user, router]);
   const { books, loading, error, fetchBooks } = useBook(); // Ambil data buku perpustakaan dari context
   const [combinedBooks, setCombinedBooks] = useState<Book[]>([]);
 
-  
+
 
   // Data statis untuk "Menambahkan Buku"
   const staticBook: Book = {
@@ -61,10 +61,10 @@ function Page() {
         path: `/perpustakaan/Buku?id=${book.id}`,
       };
     });
-  
+
     setCombinedBooks([staticBook, ...mappedBooks]); // Pastikan staticBook selalu ada
   }, [books]);
-  
+
 
   // Fungsi untuk navigasi
   const handleNavigationClick = (path: string) => {
@@ -92,22 +92,39 @@ function Page() {
             className="text-center cursor-pointer hover:bg-gray-100"
             onClick={() => handleNavigationClick(book.path!)}
           >
-            <Image
-              src={book.cover}
-              alt={book.judul}
-              width={150}
-              height={200}
-              className="mx-auto rounded-lg shadow-md"
-              onError={(e) => {
-                console.error(`Gagal memuat gambar: ${book.cover}`);
-                e.currentTarget.src = '/assets/default-cover.png'; // Fallback ke gambar default
-              }}
-            />
+            {book.id === 0 ? (
+              // Custom Cover untuk "Menambahkan Buku"
+              <div className="w-[150px] h-[200px] bg-gradient-to-b from-red to-red rounded-lg shadow-md flex flex-col items-center justify-center relative">
+                <div className="absolute top-2 left-2 text-white text-xs font-bold"></div>
+                <div className="text-white text-lg font-bold px-2 text-center leading-tight"></div>
+                <Image
+                  src="/assets/icon/add-file.svg"
+                  alt="Tambah Buku"
+                  width={40}
+                  height={40}
+                  className="mt-4"
+                />
+                <div className="absolute bottom-2 right-2 text-white font-bold text-lg">+</div>
+              </div>
+            ) : (
+              <Image
+                src={book.cover}
+                alt={book.judul}
+                width={150}
+                height={200}
+                className="mx-auto rounded-lg shadow-md"
+                onError={(e) => {
+                  console.error(`Gagal memuat gambar: ${book.cover}`);
+                  e.currentTarget.src = '/assets/default-cover.png';
+                }}
+              />
+            )}
             <p className="mt-2 text-sm font-poppins font-semibold whitespace-pre-line text-center">
               {book.judul}
             </p>
           </div>
         ))}
+
       </div>
     </div>
   );

@@ -21,6 +21,10 @@ function Page() {
     router.push(`/kelasI/${bookName}_I`);
   };
 
+  const handleStudiAndaClick = () => {
+    router.push('/SD'); // or your homepage route if different
+  };
+
   return (
     <div className="min-h-screen bg-white">
       {/* Navbar */}
@@ -31,7 +35,12 @@ function Page() {
       {/* Page Header */}
       <div className="p-8">
         <div className="flex items-center space-x-2 mb-6">
-          <h1 className="text-xl font-bold text-gray-800">Studi Anda</h1>
+          <h1 
+            className="text-xl font-bold text-gray-800 cursor-pointer hover:underline"
+            onClick={handleStudiAndaClick}
+          >
+            Studi Anda
+          </h1>
           <Image src="/assets/Kelas_X/Primary_Direct.png" alt="Divider Icon" width={10} height={16} />
           <h2 className="text-xl font-bold text-gray-800">Kelas I</h2>
         </div>

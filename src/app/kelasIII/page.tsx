@@ -14,12 +14,15 @@ const BookCard = ({ imageSrc, altText, title, onClick }: any) => (
   </div>
 );
 
-
 function Page() {
   const router = useRouter();
 
   const navigateToBook = (bookName: string) => {
     router.push(`/kelasIII/${bookName}_III`);
+  };
+
+  const handleStudiAndaClick = () => {
+    router.push('/SD'); // or your homepage route if different
   };
 
   return (
@@ -32,7 +35,12 @@ function Page() {
       {/* Page Header */}
       <div className="p-8">
         <div className="flex items-center space-x-2 mb-6">
-          <h1 className="text-xl font-bold text-gray-800">Studi Anda</h1>
+          <h1 
+            className="text-xl font-bold text-gray-800 cursor-pointer hover:underline"
+            onClick={handleStudiAndaClick}
+          >
+            Studi Anda
+          </h1>
           <Image src="/assets/Kelas_X/Primary_Direct.png" alt="Divider Icon" width={10} height={16} />
           <h2 className="text-xl font-bold text-gray-800">Kelas III</h2>
         </div>

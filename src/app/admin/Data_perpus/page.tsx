@@ -42,6 +42,11 @@ function Page() {
   const handleEditUser = (perpus: Perpus) => {
     router.push(`/admin/Data_perpus/Edit_user_perpus?id=${perpus.id}`);
   };
+
+  const handleButtonClick = (destination: string) => {
+    router.push(`/${destination}`);
+  };
+
   return (
     <div className="min-h-screen p-8 bg-gray-50 overflow-y-auto">
       <header className="flex justify-between items-center mb-4 pt-20 px-8">
@@ -49,7 +54,8 @@ function Page() {
       </header>
 
       <div className="mb-8 flex items-center ">
-        <p className="text-xl font-semibold text-left font-poppins translate-y-[-15px]">
+        <p className="text-xl font-semibold text-left font-poppins translate-y-[-15px] hover:underline cursor-pointer"
+        onClick={() => handleButtonClick('admin/')}>
           Database Anda
         </p>
         <div className="mx-2">
