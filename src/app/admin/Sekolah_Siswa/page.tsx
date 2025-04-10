@@ -74,7 +74,7 @@ function HomePage() {
 
           {/* Text content */}
           <div className="relative z-10">
-            SMA/SMK
+            SMK
           </div>
         </button>
       </main>

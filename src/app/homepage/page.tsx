@@ -55,7 +55,7 @@ function HomePage() {
         {[
           { title: 'SD', image: '/assets/Homepage-Front/sd.jpg' },
           { title: 'SMP', image: '/assets/Homepage-Front/smp.jpg' },
-          { title: 'SMA/SMK', image: '/assets/Homepage-Front/smk.png' },
+          { title: 'SMK', image: '/assets/Homepage-Front/smk.png' },
           { title: 'Non Akademik', image: '/assets/Homepage-Front/NonAkademik.png' },
         ].map(({ title, image }) => (
           <div key={title} className="flex w-full h-56 md:h-64 bg-OldRed rounded-lg overflow-hidden">
