@@ -78,7 +78,7 @@ function Page() {
 
           {/* Flipbook */}
           <div className="flex-grow">
-            <PageFlipBook pdfPath="/assets/pdfs/MTK-OLM.pdf" />
+            <PageFlipBook pdfPath="/assets/pdfs/MTK-OLM.pdf"/>
           </div>
         </div>
       </main>
