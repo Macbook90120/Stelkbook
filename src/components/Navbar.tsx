@@ -3,11 +3,12 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import Sidebar from "./Sidebar"; // Import the Sidebar component
+import Sidebar from "./Sidebar";
 
 const Navbar: React.FC = () => {
   const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleNavigation = (path: string) => {
     router.push(path);
@@ -15,6 +16,13 @@ const Navbar: React.FC = () => {
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (searchTerm.trim() !== "") {
+      router.push(`search?q=${encodeURIComponent(searchTerm.trim())}`);
+    }
   };
 
   return (
@@ -30,28 +38,27 @@ const Navbar: React.FC = () => {
               className="focus:outline-none md:hidden"
             >
               <Image
-                src="/assets/icon/menu.svg"
+                src="/assets/Class/menu.png"
                 alt="Menu"
                 width={20}
                 height={20}
               />
             </button>
 
-            {/* Logo (Responsive Changes) */}
+            {/* Logo */}
             <div
               className="flex-shrink-0 cursor-pointer"
               onClick={() => handleNavigation("/homepage")}
             >
-              {/* Use different logos based on screen size */}
               <Image
-                src="/assets/icon/stelkbook-logo.svg"
+                src="/assets/Class/iconstelkbook.png"
                 alt="Logo Small"
                 width={50}
                 height={50}
                 className="block md:hidden"
               />
               <Image
-                src="/assets/icon/stelkbook-logo-navbar.svg"
+                src="/assets/Class/Stelk_bookTitle.png"
                 alt="Logo Full"
                 width={148}
                 height={88}
@@ -59,7 +66,30 @@ const Navbar: React.FC = () => {
               />
             </div>
           </div>
-          
+
+          {/* Search Bar */}
+          <div className="flex-grow flex justify-center relative">
+            <form
+              onSubmit={handleSearchSubmit}
+              className="w-full sm:w-3/4 md:w-1/2 lg:w-1/3 flex items-center bg-[#F5F5F5] rounded-full px-4 py-2 shadow-sm"
+            >
+              <Image
+                src="/assets/Class/Search_icon.png"
+                alt="Search Icon"
+                width={20}
+                height={20}
+                className="mr-3"
+              />
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Pencarian disini"
+                className="flex-grow bg-transparent border-none text-gray-600 placeholder-gray-400 focus:outline-none focus:ring-0"
+              />
+            </form>
+          </div>
+
           {/* Profile Icon */}
           <div className="flex items-center space-x-4">
             <div
