@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import WarningModalBuku from "./WarningModalBuku3";
-import PageFlipBook from "@/components/PageFlipBook";
+import PageFlipBook from "@/components/PageFlipBook2";
 import Navbar from "@/components/Navbar_Perpus";
 import { useBook } from "@/context/bookContext";
 
@@ -16,8 +16,8 @@ interface Book {
   tahun: string;
   kategori: string;
   ISBN: string;
-  isi: string; // Path to the PDF file
-  cover: string; // Path to the cover image
+  isi: string;
+  cover: string;
 }
 
 const Page: React.FC = () => {
@@ -25,24 +25,28 @@ const Page: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const bookId = parseInt(searchParams.get("id") || "0", 10);
-  const { fetchBookById, deleteBook } = useBook();
+
+  const { fetchBookById, deleteBook, getBookPdfUrl } = useBook(); // ✅ Ambil fungsi getBookPdfUrl
   const [book, setBook] = useState<Book | null>(null);
   const [loading, setLoading] = useState(true);
+
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const data = await fetchBookById(bookId);
         setBook(data);
+
+        // ✅ Ambil PDF URL dari context
       } catch (error) {
-        console.error("Error fetching book:", error);
+        console.error("Error fetching book or PDF URL:", error);
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [bookId, fetchBookById]);
+  }, [bookId, fetchBookById, getBookPdfUrl]);
 
   const handleDeleteBook = async (id: number) => {
     try {
@@ -55,18 +59,10 @@ const Page: React.FC = () => {
     }
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  if (loading) return <div>Loading...</div>;
+  if (!book) return null;
 
-  if (!book) {
-    return null;
-  }
-
-  // Buat URL lengkap jika properti "isi" hanya nama file
-  const pdfUrl = book.isi.startsWith("http")
-    ? book.isi
-    : `http://localhost:8000/storage/${book.isi}`;
+  const pdfUrl = `http://localhost:8000/storage/${book.isi}`; 
 
   return (
     <div className="h-screen p-8 bg-gray-50 overflow-y-auto">
@@ -80,27 +76,15 @@ const Page: React.FC = () => {
       {/* Breadcrumb */}
       <div className="mb-8 flex items-center">
         <p className="text-xl font-semibold font-poppins">Studi Anda</p>
-        <Image
-          src="/assets/Kelas_X/Primary_Direct.png"
-          alt="Breadcrumb Divider"
-          width={10}
-          height={16}
-          className="mx-2"
-        />
+        <Image src="/assets/Kelas_X/Primary_Direct.png" alt=">" width={10} height={16} className="mx-2" />
         <p className="text-xl font-semibold font-poppins">{book.kategori}</p>
-        <Image
-          src="/assets/Kelas_X/Primary_Direct.png"
-          alt="Breadcrumb Divider"
-          width={10}
-          height={16}
-          className="mx-2"
-        />
+        <Image src="/assets/Kelas_X/Primary_Direct.png" alt=">" width={10} height={16} className="mx-2" />
         <p className="text-xl font-semibold font-poppins">{book.judul}</p>
       </div>
 
       {/* Konten Buku */}
       <div className="flex flex-col lg:flex-row gap-8 items-center">
-        {/* Kiri - Cover & Detail Buku */}
+        {/* Kiri */}
         <div className="flex flex-col items-center lg:items-start">
           <Image
             src={`http://localhost:8000/storage/${book.cover}`}
@@ -116,33 +100,20 @@ const Page: React.FC = () => {
           <div className="text-center lg:text-left">
             <h2 className="text-lg font-bold">{book.judul}</h2>
             <ul className="mt-2 text-sm space-y-1">
-              <li>
-                <strong>Penerbit:</strong> {book.penerbit}
-              </li>
-              <li>
-                <strong>Penulis:</strong> {book.penulis}
-              </li>
-              <li>
-                <strong>Tahun:</strong> {book.tahun}
-              </li>
-              <li>
-                <strong>ISBN:</strong> {book.ISBN}
-              </li>
+              <li><strong>Penerbit:</strong> {book.penerbit}</li>
+              <li><strong>Penulis:</strong> {book.penulis}</li>
+              <li><strong>Tahun:</strong> {book.tahun}</li>
+              <li><strong>ISBN:</strong> {book.ISBN}</li>
             </ul>
           </div>
 
-          {/* Tombol Edit & Hapus */}
+          {/* Tombol */}
           <div className="mt-4 flex flex-col gap-2">
             <button
               onClick={() => router.push(`/perpustakaan/Buku/Edit_Buku?id=${book.id}`)}
               className="bg-green-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-600 flex items-center gap-2"
             >
-              <Image
-                src="/assets/icon/edit.svg"
-                alt="Edit Icon"
-                width={16}
-                height={16}
-              />
+              <Image src="/assets/icon/edit.svg" alt="Edit Icon" width={16} height={16} />
               <span>Edit Buku</span>
             </button>
 
@@ -150,32 +121,30 @@ const Page: React.FC = () => {
               onClick={() => setShowWarningModal(true)}
               className="bg-red text-white px-4 py-2 rounded-lg shadow-md hover:bg-red flex items-center gap-2"
             >
-              <Image
-                src="/assets/Admin/Delete_user.png"
-                alt="Delete Icon"
-                width={16}
-                height={16}
-              />
+              <Image src="/assets/Admin/Delete_user.png" alt="Delete Icon" width={16} height={16} />
               <span>Hapus Buku</span>
             </button>
           </div>
         </div>
 
-        {/* Kanan - Page Flip Book */}
+        {/* Kanan */}
         <div className="flex-grow overflow-x-auto">
-          <PageFlipBook pdfPath={pdfUrl} />
+          {pdfUrl ? (
+            <PageFlipBook pdfUrl={pdfUrl} />
+          ) : (
+            <p className="text-gray-500">Memuat buku...</p>
+          )}
         </div>
       </div>
 
-      {/* Modal Hapus Buku */}
-     
-{showWarningModal && (
-  <WarningModalBuku
-    isVisible={showWarningModal}
-    onClose={() => setShowWarningModal(false)}
-    book={book}
-  />
-)}
+      {/* Modal */}
+      {showWarningModal && (
+        <WarningModalBuku
+          isVisible={showWarningModal}
+          onClose={() => setShowWarningModal(false)}
+          book={book}
+        />
+      )}
     </div>
   );
 };

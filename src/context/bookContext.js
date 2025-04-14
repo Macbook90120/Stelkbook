@@ -66,9 +66,7 @@ export const BookProvider = ({ children }) => {
         }
       }, []);
 
-    useEffect(() => {
-        fetchPerpusBooks();
-      }, []);
+     
 
     // Fungsi untuk mengambil buku non akademik
     const fetchNonAkademikBooks = async () => {
@@ -94,6 +92,19 @@ export const BookProvider = ({ children }) => {
             setLoading(false);
         }
     }); 
+
+    // Fungsi untuk mengambil dan menampilkan file PDF
+    const getBookPdfUrl = useCallback(async (id)=> {
+        try {
+          // ✅ Gunakan URL langsung ke endpoint PDF
+          return `http://localhost:8000/api/books/preview/${id}`
+        } catch (error) {
+          console.error("Gagal mendapatkan URL PDF:", error)
+          throw error
+        }
+      }, [])
+      
+    
 
     // Fungsi untuk mengambil buku siswa berdasarkan ID
     const fetchSiswaBookById = async (id) => {
@@ -229,6 +240,7 @@ export const BookProvider = ({ children }) => {
                 fetchPerpusBookById,
                 fetchNonAkademikBookById,
                 fetchBookById,
+                getBookPdfUrl,
                 addBook,
                 updateBook,
                 deleteBook,
