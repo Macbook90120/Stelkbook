@@ -54,7 +54,7 @@ function HomePage() {
       <main className="grid grid-cols-1 gap-6 md:grid-cols-2 pt-4">
         {[
           { title: 'SD', image: '/assets/Homepage-Front/sd.jpg' },
-          { title: 'SMP', image: '/assets /Homepage-Front/smp.jpg' },
+          { title: 'SMP', image: '/assets/Homepage-Front/smp.jpg' },
           { title: 'SMK', image: '/assets/Homepage-Front/smk.png' },
           { title: 'Non Akademik', image: '/assets/Homepage-Front/NonAkademik.png' },
         ].map(({ title, image }) => (
