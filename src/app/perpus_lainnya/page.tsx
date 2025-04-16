@@ -1,81 +1,98 @@
 'use client';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import Navbar_Lainnya from '@/components/Navbar_Lainnya_Perpus';
+import Navbar from '@/components/Navbar_Perpus';
+import { useBook } from '@/context/bookContext';
+import useAuthMiddleware from '@/hooks/auth';
+import { useAuth } from '@/context/authContext';
 
-const BookCard = ({ imageSrc, altText, title, onClick }: any) => (
-  <div
-    className="bg-white hover:bg-gray-100 rounded-lg p-4 cursor-pointer flex flex-col items-center transition-colors duration-200"
-    onClick={onClick}
-  >
-    <Image src={imageSrc} alt={altText} width={150} height={200} className="rounded-md" />
-    <p className="mt-4 text-center text-sm font-semibold font-poppins">{title}</p>
-  </div>
-);
-
+interface Book {
+  id: number;
+  judul: string;
+  cover: string;
+  path?: string;
+}
 
 function Page() {
+  useAuthMiddleware();
   const router = useRouter();
+  const { user } = useAuth();
+  const { nonAkademikBooks, loading, error, fetchNonAkademikBooks } = useBook();
+  const [displayBooks, setDisplayBooks] = useState<Book[]>([]);
 
-  const navigateToBook = (bookName: string) => {
-    router.push(`/perpus_lainnya/${bookName}_Lainnya`);
+  // Redirect based on user role
+
+
+  // Fetch non-akademik books on component mount
+  useEffect(() => {
+    fetchNonAkademikBooks();
+  }, [fetchNonAkademikBooks]);
+
+  // Process books data when it changes
+  useEffect(() => {
+    const processedBooks = nonAkademikBooks.map((book: Book) => {
+      const coverUrl = book.cover 
+        ? `http://localhost:8000/storage/${book.cover}` 
+        : '/assets/default-cover.png';
+      
+      console.log(`Cover URL for Book ID ${book.id}:`, coverUrl);
+      
+      return {
+        id: book.id,
+        judul: book.judul,
+        cover: coverUrl,
+        path: `/perpus_lainnya/Buku_NA?id=${book.id}`,
+      };
+    });
+
+    setDisplayBooks(processedBooks);
+  }, [nonAkademikBooks]);
+
+  const handleNavigationClick = (path: string) => {
+    router.push(path);
   };
 
+  if (loading) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  if (error) return <div className="min-h-screen flex items-center justify-center text-red-500">Error: {error}</div>;
+
   return (
-    <div className="min-h-screen bg-white">
-      {/* Navbar */}
-      <Navbar_Lainnya />
+    <div className="min-h-screen p-8 bg-gray-50 overflow-y-auto">
+      <header className="flex justify-between items-center mb-4">
+        <Navbar />
+      </header>
 
-      <main className="pt-20 px-8"></main> {/* Added padding to avoid overlap with navbar */}
+      <div className="mb-8 flex items-center pt-20 px-8">
+        <p className="text-xl font-semibold text-left font-poppins translate-y-[-15px]">
+          Buku Non-Akademik
+        </p>
+      </div>
 
-      {/* Page Header */}
-      <div className="p-8">
-        <div className="flex items-center space-x-2 mb-6">
-          <h1 className="text-xl font-bold text-gray-800">Studi Anda</h1>
-          <Image src="/assets/Kelas_X/Primary_Direct.png" alt="Divider Icon" width={10} height={16} />
-          <h2 className="text-xl font-bold text-gray-800">Lainnya</h2>
-        </div>
-
-        {/* Books Section */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 justify-center">
-          <BookCard
-            imageSrc="/assets/Lainnya/History_math.jpeg"
-            altText="Buku Sejarah Matematika  "
-            title="History of Mathematics Third Edition"
-            onClick={() => navigateToBook('History_Math')}
-          />
-          <BookCard
-            imageSrc="/assets/Lainnya/History_math2.jpeg"
-            altText="Buku Sejarah Matematika Perkenalan"
-            title="History of Mathematics Introduction"
-            onClick={() => navigateToBook('History_Math2')}
-          />
-          <BookCard
-            imageSrc="/assets/Lainnya/History_Math3.png"
-            altText="Buku Sejarah Matematika"
-            title="History of Mathematics Brief Edition"
-            onClick={() => navigateToBook('History_Math3')}
-          />
-          <BookCard
-            imageSrc="/assets/Lainnya/Physics_Enginner.jpg"
-            altText="Physics Enginner"
-            title="Enginnering Physics"
-            onClick={() => navigateToBook('Physics_Enginner')}
-          />
-           <BookCard
-            imageSrc="/assets/Lainnya/Chemistry.jpg"
-            altText="Chemistry"
-            title="Chemistry"
-            onClick={() => navigateToBook('Chemistry')}
-          />
-           <BookCard
-            imageSrc="/assets/Lainnya/Organic_Chemistry.jpg"
-            altText="Sejarah SMA Kelas X"
-            title="Organic Chemistry Second Edition"
-            onClick={() => navigateToBook('Organic_Chemistry')}
-          />
-        </div>
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
+        {displayBooks.map((book) => (
+          <div
+            key={book.id}
+            className="text-center cursor-pointer hover:bg-gray-100 p-4 rounded-lg transition-colors"
+            onClick={() => handleNavigationClick(book.path!)}
+          >
+            <div className="w-[150px] h-[200px] relative mx-auto">
+              <Image
+                src={book.cover}
+                alt={book.judul}
+                fill
+                className="object-cover rounded-lg shadow-md"
+                onError={(e) => {
+                  console.error(`Failed to load image: ${book.cover}`);
+                  const target = e.target as HTMLImageElement;
+                  target.src = '/assets/default-cover.png';
+                }}
+              />
+            </div>
+            <p className="mt-2 text-sm font-poppins font-semibold line-clamp-2">
+              {book.judul}
+            </p>
+          </div>
+        ))}
       </div>
     </div>
   );

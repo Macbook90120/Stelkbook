@@ -33,6 +33,14 @@ const DataSiswaSD: React.FC = () => {
     router.push(`/${destination}`);
   };
 
+  const handleDeleteSuccess = async () => {
+    try {
+      await fetchAllSiswaSd();
+    } catch (error) {
+      console.error("Gagal refresh data perpus:", error);
+    }
+  };
+
   return (
     <div className="min-h-screen p-8 bg-gray-50 overflow-y-auto">
       <header className="flex justify-between items-center mb-4 pt-20 px-8">
@@ -114,6 +122,7 @@ const DataSiswaSD: React.FC = () => {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           siswa={selectedSiswa}
+          onSuccess={handleDeleteSuccess}
         />
       )}
     </div>

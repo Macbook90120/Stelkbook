@@ -15,9 +15,10 @@ interface ConfirmationModalProps {
   isOpen: boolean;
   onClose: () => void;
   siswa: Siswa;
+  onSuccess?: () => void; // Tambahan opsional seperti di perpus
 }
 
-const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ isOpen, onClose, siswa }) => {
+const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ isOpen, onClose, siswa,onSuccess }) => {
   const { deleteSiswaSmk, fetchAllSiswaSmk } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -28,7 +29,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ isOpen, onClose, 
 
     try {
       await deleteSiswaSmk(siswa.id);
-      await fetchAllSiswaSmk();
+      onSuccess?.();
       onClose();
     } catch (err) {
       console.error('Error deleting siswa SMK:', err);

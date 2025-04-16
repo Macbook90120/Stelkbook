@@ -23,14 +23,14 @@ function Page() {
     const [penerbit, setPenerbit] = useState('');
     const [pdfFileName, setPdfFileName] = useState('');
 
-    const { fetchBookById, updateBook, loading, error } = useBook();
+    const { fetchNonAkademikBookById, updateBook, loading, error } = useBook();
     const searchParams = useSearchParams();
     const id = searchParams.get('id');
     const router = useRouter();
 
     useEffect(() => {
         if (id) {
-            fetchBookById(id).then((data: any) => {
+            fetchNonAkademikBookById(id).then((data: any) => {
                 setJudul(data.judul);
                 setDeskripsi(data.deskripsi);
                 setPenulis(data.penulis);
@@ -54,7 +54,7 @@ function Page() {
                 console.error('Error fetching book:', err);
             });
         }
-    }, [id, fetchBookById]);
+    }, [id, fetchNonAkademikBookById]);
 
     useEffect(() => {
         if (selectedSekolah === 'SD') {
@@ -93,7 +93,7 @@ function Page() {
         try {
             await updateBook(id, formData);
             setShowNotification(true);
-            router.push(`/perpustakaan/Buku?id=${id}`);
+            router.push(`/perpus_lainnya/Buku_NA?id=${id}`);
         } catch (err) {
             console.error('Error updating book:', err);
         }

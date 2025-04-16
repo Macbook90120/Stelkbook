@@ -33,6 +33,14 @@ const DataGuruSMK: React.FC = () => {
     router.push(`/${destination}`);
   };
 
+  const handleDeleteSuccess = async () => {
+    try {
+      await fetchAllGuruSmk();
+    } catch (error) {
+      console.error("Gagal refresh data perpus:", error);
+    }
+  };
+
   return (
     <div className="min-h-screen p-8 bg-gray-50 overflow-y-auto">
       <header className="flex justify-between items-center mb-4 pt-20 px-8">
@@ -113,6 +121,7 @@ const DataGuruSMK: React.FC = () => {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           guru={selectedGuru}
+          onSuccess={handleDeleteSuccess}
         />
       )}
     </div>

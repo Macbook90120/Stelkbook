@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import axios from '../utils/axios'; // Pastikan path ini sesuai dengan struktur proyek Anda
 
+
 const BookContext = createContext();
 
 export const BookProvider = ({ children }) => {
@@ -14,17 +15,17 @@ export const BookProvider = ({ children }) => {
     const [error, setError] = useState(null);
 
     // Fungsi untuk mengambil semua buku
-    const fetchBooks = async () => {
+    const fetchBooks = useCallback(async () => {
         setLoading(true);
         try {
-            const response = await axios.get('/books');
-            setBooks(response.data.books);
+          const res = await axios.get('/books');
+          setBooks(res.data.books); 
         } catch (err) {
-            setError(err.message);
+          setError(err.message);
         } finally {
-            setLoading(false);
+          setLoading(false);
         }
-    };
+      }, []); // Stabil
 
     // Fungsi untuk mengambil buku siswa
     const fetchSiswaBooks = async () => {
@@ -69,7 +70,7 @@ export const BookProvider = ({ children }) => {
      
 
     // Fungsi untuk mengambil buku non akademik
-    const fetchNonAkademikBooks = async () => {
+    const fetchNonAkademikBooks = useCallback(async () => {
         setLoading(true);
         try {
             const response = await axios.get('/books-non-akademik');
@@ -79,7 +80,7 @@ export const BookProvider = ({ children }) => {
         } finally {
             setLoading(false);
         }
-    };
+    },[])
 
     const fetchBookById = useCallback(async (id) => {
         setLoading(true);
@@ -91,15 +92,16 @@ export const BookProvider = ({ children }) => {
         } finally {
             setLoading(false);
         }
-    }); 
+    },[]);
+    
 
     // Fungsi untuk mengambil dan menampilkan file PDF
     const getBookPdfUrl = useCallback(async (id)=> {
         try {
           // ✅ Gunakan URL langsung ke endpoint PDF
-          return `http://localhost:8000/api/books/preview/${id}`
+          return `http://localhost:8000/api/books/preview/${id}`;
         } catch (error) {
-          console.error("Gagal mendapatkan URL PDF:", error)
+          console.error("Gagal mendapatkan URL PDF:", error);
           throw error
         }
       }, [])
@@ -146,7 +148,7 @@ export const BookProvider = ({ children }) => {
     });
 
     // Fungsi untuk mengambil buku non akademik berdasarkan ID
-    const fetchNonAkademikBookById = async (id) => {
+    const fetchNonAkademikBookById = useCallback(async (id) => {
         setLoading(true);
         try {
             const response = await axios.get(`/books/non-akademik/${id}`);
@@ -156,7 +158,7 @@ export const BookProvider = ({ children }) => {
         } finally {
             setLoading(false);
         }
-    };
+    },[])
 
     // Fungsi untuk menambahkan buku baru
     const addBook = async (bookData) => {
@@ -211,6 +213,20 @@ export const BookProvider = ({ children }) => {
         }
     };
 
+    // Fungsi untuk menghapus buku non-akademik
+const deleteBookNonAkademik = async (id) => {
+    setLoading(true);
+    try {
+        await axios.delete(`/books/non-akademik/${id}`);
+        setNonAkademikBooks((prevBooks) => prevBooks.filter((book) => book.id !== id));
+    } catch (err) {
+        setError(err.message);
+    } finally {
+        setLoading(false);
+    }
+};
+
+
     // Ambil data buku saat komponen pertama kali di-mount
     useEffect(() => {
         fetchBooks();
@@ -244,6 +260,7 @@ export const BookProvider = ({ children }) => {
                 addBook,
                 updateBook,
                 deleteBook,
+                deleteBookNonAkademik,
             }}
         >
             {children}

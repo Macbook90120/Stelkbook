@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { useAuth } from '@/context/authContext'; // Impor useAuth
+import { useAuth } from '@/context/authContext';
 
 interface Guru {
   id: string;
@@ -14,9 +14,15 @@ interface ConfirmationModalProps {
   isOpen: boolean;
   onClose: () => void;
   guru: Guru;
+  onSuccess?: () => void; // Tambahan opsional seperti di perpus
 }
 
-const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ isOpen, onClose, guru }) => {
+const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
+  isOpen,
+  onClose,
+  guru,
+  onSuccess,
+}) => {
   const { deleteGuruSd, fetchAllGuruSd } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -26,8 +32,9 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ isOpen, onClose, 
     setError(null);
 
     try {
+      console.log("Menghapus guru SD dengan ID:", guru.id);
       await deleteGuruSd(guru.id);
-      await fetchAllGuruSd();
+      onSuccess?.();
       onClose();
     } catch (err) {
       console.error('Error deleting guru SD:', err);
@@ -91,4 +98,4 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ isOpen, onClose, 
   );
 };
 
-export default ConfirmationModal;   
+export default ConfirmationModal;

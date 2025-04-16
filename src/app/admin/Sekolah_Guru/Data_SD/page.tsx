@@ -18,6 +18,7 @@ const DataGuruSD: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedGuru, setSelectedGuru] = useState<Guru | null>(null);
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     fetchAllGuruSd(); // Ambil semua data siswa SD
@@ -26,6 +27,14 @@ const DataGuruSD: React.FC = () => {
   const handleDeleteGuru = (guru:Guru) => {
     setSelectedGuru(guru);
     setIsModalOpen(true); // Buka modal hapus
+  };
+
+  const handleDeleteSuccess = async () => {
+    try {
+      await fetchAllGuruSd();
+    } catch (error) {
+      console.error("Gagal refresh data perpus:", error);
+    }
   };
 
   const handleButtonClick = (destination: string) => {
@@ -112,6 +121,7 @@ const DataGuruSD: React.FC = () => {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           guru={selectedGuru}
+          onSuccess={handleDeleteSuccess}
         />
       )}
     </div>

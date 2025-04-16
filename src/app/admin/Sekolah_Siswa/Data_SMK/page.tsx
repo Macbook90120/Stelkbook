@@ -33,6 +33,14 @@ const DataSiswaSMK: React.FC = () => {
     router.push(`/${destination}`);
   };
 
+  const handleDeleteSuccess = async () => {
+    try {
+      await fetchAllSiswaSmk();
+    } catch (error) {
+      console.error("Gagal refresh data perpus:", error);
+    }
+  };
+
 
   return (
     <div className="min-h-screen p-8 bg-gray-50 overflow-y-auto">
@@ -115,6 +123,7 @@ const DataSiswaSMK: React.FC = () => {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           siswa={selectedSiswa}
+          onSuccess={handleDeleteSuccess} // Tambahkan o
         />
       )}
     </div>

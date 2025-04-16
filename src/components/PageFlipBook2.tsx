@@ -16,6 +16,7 @@ const PageFlipBook: React.FC<PageFlipBookProps> = ({ pdfUrl }) => {
   const [numPages, setNumPages] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [loadingPage, setLoadingPage] = useState<number | null>(null)
 
   useEffect(() => {
     let pdfInstance: pdfjs.PDFDocumentProxy | null = null
@@ -25,7 +26,7 @@ const PageFlipBook: React.FC<PageFlipBookProps> = ({ pdfUrl }) => {
         setIsLoading(true)
         const loadingTask = pdfjs.getDocument({
           url: pdfUrl,
-          withCredentials: true // Jika butuh credentials
+          withCredentials: true,
         })
         
         pdfInstance = await loadingTask.promise
@@ -34,6 +35,7 @@ const PageFlipBook: React.FC<PageFlipBookProps> = ({ pdfUrl }) => {
         // Render semua halaman
         const pages = []
         for (let i = 1; i <= pdfInstance.numPages; i++) {
+          setLoadingPage(i)  // Update loading page saat sedang memuat halaman
           const page = await pdfInstance.getPage(i)
           const viewport = page.getViewport({ scale: 1.5 })
           
@@ -60,7 +62,7 @@ const PageFlipBook: React.FC<PageFlipBookProps> = ({ pdfUrl }) => {
             size: 'fixed' as SizeType,
             maxShadowOpacity: 0.5,
             showCover: true,
-            mobileScrollSupport: false
+            mobileScrollSupport: false,
           })
 
           pageFlip.loadFromHTML(document.querySelectorAll('.page'))
@@ -88,7 +90,10 @@ const PageFlipBook: React.FC<PageFlipBookProps> = ({ pdfUrl }) => {
   return (
     <div ref={bookContainerRef} className="book-container">
       {Array.from({ length: numPages }).map((_, i) => (
-        <div key={`page-${i}`} className="page" />
+        <div key={`page-${i}`} className="page">
+          {/* Tampilkan halaman saat sudah dimuat */}
+          {loadingPage === i + 1 ? <div>Memuat Halaman {i + 1}...</div> : null}
+        </div>
       ))}
     </div>
   )

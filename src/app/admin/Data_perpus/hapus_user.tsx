@@ -1,40 +1,43 @@
 'use client';
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { useAuth } from '@/context/authContext'; // Impor useAuth
+import { useAuth } from '@/context/authContext';
 
 type ConfirmationModalProps = {
   isOpen: boolean;
   onClose: () => void;
   perpus: { id: string; name: string; nip: string };
+  onSuccess?: () => void;
 };
 
 const HapusUserModal: React.FC<ConfirmationModalProps> = ({
   isOpen,
   onClose,
   perpus,
+  onSuccess,
 }) => {
-  const [isLoading, setIsLoading] = useState(false); // State untuk loading
-  const [error, setError] = useState<string | null>(null); // State untuk error
-  const { deletePerpus, fetchAllPerpus} = useAuth(); // Ambil fungsi deleteGuru dan fetchGuru dari useAuth
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const { deletePerpus } = useAuth();
 
   const handleConfirm = async () => {
-    setIsLoading(true); // Set loading ke true
-    setError(null); // Reset error
+    setIsLoading(true);
+    setError(null);
 
     try {
-      console.log("Menghapus perpus dengan ID:", perpus.id); // Log ID yang dikirim
-      await deletePerpus(perpus.id); // Panggil fungsi deleteGuru dengan ID guru
-      console.log("Perpus berhasil dihapus"); // Log keberhasilan
-      await fetchAllPerpus(); // Refresh data guru setelah penghapusan
-      onClose(); // Tutup modal setelah berhasil
+      await deletePerpus(perpus.id);
+      console.log("Perpus berhasil dihapus");
+      onSuccess?.();
+      onClose();
     } catch (err) {
-      console.error('Error deleting perpus:', err); // Log error
-      setError('Gagal menghapus perpus. Silakan coba lagi.'); // Set pesan error
+      console.error('Error deleting perpus:', err);
+      setError('Gagal menghapus perpus. Silakan coba lagi.');
     } finally {
-      setIsLoading(false); // Set loading ke false
+      setIsLoading(false);
     }
   };
+
+  
 
   if (!isOpen) return null;
 
@@ -60,7 +63,6 @@ const HapusUserModal: React.FC<ConfirmationModalProps> = ({
           </div>
         </div>
 
-        {/* Tampilkan pesan error jika ada */}
         {error && (
           <p className="text-red-500 text-sm mb-4">{error}</p>
         )}
@@ -68,7 +70,7 @@ const HapusUserModal: React.FC<ConfirmationModalProps> = ({
         <div className="flex justify-around mt-4">
           <button
             onClick={handleConfirm}
-            disabled={isLoading} // Nonaktifkan tombol saat loading
+            disabled={isLoading}
             className={`px-10 py-2 text-white bg-green-500 rounded-lg hover:bg-green-600 ${
               isLoading ? 'opacity-50 cursor-not-allowed' : ''
             }`}
@@ -77,7 +79,7 @@ const HapusUserModal: React.FC<ConfirmationModalProps> = ({
           </button>
           <button
             onClick={onClose}
-            disabled={isLoading} // Nonaktifkan tombol saat loading
+            disabled={isLoading}
             className={`px-8 py-2 text-white bg-red rounded-lg hover:bg-red ${
               isLoading ? 'opacity-50 cursor-not-allowed' : ''
             }`}

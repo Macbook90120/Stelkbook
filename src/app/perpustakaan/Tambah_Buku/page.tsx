@@ -28,7 +28,11 @@ function Page() {
             setKelasOptions(['VII', 'VIII', 'IX',]);
         } else if (selectedSekolah === 'SMK') {
             setKelasOptions(['X', 'XI', 'XII',]);
-        } else {
+        } else if (selectedSekolah === 'NA') {
+            setKelasOptions([]); // Kosongkan kelas jika NA dipilih
+            setSelectedKelas('NA'); // Otomatis set kelas ke NA
+        }
+        else {
             setKelasOptions([]);
         }
     }, [selectedSekolah]);
@@ -39,8 +43,8 @@ function Page() {
         const formData = new FormData();
         formData.append('judul', judul);
         formData.append('deskripsi', deskripsi);
-        formData.append('sekolah', selectedSekolah);
-        formData.append('kategori', selectedKelas);
+        formData.append('sekolah', selectedSekolah === 'NA' ? '' : selectedSekolah);
+        formData.append('kategori', selectedSekolah === 'NA' ? 'NA' : selectedKelas);
         formData.append('penerbit', penerbit);
         formData.append('penulis', penulis);
         formData.append('tahun', tahun);
@@ -122,39 +126,46 @@ function Page() {
 
                             <div className="mb-4">
                                 <label className="block text-gray-700 font-medium mb-2">Sekolah</label>
-                                <div className="flex space-x-4">
-                                    {['SD', 'SMP', 'SMK','NA'].map((Sekolah) => (
+                                <div className="flex flex-wrap gap-2">
+                                    {['SD', 'SMP', 'SMK', 'NA'].map((sekolah) => (
                                         <button
-                                            key={Sekolah}
+                                            key={sekolah}
                                             type="button"
-                                            onClick={() => setSelectedSekolah(Sekolah)}
+                                            onClick={() => setSelectedSekolah(sekolah)}
                                             className={`py-2 px-4 text-sm font-semibold border rounded-lg transition ${
-                                                selectedSekolah === Sekolah ? 'bg-red text-white border-red-500' : 'bg-white text-gray-700 border-gray-300'
-                                            } focus:outline-none cursor-pointer`}
+                                                selectedSekolah === sekolah 
+                                                    ? 'bg-red text-white border-red-500' 
+                                                    : 'bg-white text-gray-700 border-gray-300'
+                                            }`}
                                         >
-                                            {Sekolah}
+                                            {sekolah}
                                         </button>
                                     ))}
                                 </div>
                             </div>
 
-                            <div className="mb-4">
-                                <label className="block text-gray-700 font-medium mb-2">Kelas</label>
-                                <div className="flex space-x-4">
-                                    {kelasOptions.map((kelas) => (
-                                        <button
-                                            key={kelas}
-                                            type="button"
-                                            onClick={() => setSelectedKelas(kelas)}
-                                            className={`py-2 px-4 text-sm font-semibold border rounded-lg transition ${
-                                                selectedKelas === kelas ? 'bg-red text-white border-red-500' : 'bg-white text-gray-700 border-gray-300'
-                                            } focus:outline-none cursor-pointer`}
-                                        >
-                                            {kelas}
-                                        </button>
-                                    ))}
+                            
+                            {selectedSekolah && selectedSekolah !== 'NA' && (
+                                <div className="mb-4">
+                                    <label className="block text-gray-700 font-medium mb-2">Kelas</label>
+                                    <div className="flex flex-wrap gap-2">
+                                        {kelasOptions.map((kelas) => (
+                                            <button
+                                                key={kelas}
+                                                type="button"
+                                                onClick={() => setSelectedKelas(kelas)}
+                                                className={`py-2 px-4 text-sm font-semibold border rounded-lg transition ${
+                                                    selectedKelas === kelas 
+                                                        ? 'bg-red text-white border-red-500' 
+                                                        : 'bg-white text-gray-700 border-gray-300'
+                                                }`}
+                                            >
+                                                {kelas}
+                                            </button>
+                                        ))}
+                                    </div>
                                 </div>
-                            </div>
+                            )}
 
                             <div className="mb-4">
                                 <label className="block text-gray-700 font-medium mb-2">Penerbit</label>
