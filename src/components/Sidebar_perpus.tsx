@@ -22,7 +22,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   return (
     <>
       {/* Sidebar */}
-      <aside className="fixed top-16 left-0 w-64 h-[calc(100%-4rem)] bg-red shadow-md z-50 text-white">
+      <aside className="fixed top-20 left-0 w-64 h-[calc(100%-4rem)] bg-red shadow-md z-50 text-white sm:">
         <nav className="p-4">
           <ul className="space-y-6">
             {/* SD */}

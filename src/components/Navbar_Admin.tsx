@@ -27,7 +27,7 @@ const Navbar: React.FC = () => {
             {/* Menu Icon */}
             <button
               onClick={toggleSidebar}
-              className="focus:outline-none md:hidden"
+              className="focus:outline-none"
             >
               <Image
                 src="/assets/icon/menu.svg"

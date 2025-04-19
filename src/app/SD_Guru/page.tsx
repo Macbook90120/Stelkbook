@@ -4,12 +4,12 @@ import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar_Guru';
 
 const classes = [
-  { name: 'Kelas I', color: 'bg-pink-400', route: '/kelasI' },
-  { name: 'Kelas II', color: 'bg-blue-500', route: '/kelasII' },
-  { name: 'Kelas III', color: 'bg-teal-400', route: '/kelasIII' },
-  { name: 'Kelas IV', color: 'bg-purple-500', route: '/kelasIV' },
-  { name: 'Kelas V', color: 'bg-orange-500', route: '/kelasV' },
-  { name: 'Kelas VI', color: 'bg-yellow-400', route: '/kelasVI' },
+  { name: 'Kelas I', color: 'bg-pink-400', route: '/kelasI_Guru' },
+  { name: 'Kelas II', color: 'bg-blue-500', route: '/kelasII_Guru' },
+  { name: 'Kelas III', color: 'bg-teal-400', route: '/kelasIII_Guru' },
+  { name: 'Kelas IV', color: 'bg-purple-500', route: '/kelasIV_Guru' },
+  { name: 'Kelas V', color: 'bg-orange-500', route: '/kelasV_Guru' },
+  { name: 'Kelas VI', color: 'bg-yellow-400', route: '/kelasVI_Guru' },
 ];
 
 const HomePage = () => {
@@ -31,12 +31,21 @@ const HomePage = () => {
       {/* Combined Grid for Kelas I - VI */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-8 place-items-center mt-6 mx-auto max-w-4xl">
         {classes.map((cls) => (
-          <div
-            key={cls.name}
-            className={`${cls.color} w-64 h-64 flex items-center justify-center rounded-xl text-white font-bold italic text-3xl shadow-xl hover:opacity-100 transition transform hover:scale-110 cursor-pointer`}
-            onClick={() => handleButtonClick(cls.route)}
-          >
-            {cls.name}
+           <div
+           key={cls.name}
+           className={`relative ${cls.color} w-64 h-64 rounded-xl text-white font-bold italic text-3xl shadow-xl hover:opacity-100 transition transform hover:scale-110 cursor-pointer overflow-hidden`}
+           onClick={() => handleButtonClick(cls.route)}
+         >
+           {/* Texture overlay */}
+           <div
+             className="absolute inset-0 opacity-20 bg-center bg-cover pointer-events-none"
+             style={{ backgroundImage: "url('/assets/texture/011.svg')" }}
+           />
+
+           {/* Class name */}
+           <div className="relative flex items-center justify-center h-full w-full">
+             {cls.name}
+           </div>
           </div>
         ))}
       </div>

@@ -53,8 +53,6 @@ function Page() {
     router.push(path);
   };
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
-  if (error) return <div className="min-h-screen flex items-center justify-center text-red-500">Error: {error}</div>;
 
   return (
     <div className="min-h-screen p-8 bg-gray-50 overflow-y-auto">

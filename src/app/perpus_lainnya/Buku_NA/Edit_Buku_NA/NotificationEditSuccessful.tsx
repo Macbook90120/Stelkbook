@@ -1,26 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 
 interface NotificationProps {
     show: boolean;
+    onHide?: () => void;
 }
 
-const NotificationEditSuccessful: React.FC<NotificationProps> = ({ show }) => {
+const NotificationSuccessful: React.FC<NotificationProps> = ({ show, onHide }) => {
     const [visible, setVisible] = useState(false);
-    const router = useRouter(); // Initialize useRouter
 
     useEffect(() => {
         if (show) {
             setVisible(true);
             const timer = setTimeout(() => {
                 setVisible(false);
-                // Navigate to the desired page after the notification disappears
-                router.push('/nextPage'); // Adjust the path as needed
-            }, 3000); // Notification disappears after 3 seconds
-
+                if (onHide) onHide();
+            }, 3000);
             return () => clearTimeout(timer);
         }
-    }, [show, router]);
+    }, [show, onHide]);
 
     return (
         <div
@@ -28,9 +25,9 @@ const NotificationEditSuccessful: React.FC<NotificationProps> = ({ show }) => {
                 visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
             }`}
         >
-            Edit Buku Successful!
+            Add Buku Successful!
         </div>
     );
 };
 
-export default NotificationEditSuccessful;
+export default NotificationSuccessful;

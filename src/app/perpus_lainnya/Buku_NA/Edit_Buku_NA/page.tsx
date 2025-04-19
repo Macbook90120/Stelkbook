@@ -23,7 +23,7 @@ function Page() {
     const [penerbit, setPenerbit] = useState('');
     const [pdfFileName, setPdfFileName] = useState('');
 
-    const { fetchNonAkademikBookById, updateBook, loading, error } = useBook();
+    const { fetchNonAkademikBookById, updateNonAkademikBook, loading, error } = useBook();
     const searchParams = useSearchParams();
     const id = searchParams.get('id');
     const router = useRouter();
@@ -91,7 +91,7 @@ function Page() {
         }
 
         try {
-            await updateBook(id, formData);
+            await updateNonAkademikBook(id, formData);
             setShowNotification(true);
             router.push(`/perpus_lainnya/Buku_NA?id=${id}`);
         } catch (err) {

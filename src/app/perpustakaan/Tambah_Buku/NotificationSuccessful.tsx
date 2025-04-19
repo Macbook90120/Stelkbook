@@ -2,18 +2,22 @@ import React, { useEffect, useState } from 'react';
 
 interface NotificationProps {
     show: boolean;
+    onHide?: () => void;
 }
 
-const NotificationSuccessful: React.FC<NotificationProps> = ({ show }) => {
+const NotificationSuccessful: React.FC<NotificationProps> = ({ show, onHide }) => {
     const [visible, setVisible] = useState(false);
 
     useEffect(() => {
         if (show) {
             setVisible(true);
-            const timer = setTimeout(() => setVisible(false), 3000); // Auto-hide after 3 seconds
+            const timer = setTimeout(() => {
+                setVisible(false);
+                if (onHide) onHide();
+            }, 3000);
             return () => clearTimeout(timer);
         }
-    }, [show]);
+    }, [show, onHide]);
 
     return (
         <div
