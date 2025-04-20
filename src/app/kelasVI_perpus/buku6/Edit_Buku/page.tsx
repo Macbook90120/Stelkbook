@@ -22,6 +22,8 @@ function Page() {
     const [kelasOptions, setKelasOptions] = useState<string[]>([]);
     const [penerbit, setPenerbit] = useState('');
     const [pdfFileName, setPdfFileName] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
 
     const { fetchKelas6BookById, updateKelas6Book, loading, error } = useBook();
     const searchParams = useSearchParams();
@@ -96,6 +98,8 @@ function Page() {
             router.push(`/kelasVI_perpus`);
         } catch (err) {
             console.error('Error updating book:', err);
+        }finally {
+            setIsSubmitting(false); // Stop loading
         }
     };
 

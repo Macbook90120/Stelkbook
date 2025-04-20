@@ -4,12 +4,12 @@ import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar_Guru';
 
 const classes = [
-  { name: 'Kelas I', color: 'bg-pink-400', route: '/kelasI_Guru' },
-  { name: 'Kelas II', color: 'bg-blue-500', route: '/kelasII_Guru' },
-  { name: 'Kelas III', color: 'bg-teal-400', route: '/kelasIII_Guru' },
-  { name: 'Kelas IV', color: 'bg-purple-500', route: '/kelasIV_Guru' },
-  { name: 'Kelas V', color: 'bg-orange-500', route: '/kelasV_Guru' },
-  { name: 'Kelas VI', color: 'bg-yellow-400', route: '/kelasVI_Guru' },
+  { name: 'Kelas I', color: 'bg-pink-400', route: '/kelasI_guru' },
+  { name: 'Kelas II', color: 'bg-blue-500', route: '/kelasII_guru' },
+  { name: 'Kelas III', color: 'bg-teal-400', route: '/kelasIII_guru' },
+  { name: 'Kelas IV', color: 'bg-purple-500', route: '/kelasIV_guru' },
+  { name: 'Kelas V', color: 'bg-orange-500', route: '/kelasV_guru' },
+  { name: 'Kelas VI', color: 'bg-yellow-400', route: '/kelasVI_guru' },
 ];
 
 const HomePage = () => {

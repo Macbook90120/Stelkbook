@@ -22,7 +22,7 @@ interface Book {
 const Page = () => {
   const searchParams = useSearchParams();
   const bookId = parseInt(searchParams.get("id") || "0", 10);
-  const { fetchGuruBookById } = useBook();
+  const { fetchKelas2BookById } = useBook();
 
   const [book, setBook] = useState<Book | null>(null);
   const [loading, setLoading] = useState(true);
@@ -30,7 +30,7 @@ const Page = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await fetchGuruBookById(bookId);
+        const data = await fetchKelas2BookById(bookId);
         setBook(data);
       } catch (error) {
         console.error("Gagal memuat data buku:", error);
@@ -40,7 +40,7 @@ const Page = () => {
     };
 
     fetchData();
-  }, [bookId, fetchGuruBookById]);
+  }, [bookId, fetchKelas2BookById]);
 
   if (loading) return <div>Loading...</div>;
   if (!book) return <div>Buku tidak ditemukan.</div>;

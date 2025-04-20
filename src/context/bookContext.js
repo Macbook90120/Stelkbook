@@ -271,7 +271,7 @@ export const BookProvider = ({ children }) => {
     };
 
     // Fungsi untuk mengambil buku guru berdasarkan ID
-    const fetchGuruBookById = async (id) => {
+    const fetchGuruBookById = useCallback(async (id) => {
         setLoading(true);
         try {
             const response = await axios.get(`/books/guru/${id}`);
@@ -281,7 +281,7 @@ export const BookProvider = ({ children }) => {
         } finally {
             setLoading(false);
         }
-    };
+    },[])
 
     // Fungsi untuk mengambil buku perpus berdasarkan ID
     const fetchPerpusBookById = useCallback(async (id) => {

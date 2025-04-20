@@ -1,133 +1,117 @@
-"use client";
+'use client';
+import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import Navbar from '@/components/Navbar_Guru';
+import { useBook } from '@/context/bookContext';
+import useAuthMiddleware from '@/hooks/auth';
+import { useAuth } from '@/context/authContext';
 
-import React from "react";
-import Image from "next/image";
-import Navbar from "@/components/Navbar_Guru";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { useBook } from "@/context/bookContext";
-import useAuthMiddleware from "@/hooks/auth";
-import { useAuth } from "@/context/authContext";
+interface Book {
+  id: number;
+  judul: string;
+  cover: string;
+  path?: string;
+  kategori?: string;
+  sekolah?: string;
+}
 
 function Page() {
   useAuthMiddleware();
   const router = useRouter();
-   const { user } = useAuth();
-  
-    useEffect(() => {
-      // Check if user is not null before accessing its properties
-      if (user) {
-        if (user.role === 'Admin') {
-          router.push('/admin');
-        } else if (user.role === 'Guru') {
-          router.push('/homepage_guru');
-        } else if (user.role === 'Perpus') {
-          router.push('/perpustakaan');
-        } else {
-          router.push('/homepage');
-        }
-      }
-    }, [user, router]); 
+  const { user } = useAuth();
+  const { guruBooks, loading, error, fetchGuruBooks } = useBook();
+  const [mappedBooks, setMappedBooks] = useState<Book[]>([]);
 
-  const handleBookClick = (bookPath: string) => {
-    router.push(bookPath);
+  useEffect(() => {
+    if (user) {
+      if (user.role === 'Admin') {
+        router.push('/admin');
+      } else if (user.role === 'Guru') {
+        router.push('/homepage_guru');
+      } else if (user.role === 'Perpus') {
+        router.push('/perpustakaan');
+      } else {
+        router.push('/homepage');
+      }
+    }
+  }, [user, router]);
+
+  useEffect(() => {
+    fetchGuruBooks();
+  }, [fetchGuruBooks]);
+
+  useEffect(() => {
+    if (guruBooks) {
+      const processedBooks = guruBooks.map((book: Book) => {
+        const coverUrl = book.cover 
+          ? `http://localhost:8000/storage/${book.cover}` 
+          : '/assets/default-cover.png';
+        
+        // Generate path berdasarkan data buku
+        const path = `/homepage_guru/Buku?id=${book.id}`;
+
+        return {
+          id: book.id,
+          judul: book.judul,
+          cover: coverUrl,
+          path: path,
+          kelas: book.kategori,
+          mata_pelajaran: book.sekolah
+        };
+      });
+      setMappedBooks(processedBooks);
+    }
+  }, [guruBooks]);
+
+  const handleBookClick = (path: string) => {
+    router.push(path);
   };
 
-  const books = [
-    {
-      title: "Buku Paket Ekonomi",
-      subtitle: "Kelas X SMA",
-      imgSrc: "/assets/Kelas_XII/Buku_Ekonomi.png",
-      path: "/homepage_guru/KelasGuru/Ekonomi_X",
-    },
-    {
-      title: "Pendidikan Pancasila",
-      subtitle: "Kelas XI SMA",
-      imgSrc: "/assets/Kelas_XI/Buku_Pancasila.png",
-      path: "/homepage_guru/KelasGuru/Pancasila_XI",
-    },
-    {
-      title: "Buku Paket Agama",
-      subtitle: "Kelas XII SMA",
-      imgSrc: "/assets/Kelas_XII/Buku_Agama.png",
-      path: "/homepage_guru/KelasGuru/Agama_XII",
-    },
-    {
-      title: "Buku Paket Matematika",
-      subtitle: "Kelas X SMA",
-      imgSrc: "/assets/Kelas_X/Buku_Matematika.png",
-      path: "/homepage_guru/KelasGuru/Matematika_X",
-    },
-    {
-      title: "Buku Paket Bahasa Indonesia",
-      subtitle: "Kelas X SMA",
-      imgSrc: "/assets/Kelas_X/Buku_Bahasa_Indonesia.png",
-      path: "/homepage_guru/KelasGuru/BahasaIndonesia_X",
-    },
-    {
-      title: "Buku Paket Sejarah",
-      subtitle: "Kelas X SMA",
-      imgSrc: "/assets/Kelas_X/Buku_Sejarah.png",
-      path: "/homepage_guru/KelasGuru/Sejarah_X",
-    },
-    {
-      title: "Buku Paket Fisika",
-      subtitle: "Kelas X SMA",
-      imgSrc: "/assets/Kelas_X/Buku_Fisika.png",
-      path: "/homepage_guru/KelasGuru/Fisika_X",
-    },
-    {
-      title: "Buku Paket Kimia",
-      subtitle: "Kelas X SMA",
-      imgSrc: "/assets/Kelas_X/Buku_Kimia.png",
-      path: "/homepage_guru/KelasGuru/Kimia_X",
-    },
-    {
-      title: "Buku Paket Geografi",
-      subtitle: "Kelas X SMA",
-      imgSrc: "/assets/Kelas_XII/Buku_Geografi.png",
-      path: "/homepage_guru/KelasGuru/Geografi_X",
-    },
-  ];
+  
 
   return (
-    <div className="min-h-screen bg-white overflow-y-auto">
-      {/* Navbar */}
-      <div className="mb-8">
+    <div className="min-h-screen p-8 bg-gray-50 overflow-y-auto">
+      <header className="flex justify-between items-center mb-4">
         <Navbar />
+      </header>
+
+      <div className="mb-8 flex items-center pt-20 px-8">
+        <p className="text-xl font-semibold text-left font-poppins translate-y-[-15px]">
+          Buku Ajar Anda
+        </p>
       </div>
 
-      {/* Main Content */}
-      <main className="pt-20 px-8">
-        {/* Studi Anda Section */}
-        <div className="mb-8 flex items-center">
-          <p className="text-xl font-semibold text-left font-poppins">
-            Studi Anda
-          </p>
-        </div>
-
-        {/* Book List Section */}
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
-          {books.map((book, index) => (
-            <div
-              key={index}
-              className="text-center cursor-pointer"
-              onClick={() => handleBookClick(book.path)}
-            >
-              <Image
-                src={book.imgSrc}
-                alt={book.title}
-                width={150}
-                height={200}
-                className="mx-auto rounded-lg shadow-md"
-              />
-              <p className="mt-2 text-sm font-poppins font-semibold">
-                {book.title} <br /> {book.subtitle}
-              </p>
-            </div>
-          ))}
-        </div>
-      </main>
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
+        {mappedBooks.map((book, index) => (
+          <div
+            key={index}
+            className="text-center cursor-pointer hover:bg-gray-100"
+            onClick={() => handleBookClick(book.path!)}
+          >
+            <Image
+              src={book.cover}
+              alt={book.judul}
+              width={150}
+              height={200}
+              className="mx-auto rounded-lg shadow-md"
+              onError={(e) => {
+                console.error(`Gagal memuat gambar: ${book.cover}`);
+                e.currentTarget.src = '/assets/default-cover.png';
+              }}
+            />
+            <p className="mt-2 text-sm font-poppins font-semibold whitespace-pre-line text-center">
+              {book.judul}
+            </p>
+            {book.kategori && (
+              <p className="text-xs text-gray-500">Kelas {book.kategori}</p>
+            )}
+            {book.kategori && (
+              <p className="text-xs text-gray-500">{book.kategori}</p>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
