@@ -64,6 +64,18 @@ const DataGuruSD: React.FC = () => {
           Guru SD
         </p>
       </div>
+
+      {/* Tambah Siswa Button */}
+      <div className="relative mb-4">
+        <button
+          className="absolute right-0 top-0 w-10 h-10 bg-red text-white text-xl rounded-full flex items-center justify-center shadow translate-y-[-60px]"
+          onClick={() => router.push("/admin/Create_User")}
+          title="Create_User"
+        >
+          +
+        </button>
+      </div>
+
       <div className="bg-white rounded-lg shadow p-4">
       {guruSdData?.length > 0 ? (
         guruSdData?.map((guru:Guru) => (

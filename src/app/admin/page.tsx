@@ -7,7 +7,7 @@ import useAuthMiddleware from '@/hooks/auth';
 import { useAuth } from '@/context/authContext';
 import { useEffect } from 'react';
 function HomePage() {
-  useAuthMiddleware();
+   useAuthMiddleware();
   const router = useRouter();
   const {user} = useAuth();
    useEffect(() => {
