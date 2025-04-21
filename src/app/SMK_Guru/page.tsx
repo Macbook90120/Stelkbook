@@ -20,7 +20,7 @@ function HomePage() {
       <main className="flex flex-col gap-10 pt-6 items-center">
         {/* Kelas X */}
         <button
-          onClick={() => handleButtonClick('kelasX_Guru')}
+          onClick={() => handleButtonClick('kelasX_guru')}
           className="flex flex-col items-center pt-8 space-y-4 w-[95%] sm:w-[90%] md:w-[85%] lg:w-[80%] py-16 text-white font-bold italic text-5xl text-center rounded-lg bg-green-500 shadow-lg transition-transform duration-300 transform scale-100 sm:scale-105 md:scale-110 lg:scale-115 hover:scale-125 overflow-hidden"
         >
           {/* Texture Overlay */}
@@ -32,7 +32,7 @@ function HomePage() {
 
         {/* Kelas XI */}
         <button
-          onClick={() => handleButtonClick('kelasXI_Guru')}
+          onClick={() => handleButtonClick('kelasXI_guru')}
           className="flex flex-col items-center pt-8 space-y-4 w-[95%] sm:w-[90%] md:w-[85%] lg:w-[80%] py-16 text-white font-bold italic text-5xl text-center rounded-lg bg-fuchsia-700 shadow-lg transition-transform duration-300 transform scale-100 sm:scale-105 md:scale-110 lg:scale-115 hover:scale-125 overflow-hidden"
         >
            {/* Texture Overlay */}
@@ -44,7 +44,7 @@ function HomePage() {
 
         {/* Kelas XII */}
         <button
-          onClick={() => handleButtonClick('kelasXII_Guru')}
+          onClick={() => handleButtonClick('kelasXII_guru')}
           className="flex flex-col items-center pt-8 space-y-4 w-[95%] sm:w-[90%] md:w-[85%] lg:w-[80%] py-16 text-white font-bold italic text-5xl text-center rounded-lg bg-cyan-600 shadow-lg transition-transform duration-300 transform scale-100 sm:scale-105 md:scale-110 lg:scale-115 hover:scale-125 overflow-hidden"
         >
           {/* Texture Overlay */}
