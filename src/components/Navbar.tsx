@@ -28,7 +28,7 @@ const Navbar: React.FC = () => {
   return (
     <>
       {/* Navbar */}
-      <header className="w-full fixed top-0 left-0 bg-white shadow-md z-50 h-16 md:h-20">
+      <header className="w-full fixed top-0 left-0 bg-white shadow-md z-50 h-20">
         <div className="container mx-auto px-4 md:px-6 flex justify-between items-center h-full space-x-4">
           {/* Logo and Menu Icon */}
           <div className="flex items-center space-x-4">

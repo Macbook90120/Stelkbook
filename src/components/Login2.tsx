@@ -1,79 +1,88 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { useAuth } from '@/context/authContext'; // Ensure the import path is correct
+import { useAuth } from '@/context/authContext';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import WarningModal from './WarningForgot'; // Import the WarningModal component
+import WarningModal from './WarningForgot';
+import { Eye, EyeOff } from 'lucide-react';
+
+const slides = [
+    { image: "/assets/Lab komputer.jpg", id: "01" },
+    { image: "/assets/Lab komputer.jpg", id: "02" },
+    { image: "/assets/Lab komputer.jpg", id: "03" },
+    { image: "/assets/Lab komputer.jpg", id: "04" },
+];
 
 function Login() {
     const { login } = useAuth();
     const router = useRouter();
-    const [form, setForm] = useState({
-        kode: '',
-        password: '',
-    });
+    const [form, setForm] = useState({ kode: '', password: '' });
     const [errorMessage, setErrorMessage] = useState('');
     const [showWarningModal, setShowWarningModal] = useState(false);
-    const [isSubmitting, setIsSubmitting] = useState(false); // Tambahkan state untuk menangani submit ganda
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [currentSlide, setCurrentSlide] = useState(0);
+    const [showPassword, setShowPassword] = useState(false);
 
     useEffect(() => {
-        // Disable scrolling on mount
         document.body.style.overflow = 'hidden';
-
+        const interval = setInterval(() => {
+            setCurrentSlide((prev) => (prev + 1) % slides.length);
+        }, 5000);
         return () => {
-            // Re-enable scrolling on unmount
             document.body.style.overflow = 'auto';
+            clearInterval(interval);
         };
     }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setForm({
-            ...form,
-            [e.target.name]: e.target.value,
-        });
+        setForm({ ...form, [e.target.name]: e.target.value });
     };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (isSubmitting) return; // Hindari submit ganda
-
+        if (isSubmitting) return;
         setErrorMessage('');
-        setIsSubmitting(true); // Set submitting ke true
-
+        setIsSubmitting(true);
         try {
-            await login(form); // Call login function from useAuth
-            // Redirect akan dihandle di dalam fungsi login di AuthContext
+            await login(form);
         } catch (error) {
             setErrorMessage('Login gagal. Periksa kembali kode atau password.');
         } finally {
-            setIsSubmitting(false); // Set submitting ke false setelah selesai
+            setIsSubmitting(false);
         }
     };
 
     const handleForgotPasswordClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
         e.preventDefault();
-        setShowWarningModal(true); // Show the warning modal
+        setShowWarningModal(true);
     };
 
     const handleCloseWarningModal = () => {
-        setShowWarningModal(false); // Close the warning modal
+        setShowWarningModal(false);
     };
 
     return (
         <div className="flex min-h-screen">
-            {/* Left-side image */}
-            <div
-                className="hidden lg:block lg:w-9/12 relative"
-                style={{ height: '100vh' }}
-            >
-                <Image
-                    src="/assets/Lab komputer.jpg"
-                    alt="BackgroundComputer"
-                    className="absolute inset-0 object-cover"
-                    layout="fill"
-                    priority
-                    style={{ objectFit: 'cover', transform: 'scale(1.3) translateX(11%)' }}
-                />
+            {/* Left-side slideshow */}
+            <div className="hidden lg:block lg:w-9/12 relative" style={{ height: '100vh' }}>
+                {slides.map((slide, index) => (
+                    <div
+                        key={slide.id}
+                        className={`absolute inset-0 transition-opacity duration-1000 ${
+                            currentSlide === index ? 'opacity-100' : 'opacity-0'
+                        }`}
+                        style={{ zIndex: 0 }}
+                    >
+                        <Image
+                            src={slide.image}
+                            alt={`Slide ${index + 1}`}
+                            layout="fill"
+                            objectFit="cover"
+                            priority
+                            className="brightness-75"
+                        />
+                    </div>
+                ))}
             </div>
 
             {/* Right-side login */}
@@ -116,17 +125,24 @@ function Login() {
                                 required
                             />
                         </div>
-                        <div className="mb-6">
+                        <div className="mb-6 relative">
                             <input
-                                type="password"
+                                type={showPassword ? 'text' : 'password'}
                                 id="password"
                                 name="password"
                                 value={form.password}
                                 onChange={handleChange}
-                                className="w-full px-4 py-2 bg-gray-200 text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
+                                className="w-full px-4 py-2 bg-gray-200 text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-red pr-10"
                                 placeholder="Password"
                                 required
                             />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword((prev) => !prev)}
+                                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600"
+                            >
+                                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                            </button>
                         </div>
                         {errorMessage && (
                             <div className="mt-4 text-red-500 text-sm text-center">
@@ -137,7 +153,7 @@ function Login() {
                             <button
                                 type="submit"
                                 className="w-full py-3 bg-red text-white font-semibold rounded-md hover:bg-red-600 transition duration-200"
-                                disabled={isSubmitting} // Nonaktifkan tombol saat submitting
+                                disabled={isSubmitting}
                             >
                                 {isSubmitting ? 'Loading...' : 'Login'}
                             </button>
@@ -153,6 +169,7 @@ function Login() {
                         </a>
                     </div>
                 </div>
+
                 {/* Powered by Telkom section */}
                 <div className="absolute bottom-8 w-full text-center flex justify-center items-center space-x-4">
                     <Image src="/assets/PoweredBy.png" alt="Powered by Logo" width={80} height={10} />
@@ -161,9 +178,7 @@ function Login() {
             </div>
 
             {/* Warning Modal */}
-            {showWarningModal && (
-                <WarningModal onClose={handleCloseWarningModal} />
-            )}
+            {showWarningModal && <WarningModal onClose={handleCloseWarningModal} />}
         </div>
     );
 }
