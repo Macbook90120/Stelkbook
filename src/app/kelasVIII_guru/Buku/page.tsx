@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
-import Navbar from "@/components/Navbar_Guru";
+import Navbar from "@/components/Navbar_Lainnya_Guru";
 import PageFlipBook from "@/components/PageFlipBook";
 import { useBook } from "@/context/bookContext";
 

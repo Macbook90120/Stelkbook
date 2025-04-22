@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import WarningModalBuku from "./WarningModalKelas3";
 import PageFlipBook from "@/components/PageFlipBook2";
-import Navbar from "@/components/Navbar_Perpus";
+import Navbar from "@/components/Navbar_Lainnya_Perpus";
 import { useBook } from "@/context/bookContext";
 
 interface Book {

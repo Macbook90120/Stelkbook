@@ -26,7 +26,7 @@ const Page: React.FC = () => {
   const searchParams = useSearchParams();
   const bookId = parseInt(searchParams.get("id") || "0", 10);
 
-  const { fetchNonAkademikBookById, deleteBookNonAkademik, getBookPdfUrl } = useBook(); // ✅ Ambil fungsi getBookPdfUrl
+  const { fetchBookById, deleteBook, getBookPdfUrl } = useBook(); // ✅ Ambil fungsi getBookPdfUrl
   const [book, setBook] = useState<Book | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -34,7 +34,7 @@ const Page: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await fetchNonAkademikBookById(bookId);
+        const data = await fetchBookById(bookId);
         setBook(data);
 
         // ✅ Ambil PDF URL dari context
@@ -46,14 +46,14 @@ const Page: React.FC = () => {
     };
 
     fetchData();
-  }, [bookId, fetchNonAkademikBookById, getBookPdfUrl]);
+  }, [bookId, fetchBookById, getBookPdfUrl]);
 
   const handleDeleteBook = async (id: number) => {
     try {
-      await deleteBookNonAkademik(id);
+      await deleteBook(id);
       setShowWarningModal(false);
       console.log("Buku dihapus");
-      router.push("/perpus_lainnya");
+      router.push("/perpustakaan");
     } catch (error) {
       console.error("Gagal menghapus buku:", error);
     }
@@ -110,7 +110,7 @@ const Page: React.FC = () => {
           {/* Tombol */}
           <div className="mt-4 flex flex-col gap-2">
             <button
-              onClick={() => router.push(`/perpus_lainnya/Buku_NA/Edit_Buku_NA?id=${book.id}`)}
+              onClick={() => router.push(`/search_perpus/books/Edit_Buku?id=${book.id}`)}
               className="bg-green-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-600 flex items-center gap-2"
             >
               <Image src="/assets/icon/edit.svg" alt="Edit Icon" width={16} height={16} />

@@ -22,15 +22,16 @@ function Page() {
     const [kelasOptions, setKelasOptions] = useState<string[]>([]);
     const [penerbit, setPenerbit] = useState('');
     const [pdfFileName, setPdfFileName] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const { fetchKelas7BookById, updateKelas7Book, loading, error } = useBook();
+    const { fetchBookById, updateBook, loading, error } = useBook();
     const searchParams = useSearchParams();
     const id = searchParams.get('id');
     const router = useRouter();
 
     useEffect(() => {
         if (id) {
-            fetchKelas7BookById(id).then((data: any) => {
+            fetchBookById(id).then((data: any) => {
                 setJudul(data.judul);
                 setDeskripsi(data.deskripsi);
                 setPenulis(data.penulis);
@@ -54,7 +55,7 @@ function Page() {
                 console.error('Error fetching book:', err);
             });
         }
-    }, [id, fetchKelas7BookById]);
+    }, [id, fetchBookById]);
 
     useEffect(() => {
         if (selectedSekolah === 'SD') {
@@ -91,11 +92,13 @@ function Page() {
         }
 
         try {
-            await updateKelas7Book(id, formData);
+            await updateBook(id, formData);
             setShowNotification(true);
-            router.push(`/kelasVII_perpus`);
+            router.push(`/search_perpus/books?id=${id}`);
         } catch (err) {
             console.error('Error updating book:', err);
+        }finally {
+            setIsSubmitting(false);
         }
     };
 

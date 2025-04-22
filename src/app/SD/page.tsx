@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import Navbar from '@/components/Navbar';
+import Navbar from '@/components/Navbar_Lainnya';
 
 const classes = [
   { name: 'Kelas I', color: 'bg-pink-400', route: '/kelasI' },

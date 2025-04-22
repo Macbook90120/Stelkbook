@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import NotificationSuccessful from './NotificationEditSuccessful';
-import Navbar from '@/components/Navbar_Perpus';
+import Navbar from '@/components/Navbar_Lainnya_Perpus';
 import { useBook } from '@/context/bookContext';
 import { useRouter, useSearchParams } from 'next/navigation';
 
