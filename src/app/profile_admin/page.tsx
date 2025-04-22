@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import Navbar from '@/components/Navbar_Admin';
+import Navbar from '@/components/Navbar_Lainnya_Admin';
 import WarningModal from '@/app/profile/WarningLogout'; // Import the WarningModal component
 import { useAuth } from '@/context/authContext';
 import useAuthMiddleware from '@/hooks/auth';

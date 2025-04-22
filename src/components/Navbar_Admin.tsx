@@ -29,12 +29,7 @@ const Navbar: React.FC = () => {
               onClick={toggleSidebar}
               className="focus:outline-none"
             >
-              <Image
-                src="/assets/icon/menu.svg"
-                alt="Menu"
-                width={20}
-                height={20}
-              />
+             
             </button>
 
             {/* Logo (Responsive Changes) */}

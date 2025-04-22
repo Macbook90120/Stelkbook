@@ -4,89 +4,71 @@ import React, { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Navbar from "@/components/Navbar";
+import { useBook } from "@/context/bookContext";
 
-const books = [
-  {
-    title: "Buku paket Ekonomi",
-    subject: "ekonomi",
-    imageSrc: "/assets/Kelas_X/Buku_Ekonomi.png",
-    altText: "Ekonomi SMA",
-    author: "Sri Mulyani",
-    grade: "10",
-  },
-  {
-    title: "Buku paket Matematika",
-    subject: "matematika",
-    imageSrc: "/assets/Kelas_X/Buku_Matematika.png",
-    altText: "Matematika SMA",
-    author: "Budi Santoso",
-    grade: "10",
-  },
-  {
-    title: "Bahasa Indonesia Kelas X",
-    subject: "bahasa indonesia",
-    imageSrc: "/assets/Kelas_X/Buku_Bahasa_Indonesia.png",
-    altText: "Bahasa Indonesia SMA",
-    author: "Tri Retno Muniarsih",
-    grade: "10",
-  },
-  {
-    title: "Sejarah Indonesia",
-    subject: "sejarah",
-    imageSrc: "/assets/Kelas_X/Buku_Sejarah.png",
-    altText: "Sejarah SMA",
-    author: "Eka Prasetya",
-    grade: "10",
-  },
-  {
-    title: "Fisika Dasar",
-    subject: "fisika",
-    imageSrc: "/assets/Kelas_X/Buku_Fisika.png",
-    altText: "Fisika SMA",
-    author: "Andi Wijaya",
-    grade: "10",
-  },
-  {
-    title: "Kimia SMA",
-    subject: "kimia",
-    imageSrc: "/assets/Kelas_X/Buku_Kimia.png",
-    altText: "Kimia SMA",
-    author: "Fitri Ramadhani",
-    grade: "10",
-  },
-  {
-    title: "Geografi Nusantara",
-    subject: "geografi",
-    imageSrc: "/assets/Kelas_X/Buku_Geografi.png",
-    altText: "Geografi SMA",
-    author: "Dewi Kartika",
-    grade: "10",
-  },
-];
+interface Book {
+  id: number;
+  judul: string;
+  cover: string;
+  subject?: string;
+  penulis?: string;
+  kategori?: string;
+  path?: string;
+}
 
 const SearchPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const query = searchParams.get("q")?.toLowerCase() || "";
-  const [filteredBooks, setFilteredBooks] = useState<typeof books>([]);
+  const [filteredBooks, setFilteredBooks] = useState<Book[]>([]);
+  
+  // Hanya menggunakan fetchBooks dari context
+  const { books, loading, error, fetchBooks } = useBook();
 
-  const navigateToBook = (subject: string) => {
-    router.push(`books/${subject}`);
-  };  
+  const navigateToBook = (id: number) => {
+    router.push(`search/books?id=${id}`);
+  };
 
   useEffect(() => {
-    if (query) {
-      const results = books.filter(
-        (book) =>
-          book.title.toLowerCase().includes(query) ||
-          book.grade.toLowerCase().includes(query) ||
-          book.subject.toLowerCase().includes(query)
+    fetchBooks(); // Memuat data buku saat komponen mount
+  }, [fetchBooks]);
+
+  useEffect(() => {
+    if (query && books.length > 0) {
+      // Proses data buku untuk menambahkan URL cover dan path
+      const processedBooks = books.map((book: any) => {
+        const coverUrl = book.cover 
+          ? `http://localhost:8000/storage/${book.cover}` 
+          : '/assets/default-cover.png';
+        
+        return {
+          id: book.id,
+          judul: book.judul,
+          cover: coverUrl,
+          subject: book.subject || "",
+          penulis: book.penulis || "Unknown Author",
+          kategori: book.kategori || "",
+          path: `search/books?id=${book.id}`
+        };
+      });
+
+      // Filter buku berdasarkan query
+      const results = processedBooks.filter(
+        (book:any) =>
+          book.judul.toLowerCase().includes(query) ||
+          (book.kategori && book.kategori.toLowerCase().includes(query)) ||
+          (book.subject && book.subject.toLowerCase().includes(query)) ||
+          (book.penulis && book.penulis.toLowerCase().includes(query))
       );
+      
       setFilteredBooks(results);
     } else {
       setFilteredBooks([]);
     }
-  }, [query]);
+  }, [query, books]);
+
+  if (loading) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  if (error) return <div className="min-h-screen flex items-center justify-center">Error: {error}</div>;
 
   return (
     <div className="pt-28 px-6 md:px-16 lg:px-32 min-h-screen bg-white">
@@ -103,32 +85,41 @@ const SearchPage = () => {
 
       {filteredBooks.length > 0 ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
-          {filteredBooks.map((book, index) => (
+          {filteredBooks.map((book) => (
             <div
-              key={index}
-              onClick={() => navigateToBook(book.subject)}
+              key={book.id}
+              onClick={() => navigateToBook(book.id)}
               className="bg-white hover:bg-gray-100 hover:scale-105 transition-transform duration-200 rounded-lg p-4 cursor-pointer flex flex-col items-center"
             >
-              <Image
-                src={book.imageSrc}
-                alt={book.altText}
-                width={150}
-                height={200}
-                className="rounded-md"
-              />
+              <div className="w-[150px] h-[200px] relative">
+                <Image
+                  src={book.cover}
+                  alt={book.judul}
+                  fill
+                  className="rounded-md object-cover"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = '/assets/default-cover.png';
+                  }}
+                />
+              </div>
               <h3 className="mt-4 text-center text-sm font-semibold text-gray-800">
-                {book.title}
+                {book.judul}
               </h3>
-              <p className="text-xs text-gray-500">{book.author}</p>
-              <p className="text-xs text-gray-500 font-medium">
-                Kelas: {book.grade}
-              </p>
+              {book.penulis && <p className="text-xs text-gray-500">{book.penulis}</p>}
+              {book.kategori && (
+                <p className="text-xs text-gray-500 font-medium">
+                  {book.kategori}
+                </p>
+              )}
             </div>
           ))}
         </div>
       ) : (
         <div className="text-center text-gray-500 mt-20">
-          <p className="text-lg">Tidak ada hasil ditemukan.</p>
+          <p className="text-lg">
+            {query ? "Tidak ada hasil ditemukan." : "Masukkan kata kunci pencarian."}
+          </p>
         </div>
       )}
     </div>

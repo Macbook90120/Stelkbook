@@ -3,11 +3,12 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import Sidebar from "./Sidebar_guru"; // Import the Sidebar component
+import Sidebar from "./Sidebar_guru";
 
-const Navbar: React.FC = () => {
+const Navbar_Guru: React.FC = () => {
   const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleNavigation = (path: string) => {
     router.push(path);
@@ -15,6 +16,13 @@ const Navbar: React.FC = () => {
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (searchTerm.trim() !== "") {
+      router.push(`search_guru?q=${encodeURIComponent(searchTerm.trim())}`);
+    }
   };
 
   return (
@@ -42,7 +50,6 @@ const Navbar: React.FC = () => {
               className="flex-shrink-0 cursor-pointer"
               onClick={() => handleNavigation("/homepage_guru")}
             >
-              {/* Use different logos based on screen size */}
               <Image
                 src="/assets/Class/iconstelkbook.png"
                 alt="Logo Small"
@@ -62,7 +69,10 @@ const Navbar: React.FC = () => {
 
           {/* Search Bar */}
           <div className="flex-grow flex justify-center relative">
-            <div className="w-full sm:w-3/4 md:w-1/2 lg:w-1/3 flex items-center bg-[#F5F5F5] rounded-full px-4 py-2 shadow-sm">
+            <form
+              onSubmit={handleSearchSubmit}
+              className="w-full sm:w-3/4 md:w-1/2 lg:w-1/3 flex items-center bg-[#F5F5F5] rounded-full px-4 py-2 shadow-sm"
+            >
               <Image
                 src="/assets/icon/search.svg"
                 alt="Search Icon"
@@ -72,10 +82,12 @@ const Navbar: React.FC = () => {
               />
               <input
                 type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Pencarian disini"
                 className="flex-grow bg-transparent border-none text-gray-600 placeholder-gray-400 focus:outline-none focus:ring-0"
               />
-            </div>
+            </form>
           </div>
 
           {/* Profile Icon */}
@@ -105,4 +117,4 @@ const Navbar: React.FC = () => {
   );
 };
 
-export default Navbar;
+export default Navbar_Guru;

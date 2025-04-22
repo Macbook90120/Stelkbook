@@ -1,36 +1,83 @@
 'use client';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
+import { useBook } from '@/context/bookContext';
+import useAuthMiddleware from '@/hooks/auth';
 
-const BookCard = ({ imageSrc, altText, title, onClick }: any) => (
-  <div
-    className="bg-white hover:bg-gray-100 rounded-lg p-4 cursor-pointer flex flex-col items-center transition-colors duration-200"
-    onClick={onClick}
-  >
-    <Image src={imageSrc} alt={altText} width={150} height={200} className="rounded-md" />
-    <p className="mt-4 text-center text-sm font-semibold font-poppins">{title}</p>
-  </div>
-);
+interface Book {
+  id: number;
+  judul: string;
+  cover: string;
+  path?: string;
+}
 
-function Page() {
+const BookCard = ({ book }: { book: Book }) => {
   const router = useRouter();
 
-  const navigateToBook = (bookName: string) => {
-    router.push(`/kelasV/${bookName}_V`);
-  };
+  return (
+    <div
+      className="bg-white hover:bg-gray-100 rounded-lg p-4 cursor-pointer flex flex-col items-center transition-colors duration-200"
+      onClick={() => book.path && router.push(book.path)}
+    >
+      <div className="w-[150px] h-[200px] relative">
+        <Image 
+          src={book.cover} 
+          alt={book.judul} 
+          fill
+          className="rounded-md object-cover"
+          onError={(e) => {
+            console.error(`Failed to load image: ${book.cover}`);
+            const target = e.target as HTMLImageElement;
+            target.src = '/assets/default-cover.png';
+          }}
+        />
+      </div>
+      <p className="mt-4 text-center text-sm font-semibold font-poppins">{book.judul}</p>
+    </div>
+  );
+};
+
+function Page() {
+  useAuthMiddleware();
+  const router = useRouter();
+  const { kelas5Books, loading, error, fetchKelas5Books } = useBook();
+  const [displayBooks, setDisplayBooks] = useState<Book[]>([]);
 
   const handleStudiAndaClick = () => {
-    router.push('/SD'); // Update this path if your homepage is different
+    router.push('/SD');
   };
+
+  useEffect(() => {
+    fetchKelas5Books();
+  }, [fetchKelas5Books]);
+
+  useEffect(() => {
+    const processedBooks = kelas5Books.map((book: Book) => {
+      const coverUrl = book.cover 
+        ? `http://localhost:8000/storage/${book.cover}` 
+        : '/assets/default-cover.png';
+      
+      return {
+        id: book.id,
+        judul: book.judul,
+        cover: coverUrl,
+        path: `/kelasV/Buku?id=${book.id}`,
+      };
+    });
+
+    setDisplayBooks(processedBooks);
+  }, [kelas5Books]);
+
+
 
   return (
     <div className="min-h-screen bg-white">
       {/* Navbar */}
       <Navbar />
 
-      <main className="pt-20 px-8"></main> {/* Added padding to avoid overlap with navbar */}
+      <main className="pt-20 px-8"></main>
 
       {/* Page Header */}
       <div className="p-8">
@@ -47,60 +94,9 @@ function Page() {
 
         {/* Books Section */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 justify-center">
-          <BookCard
-            imageSrc="/assets/Kelas_XII/Buku_Ekonomi.png"
-            altText="Ekonomi SMA Kelas V"
-            title="Buku paket Ekonomi Kelas V"
-            onClick={() => navigateToBook('Ekonomi')}
-          />
-          <BookCard
-            imageSrc="/assets/Kelas_XII/Buku_Matematika.png"
-            altText="Matematika SMA Kelas V"
-            title="Buku paket Matematika Kelas V"
-            onClick={() => navigateToBook('Matematika')}
-          />
-          <BookCard
-            imageSrc="/assets/Kelas_XII/Buku_Bahasa_Indonesia.png"
-            altText="Bahasa Indonesia SMA Kelas V"
-            title="Buku paket Bahasa Indonesia Kelas V"
-            onClick={() => navigateToBook('BahasaIndonesia')}
-          />
-          <BookCard
-            imageSrc="/assets/Kelas_XII/Buku_Sejarah.png"
-            altText="Sejarah SMA Kelas V"
-            title="Buku paket Sejarah Kelas V"
-            onClick={() => navigateToBook('Sejarah')}
-          />
-          <BookCard
-            imageSrc="/assets/Kelas_XII/Buku_Fisika.png"
-            altText="Fisika SMA Kelas V"
-            title="Buku paket Fisika Kelas V"
-            onClick={() => navigateToBook('Fisika')}
-          />
-          <BookCard
-            imageSrc="/assets/Kelas_XII/Buku_Kimia.png"
-            altText="Kimia SMA Kelas V"
-            title="Buku paket Kimia Kelas V"
-            onClick={() => navigateToBook('Kimia')}
-          />
-          <BookCard
-            imageSrc="/assets/Kelas_XII/Buku_Geografi.png"
-            altText="Geografi SMA Kelas V"
-            title="Buku paket Geografi Kelas V"
-            onClick={() => navigateToBook('Geografi')}
-          />
-          <BookCard
-            imageSrc="/assets/Kelas_XII/Buku_Pancasila.png"
-            altText="Pancasila SMA Kelas V"
-            title="Buku paket Pancasila Kelas V"
-            onClick={() => navigateToBook('Pancasila')}
-          />
-          <BookCard
-            imageSrc="/assets/Kelas_XII/Buku_Agama.png"
-            altText="Pancasila SMA Kelas V"
-            title="Buku Agama Kelas V"
-            onClick={() => navigateToBook('Agama')}
-          />
+          {displayBooks.map((book) => (
+            <BookCard key={book.id} book={book} />
+          ))}
         </div>
       </div>
     </div>

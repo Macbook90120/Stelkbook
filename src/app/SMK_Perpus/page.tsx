@@ -14,7 +14,7 @@ function HomePage() {
     <div className="min-h-screen p-4 bg-white">
       <Navbar />
       <header className="pt-20 px-8">
-        <p className="text-xl font-semibold font-poppins">Studi Anda {'>'} SMA/SMK</p>
+        <p className="text-xl font-semibold font-poppins">Studi Anda {'>'} SMK</p>
       </header>
 
       <main className="flex flex-col gap-10 pt-6 items-center">

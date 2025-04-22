@@ -24,7 +24,7 @@ function HomePage() {
             onClick={handleStudiAndaClick}
           >
             Studi Anda
-          </span> {'>'} SMA/SMK
+          </span> {'>'} SMK
         </p>
       </header>
 

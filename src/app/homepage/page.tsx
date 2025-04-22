@@ -31,7 +31,7 @@ function HomePage() {
       'User': '/profile',
       'SD': '/SD',
       'SMP': '/SMP',
-      'SMA/SMK': '/SMK',
+      'SMK': '/SMK',
       'Non Akademik': '/lainnya',
     };
 
