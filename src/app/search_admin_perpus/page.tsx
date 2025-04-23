@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import HapusUserModal from "./hapus_user";
 import Navbar from "@/components/Navbar_Admin_Perpus";
 import { useAuth } from "@/context/authContext";
@@ -14,15 +14,18 @@ interface Perpus {
   gender: string;
 }
 
-function Page() {
+function SearchPerpus() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPerpus, setSelectedPerpus] = useState({ 
     id: "", 
     name: "", 
     nip: "" 
   });
+  const [filteredPerpus, setFilteredPerpus] = useState<Perpus[]>([]);
   const { fetchAllPerpus, perpusData, deletePerpus } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const query = searchParams.get("q")?.toLowerCase() || "";
 
   useEffect(() => {
     const getPerpusData = async () => {
@@ -35,6 +38,20 @@ function Page() {
 
     getPerpusData();
   }, [fetchAllPerpus]);
+
+  useEffect(() => {
+    if (query && perpusData?.length > 0) {
+      const results = perpusData.filter(
+        (perpus: Perpus) =>
+          perpus.username.toLowerCase().includes(query) ||
+          (perpus.nip && perpus.nip.toLowerCase().includes(query)) ||
+          (perpus.gender && perpus.gender.toLowerCase().includes(query))
+      );
+      setFilteredPerpus(results);
+    } else {
+      setFilteredPerpus(perpusData || []);
+    }
+  }, [query, perpusData]);
 
   const handleDeleteUser = (perpus: Perpus) => {
     setSelectedPerpus({ 
@@ -84,11 +101,11 @@ function Page() {
           />
         </div>
         <p className="text-xl font-semibold text-left font-poppins translate-y-[-15px]">
-          Perpus
+          Perpus {query && `- Hasil pencarian: "${query}"`}
         </p>
       </div>
 
-      {/* Tambah Siswa Button */}
+      {/* Tambah Perpus Button */}
       <div className="relative mb-4">
         <button
           className="absolute right-0 top-0 w-10 h-10 bg-red text-white text-xl rounded-full flex items-center justify-center shadow translate-y-[-60px]"
@@ -100,8 +117,8 @@ function Page() {
       </div>
 
       <div className="bg-white rounded-lg shadow p-4">
-        {perpusData?.length > 0 ? (
-          perpusData?.map((perpus: Perpus) => (
+        {filteredPerpus?.length > 0 ? (
+          filteredPerpus?.map((perpus: Perpus) => (
             <div
               key={perpus.id}
               className="grid grid-cols-12 gap-4 items-center py-4 border-b"
@@ -117,6 +134,9 @@ function Page() {
                 <div>
                   <p className="font-semibold">{perpus.username}</p>
                   <p className="text-sm text-gray-500">{perpus.nip}</p>
+                  {perpus.gender && (
+                    <p className="text-sm text-gray-500">{perpus.gender}</p>
+                  )}
                 </div>
               </div>
               <div className="col-span-8 flex justify-end space-x-2">
@@ -152,7 +172,7 @@ function Page() {
           ))
         ) : (
           <p className="text-gray-500 text-center py-4">
-            Tidak ada data pengurus perpus tersedia.
+            {query ? "Tidak ada hasil ditemukan untuk pencarian Anda." : "Tidak ada data pengurus perpus tersedia."}
           </p>
         )}
       </div>
@@ -169,4 +189,4 @@ function Page() {
   );
 }
 
-export default Page;
+export default SearchPerpus;

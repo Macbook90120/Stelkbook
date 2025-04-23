@@ -1,10 +1,10 @@
 'use client'
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/context/authContext";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import ConfirmationModal from "./hapus_user";
-import Navbar from "@/components/Navbar_Admin_Guru_SMP";
+import Navbar from "@/components/Navbar_Admin_Guru_SD";
 
 interface Guru {
   id: string;
@@ -13,19 +13,36 @@ interface Guru {
   sekolah: string;
 }
 
-const DataGuruSMP: React.FC = () => {
-  const { guruSmpData, fetchAllGuruSmp } = useAuth();
+const SearchGuruSD: React.FC = () => {
+  const { guruSdData, fetchAllGuruSd } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedGuru, setSelectedGuru] = useState<Guru | null>(null);
+  const [filteredGuru, setFilteredGuru] = useState<Guru[]>([]);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const query = searchParams.get("q")?.toLowerCase() || "";
 
   useEffect(() => {
-    fetchAllGuruSmp(); // Ambil semua data siswa SMP
-  }, [fetchAllGuruSmp]);
+    fetchAllGuruSd(); // Ambil semua data guru SD
+  }, [fetchAllGuruSd]);
 
-  const handleDeleteGuru = (guru:Guru) => {
+  useEffect(() => {
+    if (query && guruSdData?.length > 0) {
+      const results = guruSdData.filter(
+        (guru: Guru) =>
+          guru.username.toLowerCase().includes(query) ||
+          guru.nip.toLowerCase().includes(query) ||
+          (guru.sekolah && guru.sekolah.toLowerCase().includes(query))
+      );
+      setFilteredGuru(results);
+    } else {
+      setFilteredGuru(guruSdData || []);
+    }
+  }, [query, guruSdData]);
+
+  const handleDeleteGuru = (guru: Guru) => {
     setSelectedGuru(guru);
-    setIsModalOpen(true); // Buka modal hapus
+    setIsModalOpen(true);
   };
 
   const handleButtonClick = (destination: string) => {
@@ -34,9 +51,9 @@ const DataGuruSMP: React.FC = () => {
 
   const handleDeleteSuccess = async () => {
     try {
-      await fetchAllGuruSmp();
+      await fetchAllGuruSd();
     } catch (error) {
-      console.error("Gagal refresh data perpus:", error);
+      console.error("Gagal refresh data guru:", error);
     }
   };
 
@@ -46,8 +63,10 @@ const DataGuruSMP: React.FC = () => {
         <Navbar />
       </header>
       <div className="mb-8 flex items-center">
-        <p className="text-xl font-semibold text-left font-poppins translate-y-[-15px] hover:underline cursor-pointer"
-        onClick={() => handleButtonClick('admin/Sekolah_Guru')}>
+        <p 
+          className="text-xl font-semibold text-left font-poppins translate-y-[-15px] hover:underline cursor-pointer"
+          onClick={() => handleButtonClick('admin/Sekolah_Guru')}
+        >
           Database Anda
         </p>
         <div className="mx-2">
@@ -60,15 +79,15 @@ const DataGuruSMP: React.FC = () => {
           />
         </div>
         <p className="text-xl font-semibold text-left font-poppins translate-y-[-15px]">
-          Guru SMP
+          Guru SD {query && `- Hasil pencarian: "${query}"`}
         </p>
       </div>
 
-      {/* Tambah Siswa Button */}
+      {/* Tambah Guru Button */}
       <div className="relative mb-4">
         <button
           className="absolute right-0 top-0 w-10 h-10 bg-red text-white text-xl rounded-full flex items-center justify-center shadow translate-y-[-60px]"
-          onClick={() => router.push("/admin/Create_User_Guru_SMP")}
+          onClick={() => router.push("/admin/Create_User_Guru_SD")}
           title="Create_User"
         >
           +
@@ -76,8 +95,8 @@ const DataGuruSMP: React.FC = () => {
       </div>
 
       <div className="bg-white rounded-lg shadow p-4">
-        {guruSmpData?.length > 0 ? (
-          guruSmpData.map((guru: Guru) => (
+        {filteredGuru?.length > 0 ? (
+          filteredGuru.map((guru: Guru) => (
             <div key={guru.id} className="grid grid-cols-12 gap-4 items-center py-4 border-b">
               <div className="col-span-4 flex items-center">
                 <Image
@@ -96,7 +115,7 @@ const DataGuruSMP: React.FC = () => {
               <div className="col-span-8 flex justify-end space-x-2">
                 <button
                   className="flex flex-col items-center justify-center w-12 h-12 md:w-auto md:h-auto md:flex-row md:px-8 md:py-2 text-white bg-green-500 rounded-lg hover:bg-green-600"
-                  onClick={() => router.push(`/admin/Sekolah_Guru/Data_SMP/Edit_user?id=${guru.id}`)}
+                  onClick={() => router.push(`/admin/Sekolah_Guru/Data_SD/Edit_user?id=${guru.id}`)}
                 >
                   <Image
                     src="/assets/Admin/Edit_user.png"
@@ -124,9 +143,12 @@ const DataGuruSMP: React.FC = () => {
             </div>
           ))
         ) : (
-          <p className="text-gray-500 text-center py-4">Tidak ada data guru tersedia.</p>
+          <p className="text-gray-500 text-center py-4">
+            {query ? "Tidak ada hasil ditemukan untuk pencarian Anda." : "Tidak ada data guru tersedia."}
+          </p>
         )}
       </div>
+
       {isModalOpen && selectedGuru && (
         <ConfirmationModal
           isOpen={isModalOpen}
@@ -139,4 +161,4 @@ const DataGuruSMP: React.FC = () => {
   );
 };
 
-export default DataGuruSMP;
+export default SearchGuruSD;
