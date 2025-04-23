@@ -1,10 +1,10 @@
 'use client'
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/context/authContext";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import ConfirmationModal from "./hapus_user";
-import Navbar from "@/components/Navbar_Admin_SMP";
+import Navbar from "@/components/Navbar_Admin_SD";
 
 interface Siswa {
   id: string;
@@ -14,19 +14,37 @@ interface Siswa {
   kelas: string;
 }
 
-const DataSiswaSMP: React.FC = () => {
-  const { siswaSmpData, fetchAllSiswaSmp } = useAuth();
+const SearchSiswaSD: React.FC = () => {
+  const { siswaSdData, fetchAllSiswaSd } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedSiswa, setSelectedSiswa] = useState<Siswa | null>(null);
+  const [filteredSiswa, setFilteredSiswa] = useState<Siswa[]>([]);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const query = searchParams.get("q")?.toLowerCase() || "";
 
   useEffect(() => {
-    fetchAllSiswaSmp(); // Ambil semua data siswa SMP
-  }, [fetchAllSiswaSmp]);
+    fetchAllSiswaSd(); // Ambil semua data siswa SD
+  }, [fetchAllSiswaSd]);
+
+  useEffect(() => {
+    if (query && siswaSdData?.length > 0) {
+      const results = siswaSdData.filter(
+        (siswa: Siswa) =>
+          siswa.username.toLowerCase().includes(query) ||
+          siswa.nis.toLowerCase().includes(query) ||
+          (siswa.sekolah && siswa.sekolah.toLowerCase().includes(query)) ||
+          (siswa.kelas && siswa.kelas.toLowerCase().includes(query))
+      );
+      setFilteredSiswa(results);
+    } else {
+      setFilteredSiswa(siswaSdData || []);
+    }
+  }, [query, siswaSdData]);
 
   const handleDeleteSiswa = (siswa: Siswa) => {
     setSelectedSiswa(siswa);
-    setIsModalOpen(true); // Buka modal hapus
+    setIsModalOpen(true);
   };
 
   const handleButtonClick = (destination: string) => {
@@ -35,12 +53,11 @@ const DataSiswaSMP: React.FC = () => {
 
   const handleDeleteSuccess = async () => {
     try {
-      await fetchAllSiswaSmp();
+      await fetchAllSiswaSd();
     } catch (error) {
-      console.error("Gagal refresh data perpus:", error);
+      console.error("Gagal refresh data siswa:", error);
     }
   };
-
 
   return (
     <div className="min-h-screen p-8 bg-gray-50 overflow-y-auto">
@@ -48,8 +65,10 @@ const DataSiswaSMP: React.FC = () => {
         <Navbar />
       </header>
       <div className="mb-8 flex items-center">
-        <p className="text-xl font-semibold text-left font-poppins translate-y-[-15px] hover:underline cursor-pointer"
-        onClick={() => handleButtonClick('admin/Sekolah_Siswa')}>
+        <p 
+          className="text-xl font-semibold text-left font-poppins translate-y-[-15px] hover:underline cursor-pointer"
+          onClick={() => handleButtonClick('admin/Sekolah_Siswa')}
+        >
           Database Anda
         </p>
         <div className="mx-2">
@@ -62,7 +81,7 @@ const DataSiswaSMP: React.FC = () => {
           />
         </div>
         <p className="text-xl font-semibold text-left font-poppins translate-y-[-15px]">
-          Siswa SMP
+          Siswa SD {query && `- Hasil pencarian: "${query}"`}
         </p>
       </div>
 
@@ -70,7 +89,7 @@ const DataSiswaSMP: React.FC = () => {
       <div className="relative mb-4">
         <button
           className="absolute right-0 top-0 w-10 h-10 bg-red text-white text-xl rounded-full flex items-center justify-center shadow translate-y-[-60px]"
-          onClick={() => router.push("/admin/Create_User_Siswa_SMP")}
+          onClick={() => router.push("/admin/Create_User_Siswa_SD")}
           title="Create_User"
         >
           +
@@ -78,8 +97,8 @@ const DataSiswaSMP: React.FC = () => {
       </div>
 
       <div className="bg-white rounded-lg shadow p-4">
-        {siswaSmpData?.length > 0 ? (
-          siswaSmpData.map((siswa: Siswa) => (
+        {filteredSiswa?.length > 0 ? (
+          filteredSiswa.map((siswa: Siswa) => (
             <div key={siswa.id} className="grid grid-cols-12 gap-4 items-center py-4 border-b">
               <div className="col-span-4 flex items-center">
                 <Image
@@ -99,7 +118,7 @@ const DataSiswaSMP: React.FC = () => {
               <div className="col-span-8 flex justify-end space-x-2">
                 <button
                   className="flex flex-col items-center justify-center w-12 h-12 md:w-auto md:h-auto md:flex-row md:px-8 md:py-2 text-white bg-green-500 rounded-lg hover:bg-green-600"
-                  onClick={() => router.push(`/admin/Sekolah_Siswa/Data_SMP/Edit_user?id=${siswa.id}`)}
+                  onClick={() => router.push(`/admin/Sekolah_Siswa/Data_SD/Edit_user?id=${siswa.id}`)}
                 >
                   <Image
                     src="/assets/Admin/Edit_user.png"
@@ -127,19 +146,22 @@ const DataSiswaSMP: React.FC = () => {
             </div>
           ))
         ) : (
-          <p className="text-gray-500 text-center py-4">Tidak ada data siswa tersedia.</p>
+          <p className="text-gray-500 text-center py-4">
+            {query ? "Tidak ada hasil ditemukan untuk pencarian Anda." : "Tidak ada data siswa tersedia."}
+          </p>
         )}
       </div>
+
       {isModalOpen && selectedSiswa && (
         <ConfirmationModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           siswa={selectedSiswa}
-          onSuccess={handleDeleteSuccess} // Tambahkan o
+          onSuccess={handleDeleteSuccess}
         />
       )}
     </div>
   );
 };
 
-export default DataSiswaSMP;
+export default SearchSiswaSD;

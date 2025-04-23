@@ -4,7 +4,7 @@ import { useAuth } from "@/context/authContext";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import ConfirmationModal from "./hapus_user";
-import Navbar from "@/components/Navbar_Admin";
+import Navbar from "@/components/Navbar_Admin_SMK";
 
 interface Siswa {
   id: string;

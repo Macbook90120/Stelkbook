@@ -91,23 +91,7 @@ function Page() {
           <Image src="/assets/Class/Stelk_bookTitle.png" alt="Stelkbook" width={165} height={100} />
         </div>
 
-        {/* Search Bar */}
-        <div className="mx-4 flex-grow max-w-md relative">
-          <input
-            type="text"
-            placeholder="Pencarian disini"
-            className="w-full rounded-lg border border-gray-300 pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          {/* Icon-Image */}
-          <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-            <Image
-              src="/assets/Class/Search_icon.png"
-              alt="Search Icon"
-              width={20}
-              height={20}
-            />
-          </div>
-        </div>
+      
 
         {/* Icon user */}
         <div className="flex-shrink-0 cursor-pointer">
