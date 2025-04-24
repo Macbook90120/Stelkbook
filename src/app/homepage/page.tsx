@@ -56,7 +56,7 @@ function HomePage() {
           { title: 'SD', image: '/assets/Homepage-Front/sd.jpg' },
           { title: 'SMP', image: '/assets/Homepage-Front/smp.jpg' },
           { title: 'SMK', image: '/assets/Homepage-Front/smk.png' },
-          { title: 'Non Akademik', image: '/assets/Homepage-Front/NonAkademik.png' },
+          { title: 'Non Akademik', image: '/assets/Homepage-Front/nonaka.png' },
         ].map(({ title, image }) => (
           <div key={title} className="flex w-full h-56 md:h-64 bg-OldRed rounded-lg overflow-hidden">
             <div className="flex flex-col justify-end p-4 w-1/2">
