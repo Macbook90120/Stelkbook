@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import Navbar from '@/components/Navbar_Lainnya_Perpus';
+import Navbar from '@/components/Navbar_Perpus';
 
 function HomePage() {
   const router = useRouter();
