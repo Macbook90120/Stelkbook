@@ -15,6 +15,9 @@ export default {
         red: '#DC2626',
         OldRed: '#B8292D',
       },
+      gradient: {
+        'red-gradient': 'linear-gradient(to bottom, #f87171, #b91c1c)', // Red gradient
+        },
       fontFamily: {
         // Poppins font
         sans: ['Poppins', 'sans-serif'],
