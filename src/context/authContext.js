@@ -392,15 +392,34 @@ const fetchAllPerpus = useCallback(async () => {
   };
 
   // Register function
-  const register = async (username, email, password, kode, role, gender, sekolah, kelas) => {
-    try {
-      await axios.post('/register', { username, email, password, kode, role, gender, sekolah, kelas });
-      router.push('/');
-    } catch (e) {
-      console.error("Registrasi gagal:", e);
-      throw new Error(e.response?.data?.message || "Registrasi gagal.");
+const register = async (username, email, password, kode, role, gender, sekolah, kelas, avatarFile) => {
+  try {
+    const formData = new FormData();
+    formData.append('username', username);
+    formData.append('email', email);
+    formData.append('password', password);
+    formData.append('kode', kode);
+    formData.append('role', role);
+    formData.append('gender', gender);
+    formData.append('sekolah', sekolah);
+    formData.append('kelas', kelas);
+
+    if (avatarFile) {
+      formData.append('avatar', avatarFile); // <-- penting
     }
-  };
+
+    const response = await axios.post('/register', formData,  {
+      method: 'POST',
+      body: formData,
+      // headers akan otomatis diset ke multipart/form-data
+    });
+
+    return response.data;
+  } catch (error) {
+    throw error.response?.data?.errors || error;
+  }
+};
+
 
   // Logout function
   const logout = async () => {

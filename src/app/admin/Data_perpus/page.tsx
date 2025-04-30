@@ -12,6 +12,7 @@ interface Perpus {
   username: string;
   nip: string;
   gender: string;
+  avatar: string;
 }
 
 function Page() {
@@ -19,7 +20,8 @@ function Page() {
   const [selectedPerpus, setSelectedPerpus] = useState({ 
     id: "", 
     name: "", 
-    nip: "" 
+    nip: "" ,
+    avatar: ""
   });
   const { fetchAllPerpus, perpusData, deletePerpus } = useAuth();
   const router = useRouter();
@@ -40,7 +42,8 @@ function Page() {
     setSelectedPerpus({ 
       id: perpus.id, 
       name: perpus.username, 
-      nip: perpus.nip 
+      nip: perpus.nip ,
+      avatar:perpus.avatar
     });
     setIsModalOpen(true);
   };
@@ -108,7 +111,11 @@ function Page() {
             >
               <div className="col-span-4 flex items-center">
                 <Image
-                  src="/assets/Class/icon_user.png"
+                  src={
+                    perpus.avatar
+                      ? `http://localhost:8000/storage/${perpus.avatar}`
+                      : "/assets/Class/icon_user.png"
+                  }
                   alt="User Icon"
                   width={40}
                   height={40}

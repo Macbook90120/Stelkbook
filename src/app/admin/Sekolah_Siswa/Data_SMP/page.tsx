@@ -1,10 +1,10 @@
-'use client'
+"use client";
 import React, { useState, useEffect } from "react";
-import { useAuth } from "@/context/authContext";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import ConfirmationModal from "./hapus_user";
 import Navbar from "@/components/Navbar_Admin_SMP";
+import { useAuth } from "@/context/authContext";
 
 interface Siswa {
   id: string;
@@ -12,44 +12,58 @@ interface Siswa {
   nis: string;
   sekolah: string;
   kelas: string;
+  avatar?: string;
 }
 
-const DataSiswaSMP: React.FC = () => {
-  const { siswaSmpData, fetchAllSiswaSmp } = useAuth();
+function DataSiswaSMP() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedSiswa, setSelectedSiswa] = useState<Siswa | null>(null);
+  const { fetchAllSiswaSmp, siswaSmpData } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    fetchAllSiswaSmp(); // Ambil semua data siswa SMP
+    const getSiswaData = async () => {
+      try {
+        await fetchAllSiswaSmp();
+      } catch (error) {
+        console.error("Gagal mengambil data siswa:", error);
+      }
+    };
+    getSiswaData();
   }, [fetchAllSiswaSmp]);
 
-  const handleDeleteSiswa = (siswa: Siswa) => {
+  const handleDeleteUser = (siswa: Siswa) => {
     setSelectedSiswa(siswa);
-    setIsModalOpen(true); // Buka modal hapus
+    setIsModalOpen(true);
   };
 
-  const handleButtonClick = (destination: string) => {
-    router.push(`/${destination}`);
+  const handleEditUser = (siswa: Siswa) => {
+    router.push(`/admin/Sekolah_Siswa/Data_SMP/Edit_user?id=${siswa.id}`);
   };
 
   const handleDeleteSuccess = async () => {
     try {
       await fetchAllSiswaSmp();
     } catch (error) {
-      console.error("Gagal refresh data perpus:", error);
+      console.error("Gagal refresh data siswa:", error);
     }
   };
 
+  const handleButtonClick = (destination: string) => {
+    router.push(`/${destination}`);
+  };
 
   return (
     <div className="min-h-screen p-8 bg-gray-50 overflow-y-auto">
       <header className="flex justify-between items-center mb-4 pt-20 px-8">
         <Navbar />
       </header>
+
       <div className="mb-8 flex items-center">
-        <p className="text-xl font-semibold text-left font-poppins translate-y-[-15px] hover:underline cursor-pointer"
-        onClick={() => handleButtonClick('admin/Sekolah_Siswa')}>
+        <p 
+          className="text-xl font-semibold text-left font-poppins translate-y-[-15px] hover:underline cursor-pointer"
+          onClick={() => handleButtonClick('admin/Sekolah_Siswa')}
+        >
           Database Anda
         </p>
         <div className="mx-2">
@@ -80,10 +94,17 @@ const DataSiswaSMP: React.FC = () => {
       <div className="bg-white rounded-lg shadow p-4">
         {siswaSmpData?.length > 0 ? (
           siswaSmpData.map((siswa: Siswa) => (
-            <div key={siswa.id} className="grid grid-cols-12 gap-4 items-center py-4 border-b">
+            <div
+              key={siswa.id}
+              className="grid grid-cols-12 gap-4 items-center py-4 border-b"
+            >
               <div className="col-span-4 flex items-center">
                 <Image
-                  src="/assets/Class/icon_user.png"
+                  src={
+                    siswa.avatar
+                      ? `http://localhost:8000/storage/${siswa.avatar}`
+                      : "/assets/Class/icon_user.png"
+                  }
                   alt="User Icon"
                   width={40}
                   height={40}
@@ -91,18 +112,18 @@ const DataSiswaSMP: React.FC = () => {
                 />
                 <div>
                   <p className="font-semibold">{siswa.username}</p>
-                  <p className="font-semibold text-OldRed">{siswa.sekolah}</p>
-                  <p className="font-semibold text-OldRed">Kelas {siswa.kelas}</p>
                   <p className="text-sm text-gray-500">{siswa.nis}</p>
+                  <p className="font-semibold text-sm text-OldRed">Sekolah: {siswa.sekolah}</p>
+                  <p className="font-semibold text-sm text-OldRed">Kelas: {siswa.kelas}</p>
                 </div>
               </div>
               <div className="col-span-8 flex justify-end space-x-2">
                 <button
                   className="flex flex-col items-center justify-center w-12 h-12 md:w-auto md:h-auto md:flex-row md:px-8 md:py-2 text-white bg-green-500 rounded-lg hover:bg-green-600"
-                  onClick={() => router.push(`/admin/Sekolah_Siswa/Data_SMP/Edit_user?id=${siswa.id}`)}
+                  onClick={() => handleEditUser(siswa)}
                 >
                   <Image
-                    src="/assets/Admin/Edit_user.png"
+                    src="/assets/icon/edit.svg"
                     alt="Edit Icon"
                     width={16}
                     height={16}
@@ -110,12 +131,13 @@ const DataSiswaSMP: React.FC = () => {
                   />
                   <span className="hidden md:block">Edit Siswa</span>
                 </button>
+
                 <button
-                  className="flex flex-col items-center justify-center w-12 h-12 md:w-auto md:h-auto md:flex-row md:px-8 md:py-2 text-white bg-red rounded-lg hover:bg-red"
-                  onClick={() => handleDeleteSiswa(siswa)}
+                  className="flex flex-col items-center justify-center w-12 h-12 md:w-auto md:h-auto md:flex-row md:px-8 md:py-2 text-white bg-red rounded-lg hover:bg-red-600"
+                  onClick={() => handleDeleteUser(siswa)}
                 >
                   <Image
-                    src="/assets/Admin/Delete_user.png"
+                    src="/assets/icon/delete.svg"
                     alt="Delete Icon"
                     width={16}
                     height={16}
@@ -127,19 +149,22 @@ const DataSiswaSMP: React.FC = () => {
             </div>
           ))
         ) : (
-          <p className="text-gray-500 text-center py-4">Tidak ada data siswa tersedia.</p>
+          <p className="text-gray-500 text-center py-4">
+            Tidak ada data siswa SMP tersedia.
+          </p>
         )}
       </div>
+
       {isModalOpen && selectedSiswa && (
         <ConfirmationModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           siswa={selectedSiswa}
-          onSuccess={handleDeleteSuccess} // Tambahkan o
+          onSuccess={handleDeleteSuccess}
         />
       )}
     </div>
   );
-};
+}
 
 export default DataSiswaSMP;

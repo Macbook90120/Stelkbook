@@ -7,172 +7,232 @@ import { useAuth } from '@/context/authContext';
 function Page() {
   const router = useRouter();
   const { register } = useAuth();
-  const [showSekolahField, setShowSekolahField] = useState(false);
-  const [showKelasField, setShowKelasField] = useState(false);
-  const [status, setStatus] = useState('');
-  const [sekolah, setSekolah] = useState('');
-  const [kelas, setKelas] = useState('');
-  const [gender, setGender] = useState('');
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [kode, setKode] = useState('');
-  const [role, setRole] = useState('');
-
-  const handleStelkbookClick = () => {
-    router.push('/admin');
-  };
-
-  const handleSelesaiClick = async () => {
-    try {
-      await register(username, email, password, kode, role, gender, sekolah, kelas);
-      router.push('/admin');
-    } catch (error) {
-      console.error("Registrasi gagal:", error);
-    }
-  };
-
-  const handleStatusChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    const selectedRole = e.target.value;
-    setStatus(selectedRole);
-    setRole(selectedRole);
-
-    if (selectedRole === 'Siswa' || selectedRole === 'Guru') {
-      setShowSekolahField(true);
-      setShowKelasField(selectedRole === 'Siswa'); // Hanya tampilkan kelas jika Siswa
-    } else {
-      setShowSekolahField(false);
-      setShowKelasField(false);
-    }
-  };
-
-  const handleSekolahChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    const selectedSekolah = e.target.value;
-    setSekolah(selectedSekolah);
-    setKelas(''); // Reset kelas ketika sekolah berubah
-  };
+  
+  // State for form fields
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    password: '',
+    kode: '',
+    role: '',
+    gender: '',
+    sekolah: '',
+    kelas: ''
+  });
 
   const handleButtonClick = (destination: string) => {
     router.push(`/${destination}`);
   };
 
-  const renderKelasOptions = () => {
-    if (sekolah === 'SD') {
-      return ['I', 'II', 'III', 'IV', 'V', 'VI'].map((kelasOption) => (
-        <option key={kelasOption} value={kelasOption}>
-          {kelasOption}
-        </option>
-      ));
-    } else if (sekolah === 'SMP') {
-      return ['VII', 'VIII', 'IX'].map((kelasOption) => (
-        <option key={kelasOption} value={kelasOption}>
-          {kelasOption}
-        </option>
-      ));
-    } else if (sekolah === 'SMK') {
-      return ['X', 'XI', 'XII'].map((kelasOption) => (
-        <option key={kelasOption} value={kelasOption}>
-          {kelasOption}
-        </option>
-      ));
+  const handleStelkbookClick = () => {
+    router.push('/admin');
+  };
+  
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string>('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Handle form field changes
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  // Handle avatar upload
+  const handleAvatarChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setAvatarFile(file);
+      setAvatarPreview(URL.createObjectURL(file));
     }
-    return null;
+  };
+
+  // Handle form submission
+  const handleSelesaiClick = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Prepare FormData
+      const form = new FormData();
+      form.append('username', formData.username);
+      form.append('email', formData.email);
+      form.append('password', formData.password);
+      form.append('kode', formData.kode);
+      form.append('role', formData.role);
+      form.append('gender', formData.gender);
+      form.append('sekolah', formData.sekolah);
+      form.append('kelas', formData.kelas);
+      if (avatarFile) form.append('avatar', avatarFile);
+
+      // Call register function
+      await register(
+        formData.username,
+        formData.email,
+        formData.password,
+        formData.kode,
+        formData.role,
+        formData.gender,
+        formData.sekolah,
+        formData.kelas,
+        avatarFile
+      );
+
+      // Redirect on success
+      router.push('/admin');
+    } catch (err:any) {
+      console.error("Registrasi gagal:", err);
+      setError(err.message || 'Registrasi gagal');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Conditional rendering for sekolah/kelas fields
+  const showSekolahField = ['Siswa', 'Guru'].includes(formData.role);
+  const showKelasField = formData.role === 'Siswa' && formData.sekolah;
+
+  // Render kelas options based on sekolah
+  const renderKelasOptions = () => {
+    switch(formData.sekolah) {
+      case 'SD': return ['I', 'II', 'III', 'IV', 'V', 'VI'];
+      case 'SMP': return ['VII', 'VIII', 'IX'];
+      case 'SMK': return ['X', 'XI', 'XII'];
+      default: return [];
+    }
   };
 
   return (
-    <div className="min-h-screen p-8 bg-gray-50">
-      <header className="flex justify-between items-center mb-4">
-        <div className="flex-shrink-0 cursor-pointer" onClick={handleStelkbookClick}>
-          <Image src="/assets/Class/Stelk_bookTitle.png" alt="Stelkbook" width={165} height={100} />
-        </div>
-
-        <div className="flex-shrink-0 cursor-pointer">
-          <Image
-            src="/assets/Class/icon_user.png"
-            alt="Icon-User"
-            width={45}
-            height={40}
-            className="rounded-full translate-y-[-0px] translate-x-[-20px]"
-          />
-        </div>
-      </header>
-
-      <div className="mb-8">
-        <Image src="/assets/Class/Lines.png" alt="Header Line" width={3000} height={100} />
-      </div>
-
-      <div className="mb-8 flex items-center space-x-2">
-        <p className="text-lg font-semibold text-gray-700 hover:underline cursor-pointer"
-        onClick={() => handleButtonClick('admin/')}>
-
-          Database Anda
-          </p>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-5 w-5 text-gray-500"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={2}
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-        </svg>
-        <p className="text-lg font-medium text-gray-900 font-poppins">Membuat User</p>
-      </div>
+     <div className="min-h-screen p-8 bg-gray-50">
+          <header className="flex justify-between items-center mb-4">
+            <div className="flex-shrink-0 cursor-pointer" onClick={handleStelkbookClick}>
+              <Image src="/assets/Class/Stelk_bookTitle.png" alt="Stelkbook" width={165} height={100} />
+            </div>
+    
+            <div className="flex-shrink-0 cursor-pointer">
+              <Image
+                src="/assets/Class/icon_user.png"
+                alt="Icon-User"
+                width={45}
+                height={40}
+                className="rounded-full translate-y-[-0px] translate-x-[-20px]"
+              />
+            </div>
+          </header>
+    
+          <div className="mb-8">
+            <Image src="/assets/Class/Lines.png" alt="Header Line" width={3000} height={100} />
+          </div>
+    
+          <div className="mb-8 flex items-center space-x-2">
+            <p className="text-lg font-semibold text-gray-700 hover:underline cursor-pointer"
+            onClick={() => handleButtonClick('admin/')}>
+    
+              Database Anda
+              </p>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 text-gray-500"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+            <p className="text-lg font-medium text-gray-900 font-poppins">Membuat User</p>
+          </div>
 
       <div className="flex justify-center">
         <div className="bg-white border border-gray-300 rounded-lg p-8 shadow-lg max-w-4xl w-full flex items-center space-x-8">
-          <div className="flex-shrink-0">
-            <div className="w-24 h-24 sm:w-32 sm:h-32 bg-gray-300 rounded-full flex-shrink-0"></div>
+          
+          {/* Avatar Upload Section */}
+          <div className="flex flex-col items-center space-y-2">
+            <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden bg-gray-300 flex items-center justify-center">
+              {avatarPreview ? (
+                <Image 
+                  src={avatarPreview} 
+                  alt="Avatar" 
+                  width={128} 
+                  height={128} 
+                  className="object-cover w-full h-full"
+                />
+              ) : (
+                <span className="text-gray-500 text-sm">No Avatar</span>
+              )}
+            </div>
+            <input 
+              type="file" 
+              accept="image/*" 
+              onChange={handleAvatarChange} 
+              className="text-sm" 
+            />
           </div>
 
+          {/* Form Fields */}
           <div className="grid gap-4 w-full">
+            {/* Username */}
             <div>
               <label className="block text-gray-700 text-sm font-medium mb-2">Username</label>
               <input
                 type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md"
+                required
               />
             </div>
 
+            {/* Email */}
             <div>
               <label className="block text-gray-700 text-sm font-medium mb-2">Email</label>
               <input
-                type="text"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md"
+                required
               />
             </div>
 
+            {/* Password */}
             <div>
               <label className="block text-gray-700 text-sm font-medium mb-2">Password</label>
               <input
                 type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md"
+                required
               />
             </div>
 
+            {/* NIS/NIP */}
             <div>
               <label className="block text-gray-700 text-sm font-medium mb-2">NIS/NIP</label>
               <input
                 type="text"
-                value={kode}
-                onChange={(e) => setKode(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
+                name="kode"
+                value={formData.kode}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md"
+                required
               />
             </div>
 
+            {/* Status (Role) */}
             <div>
               <label className="block text-gray-700 text-sm font-medium mb-2">Status</label>
               <select
-                value={role}
-                onChange={handleStatusChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
+                name="role"
+                value={formData.role}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md"
+                required
               >
                 <option value="">Pilih Status</option>
                 <option value="Siswa">Siswa</option>
@@ -182,13 +242,16 @@ function Page() {
               </select>
             </div>
 
+            {/* Conditional Sekolah Field */}
             {showSekolahField && (
               <div>
                 <label className="block text-gray-700 text-sm font-medium mb-2">Sekolah</label>
                 <select
-                  value={sekolah}
-                  onChange={handleSekolahChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
+                  name="sekolah"
+                  value={formData.sekolah}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md"
+                  required
                 >
                   <option value="">Pilih Sekolah</option>
                   <option value="SD">SD</option>
@@ -198,26 +261,34 @@ function Page() {
               </div>
             )}
 
-            {showKelasField && sekolah && (
+            {/* Conditional Kelas Field */}
+            {showKelasField && (
               <div>
                 <label className="block text-gray-700 text-sm font-medium mb-2">Kelas</label>
                 <select
-                  value={kelas}
-                  onChange={(e) => setKelas(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
+                  name="kelas"
+                  value={formData.kelas}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md"
+                  required
                 >
                   <option value="">Pilih Kelas</option>
-                  {renderKelasOptions()}
+                  {renderKelasOptions().map(kelas => (
+                    <option key={kelas} value={kelas}>{kelas}</option>
+                  ))}
                 </select>
               </div>
             )}
 
+            {/* Gender */}
             <div>
               <label className="block text-gray-700 text-sm font-medium mb-2">Gender</label>
               <select
-                value={gender}
-                onChange={(e) => setGender(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
+                name="gender"
+                value={formData.gender}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md"
+                required
               >
                 <option value="">Pilih Gender</option>
                 <option value="Laki-Laki">Laki-Laki</option>
@@ -225,12 +296,21 @@ function Page() {
               </select>
             </div>
 
+            {/* Error Message */}
+            {error && (
+              <div className="text-red-500 text-sm mt-2">
+                {error}
+              </div>
+            )}
+
+            {/* Submit Button */}
             <div className="flex justify-center mt-8">
               <button
-                className="bg-red text-white px-6 py-2 rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 translate-x-[-50px]"
                 onClick={handleSelesaiClick}
+                disabled={loading}
+                className="bg-red text-white px-6 py-2 rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 translate-x-[-50px] disabled:opacity-50"
               >
-                Selesai
+                {loading ? 'Memproses...' : 'Selesai'}
               </button>
             </div>
           </div>
