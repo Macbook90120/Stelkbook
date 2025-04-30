@@ -11,6 +11,7 @@ interface Guru {
   username: string;
   nip: string;
   sekolah: string;
+  avatar?:string;
 }
 
 const SearchGuruSD: React.FC = () => {
@@ -100,12 +101,17 @@ const SearchGuruSD: React.FC = () => {
             <div key={guru.id} className="grid grid-cols-12 gap-4 items-center py-4 border-b">
               <div className="col-span-4 flex items-center">
                 <Image
-                  src="/assets/Class/icon_user.png"
-                  alt="User Icon"
-                  width={40}
-                  height={40}
-                  className="rounded-full mr-3"
-                />
+                               src={
+                                 guru.avatar
+                                   ? `http://localhost:8000/storage/${guru.avatar}`
+                                   : "/assets/Class/icon_user.png"
+                               }
+                               alt="User Icon"
+                               width={40}
+                               height={40}
+                               quality={100}
+                  className="w-12 h-12 object-cover rounded-full mr-3"
+                             />
                 <div>
                   <p className="font-semibold">{guru.username}</p>
                   <p className="font-semibold text-OldRed">{guru.sekolah}</p>

@@ -43,12 +43,13 @@ function Page() {
           {/* Profile Image */}
           <div className="flex justify-center lg:justify-start items-center mb-6 lg:mb-0">
             <Image
-              src="/assets/Class/Icon_user.png"
-              alt="Profile Picture"
-              width={128}
-              height={128}
-              className="rounded-full"
-            />
+                         src={user?.avatar ? `http://localhost:8000/storage/${user?.avatar}` : "/assets/Class/Icon_user.png"} 
+                         alt="Profile Picture"
+                         width={200}
+                         height={200}
+                         quality={100}
+                             className="w-48 h-48 object-cover rounded-full mr-3"
+                       />
           </div>
 
           {/* Profile Details */}
@@ -106,19 +107,8 @@ function Page() {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-col md:flex-row md:space-x-12 space-y-4 md:space-y-0 mt-6">
-              <button
-                onClick={handleChangePasswordClick}
-                className="w-full md:w-auto bg-yellow-500 text-white px-14 py-2 rounded-md hover:bg-yellow-600 flex items-center justify-center space-x-2"
-              >
-                <Image
-                  src="/assets/icon/reset-pw.svg"
-                  alt="Reset Icon"
-                  width={16}
-                  height={16}
-                />
-                <span>Ganti Password</span>
-              </button>
+            <div className="flex justify-center flex-col md:flex-row md:space-x-12 space-y-4 md:space-y-0 mt-6">
+              
               <button
                 onClick={handleLogoutClick}
                 className="w-full md:w-auto bg-red text-white px-24 py-2 rounded-md hover:bg-red-600 flex items-center justify-center space-x-2"

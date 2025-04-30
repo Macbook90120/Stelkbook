@@ -12,6 +12,7 @@ interface Perpus {
   username: string;
   nip: string;
   gender: string;
+  avatar?:string;
 }
 
 function SearchPerpus() {
@@ -125,12 +126,16 @@ function SearchPerpus() {
             >
               <div className="col-span-4 flex items-center">
                 <Image
-                  src="/assets/Class/icon_user.png"
-                  alt="User Icon"
-                  width={40}
-                  height={40}
-                  className="rounded-full mr-3"
-                />
+                                  src={
+                                    perpus.avatar
+                                      ? `http://localhost:8000/storage/${perpus.avatar}`
+                                      : "/assets/Class/icon_user.png"
+                                  }
+                                  alt="User Icon"
+                                  width={40}
+                                  height={40}
+                                  className="w-12 h-12 object-cover rounded-full mr-3"
+                                />
                 <div>
                   <p className="font-semibold">{perpus.username}</p>
                   <p className="text-sm text-gray-500">{perpus.nip}</p>

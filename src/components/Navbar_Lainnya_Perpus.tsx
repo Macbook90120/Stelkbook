@@ -40,7 +40,7 @@ const Navbar: React.FC = () => {
             {/* Logo (Responsive Changes) */}
             <div
               className="flex-shrink-0 cursor-pointer"
-              onClick={() => handleNavigation("/perpustakaan")}
+              onClick={() => handleNavigation("/perpustakaan/Daftar_Buku")}
             >
               {/* Use different logos based on screen size */}
               <Image

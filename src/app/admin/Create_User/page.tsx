@@ -1,5 +1,5 @@
 'use client';
-import React, { ChangeEvent, useState } from 'react';
+import React, { ChangeEvent, useState, useRef } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/authContext';
@@ -20,6 +20,8 @@ function Page() {
     kelas: ''
   });
 
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  
   const handleButtonClick = (destination: string) => {
     router.push(`/${destination}`);
   };
@@ -37,6 +39,11 @@ function Page() {
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  // Handle avatar click
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click();
   };
 
   // Handle avatar upload
@@ -81,7 +88,7 @@ function Page() {
 
       // Redirect on success
       router.push('/admin');
-    } catch (err:any) {
+    } catch (err: any) {
       console.error("Registrasi gagal:", err);
       setError(err.message || 'Registrasi gagal');
     } finally {
@@ -104,69 +111,77 @@ function Page() {
   };
 
   return (
-     <div className="min-h-screen p-8 bg-gray-50">
-          <header className="flex justify-between items-center mb-4">
-            <div className="flex-shrink-0 cursor-pointer" onClick={handleStelkbookClick}>
-              <Image src="/assets/Class/Stelk_bookTitle.png" alt="Stelkbook" width={165} height={100} />
-            </div>
-    
-            <div className="flex-shrink-0 cursor-pointer">
-              <Image
-                src="/assets/Class/icon_user.png"
-                alt="Icon-User"
-                width={45}
-                height={40}
-                className="rounded-full translate-y-[-0px] translate-x-[-20px]"
-              />
-            </div>
-          </header>
-    
-          <div className="mb-8">
-            <Image src="/assets/Class/Lines.png" alt="Header Line" width={3000} height={100} />
-          </div>
-    
-          <div className="mb-8 flex items-center space-x-2">
-            <p className="text-lg font-semibold text-gray-700 hover:underline cursor-pointer"
-            onClick={() => handleButtonClick('admin/')}>
-    
-              Database Anda
-              </p>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 text-gray-500"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-            </svg>
-            <p className="text-lg font-medium text-gray-900 font-poppins">Membuat User</p>
-          </div>
+    <div className="min-h-screen p-8 bg-gray-50">
+      <header className="flex justify-between items-center mb-4">
+        <div className="flex-shrink-0 cursor-pointer" onClick={handleStelkbookClick}>
+          <Image src="/assets/Class/Stelk_bookTitle.png" alt="Stelkbook" width={165} height={100} />
+        </div>
+
+        <div className="flex-shrink-0 cursor-pointer">
+          <Image
+            src="/assets/Class/icon_user.png"
+            alt="Icon-User"
+            width={45}
+            height={40}
+            className="rounded-full translate-y-[-0px] translate-x-[-20px]"
+          />
+        </div>
+      </header>
+
+      <div className="mb-8">
+        <Image src="/assets/Class/Lines.png" alt="Header Line" width={3000} height={100} />
+      </div>
+
+      <div className="mb-8 flex items-center space-x-2">
+        <p 
+          className="text-lg font-semibold text-gray-700 hover:underline cursor-pointer"
+          onClick={() => handleButtonClick('admin/')}
+        >
+          Database Anda
+        </p>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-5 w-5 text-gray-500"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+        </svg>
+        <p className="text-lg font-medium text-gray-900 font-poppins">Membuat User</p>
+      </div>
 
       <div className="flex justify-center">
         <div className="bg-white border border-gray-300 rounded-lg p-8 shadow-lg max-w-4xl w-full flex items-center space-x-8">
           
           {/* Avatar Upload Section */}
           <div className="flex flex-col items-center space-y-2">
-            <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden bg-gray-300 flex items-center justify-center">
+            <div 
+              className="w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden bg-gray-300 flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
+              onClick={handleAvatarClick}
+            >
               {avatarPreview ? (
                 <Image 
                   src={avatarPreview} 
                   alt="Avatar" 
                   width={128} 
                   height={128} 
+                  quality={100}
                   className="object-cover w-full h-full"
                 />
               ) : (
-                <span className="text-gray-500 text-sm">No Avatar</span>
+                <div className="flex flex-col items-center justify-center text-center p-2">
+                  <span className="text-gray-500 text-sm">Klik untuk mengupload foto</span>
+                </div>
               )}
             </div>
             <input 
               type="file" 
               accept="image/*" 
               onChange={handleAvatarChange} 
-              className="text-sm" 
+              ref={fileInputRef}
+              className="hidden" 
             />
           </div>
 

@@ -122,6 +122,7 @@ function Page() {
             alt="Icon-User"
             width={45}
             height={40}
+            quality={100}
             className="rounded-full translate-y-[-0px] translate-x-[-20px]"
           />
         </div>
@@ -176,6 +177,7 @@ function Page() {
                   alt="User Avatar"
                   width={128}
                   height={128}
+                  quality={100}
                   className="object-cover w-full h-full"
                 />
               ) : (

@@ -1,39 +1,50 @@
-'use client'
+"use client";
 import React, { useState, useEffect } from "react";
-import { useAuth } from "@/context/authContext";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import ConfirmationModal from "./hapus_user";
 import Navbar from "@/components/Navbar_Admin_Guru_SD";
+import { useAuth } from "@/context/authContext";
 
 interface Guru {
   id: string;
   username: string;
   nip: string;
   sekolah: string;
+  avatar?: string;
 }
 
-const DataGuruSD: React.FC = () => {
-  const { guruSdData, fetchAllGuruSd } = useAuth();
+function DataGuruSD() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedGuru, setSelectedGuru] = useState<Guru | null>(null);
+  const { fetchAllGuruSd, guruSdData } = useAuth();
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    fetchAllGuruSd(); // Ambil semua data siswa SD
+    const getGuruData = async () => {
+      try {
+        await fetchAllGuruSd();
+      } catch (error) {
+        console.error("Gagal mengambil data guru:", error);
+      }
+    };
+    getGuruData();
   }, [fetchAllGuruSd]);
 
-  const handleDeleteGuru = (guru:Guru) => {
+  const handleDeleteUser = (guru: Guru) => {
     setSelectedGuru(guru);
-    setIsModalOpen(true); // Buka modal hapus
+    setIsModalOpen(true);
+  };
+
+  const handleEditUser = (guru: Guru) => {
+    router.push(`/admin/Sekolah_Guru/Data_SD/Edit_user?id=${guru.id}`);
   };
 
   const handleDeleteSuccess = async () => {
     try {
       await fetchAllGuruSd();
     } catch (error) {
-      console.error("Gagal refresh data perpus:", error);
+      console.error("Gagal refresh data guru:", error);
     }
   };
 
@@ -46,9 +57,12 @@ const DataGuruSD: React.FC = () => {
       <header className="flex justify-between items-center mb-4 pt-20 px-8">
         <Navbar />
       </header>
+
       <div className="mb-8 flex items-center">
-        <p className="text-xl font-semibold text-left font-poppins translate-y-[-15px] hover:underline cursor-pointer"
-        onClick={() => handleButtonClick('admin/Sekolah_Guru')}>
+        <p 
+          className="text-xl font-semibold text-left font-poppins translate-y-[-15px] hover:underline cursor-pointer"
+          onClick={() => handleButtonClick('admin/Sekolah_Guru')}
+        >
           Database Anda
         </p>
         <div className="mx-2">
@@ -65,7 +79,7 @@ const DataGuruSD: React.FC = () => {
         </p>
       </div>
 
-      {/* Tambah Siswa Button */}
+      {/* Tambah Guru Button */}
       <div className="relative mb-4">
         <button
           className="absolute right-0 top-0 w-10 h-10 bg-red text-white text-xl rounded-full flex items-center justify-center shadow translate-y-[-60px]"
@@ -77,57 +91,69 @@ const DataGuruSD: React.FC = () => {
       </div>
 
       <div className="bg-white rounded-lg shadow p-4">
-      {guruSdData?.length > 0 ? (
-        guruSdData?.map((guru:Guru) => (
-          <div key={guru.id} className="grid grid-cols-12 gap-4 items-center py-4 border-b">
-            <div className="col-span-4 flex items-center">
-              <Image
-                src="/assets/Class/icon_user.png"
-                alt="User Icon"
-                width={40}
-                height={40}
-                className="rounded-full mr-3"
-              />
-              <div>
-                <p className="font-semibold">{guru.username}</p>
-                <p className="font-semibold text-OldRed">{guru.sekolah}</p>
-                <p className="text-sm text-gray-500">{guru.nip}</p>
+        {guruSdData?.length > 0 ? (
+          guruSdData.map((guru: Guru) => (
+            <div
+              key={guru.id}
+              className="grid grid-cols-12 gap-4 items-center py-4 border-b"
+            >
+              <div className="col-span-4 flex items-center">
+                <Image
+                  src={
+                    guru.avatar
+                      ? `http://localhost:8000/storage/${guru.avatar}`
+                      : "/assets/Class/icon_user.png"
+                  }
+                  alt="User Icon"
+                  width={40}
+                  height={40}
+                  quality={100}
+                  className="w-12 h-12 object-cover rounded-full mr-3"
+                />
+                <div>
+                  <p className="font-semibold">{guru.username}</p>
+                  <p className="text-sm text-gray-500">{guru.nip}</p>
+                  <p className="font-semibold text-sm text-OldRed">Sekolah: {guru.sekolah}</p>
+                </div>
+              </div>
+              <div className="col-span-8 flex justify-end space-x-2">
+                <button
+                  className="flex flex-col items-center justify-center w-12 h-12 md:w-auto md:h-auto md:flex-row md:px-8 md:py-2 text-white bg-green-500 rounded-lg hover:bg-green-600"
+                  onClick={() => handleEditUser(guru)}
+                >
+                  <Image
+                    src="/assets/icon/edit.svg"
+                    alt="Edit Icon"
+                    width={16}
+                    height={16}
+                    className="md:mr-2"
+                  />
+                  <span className="hidden md:block">Edit Guru</span>
+                </button>
+
+                <button
+                  className="flex flex-col items-center justify-center w-12 h-12 md:w-auto md:h-auto md:flex-row md:px-8 md:py-2 text-white bg-red rounded-lg hover:bg-red-600"
+                  onClick={() => handleDeleteUser(guru)}
+                >
+                  <Image
+                    src="/assets/icon/delete.svg"
+                    alt="Delete Icon"
+                    width={16}
+                    height={16}
+                    className="md:mr-2"
+                  />
+                  <span className="hidden md:block">Hapus Guru</span>
+                </button>
               </div>
             </div>
-            <div className="col-span-8 flex justify-end space-x-2">
-              <button
-                className="flex flex-col items-center justify-center w-12 h-12 md:w-auto md:h-auto md:flex-row md:px-8 md:py-2 text-white bg-green-500 rounded-lg hover:bg-green-600"
-                onClick={() => router.push(`/admin/Sekolah_Guru/Data_SD/Edit_user?id=${guru.id}`)}
-              >
-                <Image
-                  src="/assets/Admin/Edit_user.png"
-                  alt="Edit Icon"
-                  width={16}
-                  height={16}
-                  className="md:mr-2"
-                />
-                <span className="hidden md:block">Edit Guru</span>
-              </button>
-              <button
-                className="flex flex-col items-center justify-center w-12 h-12 md:w-auto md:h-auto md:flex-row md:px-8 md:py-2 text-white bg-red rounded-lg hover:bg-red"
-                onClick={() => handleDeleteGuru(guru)}
-              >
-                <Image
-                  src="/assets/Admin/Delete_user.png"
-                  alt="Delete Icon"
-                  width={16}
-                  height={16}
-                  className="md:mr-2"
-                />
-                <span className="hidden md:block">Hapus Guru</span>
-              </button>
-            </div>
-          </div>
-        ))
-      ) : (
-        <p className="text-gray-500 text-center py-4">Tidak ada data guru tersedia.</p>
-      )}
+          ))
+        ) : (
+          <p className="text-gray-500 text-center py-4">
+            Tidak ada data guru SD tersedia.
+          </p>
+        )}
       </div>
+
       {isModalOpen && selectedGuru && (
         <ConfirmationModal
           isOpen={isModalOpen}
@@ -138,6 +164,6 @@ const DataGuruSD: React.FC = () => {
       )}
     </div>
   );
-};
+}
 
 export default DataGuruSD;

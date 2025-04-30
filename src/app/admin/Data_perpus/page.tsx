@@ -119,7 +119,8 @@ function Page() {
                   alt="User Icon"
                   width={40}
                   height={40}
-                  className="rounded-full mr-3"
+                  quality={100}
+                  className="w-12 h-12 object-cover rounded-full mr-3"
                 />
                 <div>
                   <p className="font-semibold">{perpus.username}</p>

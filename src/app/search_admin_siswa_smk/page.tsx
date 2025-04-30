@@ -12,7 +12,9 @@ interface Siswa {
   nis: string;
   sekolah: string;
   kelas: string;
+  avatar?: string; // <- tambahkan ini
 }
+
 
 const SearchSiswaSD: React.FC = () => {
   const { siswaSmkData, fetchAllSiswaSmk } = useAuth();
@@ -101,13 +103,18 @@ const SearchSiswaSD: React.FC = () => {
           filteredSiswa.map((siswa: Siswa) => (
             <div key={siswa.id} className="grid grid-cols-12 gap-4 items-center py-4 border-b">
               <div className="col-span-4 flex items-center">
-                <Image
-                  src="/assets/Class/icon_user.png"
-                  alt="User Icon"
-                  width={40}
-                  height={40}
-                  className="rounded-full mr-3"
-                />
+                  <Image
+                 src={
+                   siswa.avatar
+                     ? `http://localhost:8000/storage/${siswa.avatar}`
+                     : "/assets/Class/icon_user.png"
+                 }
+                 alt="User Icon"
+                 width={40}
+                 height={40}
+                 quality={100}
+                  className="w-12 h-12 object-cover rounded-full mr-3"
+               />
                 <div>
                   <p className="font-semibold">{siswa.username}</p>
                   <p className="font-semibold text-OldRed">{siswa.sekolah}</p>

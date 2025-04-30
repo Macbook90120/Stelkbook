@@ -178,6 +178,7 @@ function Page() {
                   alt="User Avatar"
                   width={128}
                   height={128}
+                  quality={100}
                   className="object-cover w-full h-full"
                 />
               ) : (

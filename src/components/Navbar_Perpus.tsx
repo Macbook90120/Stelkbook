@@ -41,7 +41,7 @@ const Navbar_Perpus: React.FC = () => {
 
             <div
               className="cursor-pointer flex-shrink-0"
-              onClick={() => handleNavigation("/perpustakaan")}
+              onClick={() => handleNavigation("/perpustakaan/Daftar_Buku")}
             >
               {/* Logo kecil untuk mobile */}
               <Image
