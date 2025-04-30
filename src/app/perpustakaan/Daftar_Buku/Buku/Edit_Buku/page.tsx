@@ -1,15 +1,17 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import NotificationSuccessful from './NotificationSuccessful';
-import Navbar from '@/components/Navbar_Lainnya_Perpus2';
+import NotificationSuccessful from './NotificationEditSuccessful';
+import Navbar from '@/components/Navbar_Lainnya_Perpus';
 import { useBook } from '@/context/bookContext';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 function Page() {
     const [showNotification, setShowNotification] = useState(false);
     const [pdfFile, setPdfFile] = useState<File | null>(null);
     const [coverFile, setCoverFile] = useState<File | null>(null);
+    const [existingCover, setExistingCover] = useState<string | null>(null);
+    const [existingIsi, setExistingIsi] = useState<string | null>(null);
     const [judul, setJudul] = useState('');
     const [deskripsi, setDeskripsi] = useState('');
     const [penulis, setPenulis] = useState('');
@@ -19,9 +21,41 @@ function Page() {
     const [selectedSekolah, setSelectedSekolah] = useState('');
     const [kelasOptions, setKelasOptions] = useState<string[]>([]);
     const [penerbit, setPenerbit] = useState('');
+    const [pdfFileName, setPdfFileName] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const { fetchBookById, updateBook, loading, error } = useBook();
+    const searchParams = useSearchParams();
+    const id = searchParams.get('id');
     const router = useRouter();
 
-    const { addBook, loading, error } = useBook();
+    useEffect(() => {
+        if (id) {
+            fetchBookById(id).then((data: any) => {
+                setJudul(data.judul);
+                setDeskripsi(data.deskripsi);
+                setPenulis(data.penulis);
+                setTahun(data.tahun);
+                setIsbn(data.ISBN);
+                
+                // Handle sekolah and kategori for NA case
+                if (data.kategori === 'NA') {
+                    setSelectedSekolah('NA');
+                    setSelectedKelas('NA');
+                } else {
+                    setSelectedSekolah(data.sekolah);
+                    setSelectedKelas(data.kategori);
+                }
+                
+                setPenerbit(data.penerbit);
+                setExistingCover(data.cover ? `http://localhost:8000/storage/${data.cover}` : '/assets/default-cover.png');
+                const fileName = data.isi?.split('/').pop() || '';
+                setPdfFileName(fileName);
+            }).catch((err: any) => {
+                console.error('Error fetching book:', err);
+            });
+        }
+    }, [id, fetchBookById]);
 
     useEffect(() => {
         if (selectedSekolah === 'SD') {
@@ -31,7 +65,7 @@ function Page() {
         } else if (selectedSekolah === 'SMK') {
             setKelasOptions(['X', 'XI', 'XII']);
         } else if (selectedSekolah === 'NA') {
-            setKelasOptions([]);
+            setKelasOptions(['NA']);
             setSelectedKelas('NA');
         } else {
             setKelasOptions([]);
@@ -45,33 +79,26 @@ function Page() {
         formData.append('judul', judul);
         formData.append('deskripsi', deskripsi);
         formData.append('sekolah', selectedSekolah === 'NA' ? '' : selectedSekolah);
-        formData.append('kategori', selectedSekolah === 'NA' ? 'NA' : selectedKelas);
+        formData.append('kategori', selectedKelas);
         formData.append('penerbit', penerbit);
         formData.append('penulis', penulis);
         formData.append('tahun', tahun);
         formData.append('ISBN', isbn);
-        if (coverFile) formData.append('cover', coverFile);
-        if (pdfFile) formData.append('isi', pdfFile);
+        if (coverFile) {
+            formData.append('cover', coverFile);
+        }
+        if (pdfFile) {
+            formData.append('isi', pdfFile);
+        }
 
         try {
-            await addBook(formData);
+            await updateBook(id, formData);
             setShowNotification(true);
-            setTimeout(() => {
-                router.push('/perpustakaan'); // Ganti dengan path tampilan awal kamu
-            }, 2000);
-            // Reset form setelah berhasil
-            setJudul('');
-            setDeskripsi('');
-            setPenulis('');
-            setTahun('');
-            setIsbn('');
-            setSelectedSekolah('');
-            setSelectedKelas('');
-            setPenerbit('');
-            setPdfFile(null);
-            setCoverFile(null);
+            router.push(`/perpustakaan/Buku?id=${id}`);
         } catch (err) {
-            console.error('Error adding book:', err);
+            console.error('Error updating book:', err);
+        }finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -89,10 +116,6 @@ function Page() {
         }
     };
 
-    useEffect(() => {
-        document.body.style.overflow = 'auto';
-    }, []);
-
     return (
         <div className="min-h-screen bg-gray-50 p-8 overflow-y-auto">
             <Navbar />
@@ -106,7 +129,7 @@ function Page() {
                         height={16}
                     />
                 </div>
-                <p className="text-xl font-semibold font-poppins">Menambahkan Buku</p>
+                <p className="text-xl font-semibold font-poppins">Edit Buku</p>
             </div>
 
             <div className="bg-white p-6 rounded-lg shadow-lg max-w-4xl mx-auto">
@@ -121,7 +144,6 @@ function Page() {
                                     onChange={(e) => setJudul(e.target.value)}
                                     placeholder="(Isi Judul)"
                                     className="w-full border border-gray-300 bg-gray-100 rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    required
                                 />
                             </div>
 
@@ -133,7 +155,6 @@ function Page() {
                                     onChange={(e) => setDeskripsi(e.target.value)}
                                     placeholder="(Isi Deskripsi)"
                                     className="w-full border border-gray-300 bg-gray-100 rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    required
                                 />
                             </div>
 
@@ -187,7 +208,6 @@ function Page() {
                                     onChange={(e) => setPenerbit(e.target.value)}
                                     placeholder="(Isi Penerbit)"
                                     className="w-full border border-gray-300 bg-gray-100 rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    required
                                 />
                             </div>
 
@@ -199,7 +219,6 @@ function Page() {
                                     onChange={(e) => setPenulis(e.target.value)}
                                     placeholder="(Isi Penulis)"
                                     className="w-full border border-gray-300 bg-gray-100 rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    required
                                 />
                             </div>
 
@@ -211,7 +230,6 @@ function Page() {
                                     onChange={(e) => setTahun(e.target.value)}
                                     placeholder="(Isi Tahun)"
                                     className="w-full border border-gray-300 bg-gray-100 rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    required
                                 />
                             </div>
 
@@ -223,7 +241,6 @@ function Page() {
                                     onChange={(e) => setIsbn(e.target.value)}
                                     placeholder="(Isi ISBN)"
                                     className="w-full border border-gray-300 bg-gray-100 rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    required
                                 />
                             </div>
                         </div>
@@ -233,20 +250,25 @@ function Page() {
                                 <label className="block text-gray-700 font-medium mb-2">Cover Buku</label>
                                 <div className="border border-gray-300 rounded-lg p-6 bg-gray-50 relative">
                                     {coverFile ? (
-                                        <img 
-                                            src={URL.createObjectURL(coverFile)} 
-                                            alt="Book Cover" 
-                                            className="w-full h-full object-cover rounded-lg" 
+                                        <img
+                                            src={URL.createObjectURL(coverFile)}
+                                            alt="Book Cover"
+                                            className="w-full h-full object-cover rounded-lg"
                                         />
                                     ) : (
-                                        <p className="text-gray-500">Upload dalam format .jpg/.png</p>
+                                        <Image
+                                            src={existingCover || '/assets/default-cover.png'}
+                                            alt="Book Cover"
+                                            width={200}
+                                            height={300}
+                                            className="w-full h-full object-cover rounded-lg"
+                                        />
                                     )}
                                     <input
                                         type="file"
                                         accept="image/*"
                                         onChange={handleCoverUpload}
                                         className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer"
-                                        required
                                     />
                                 </div>
                             </div>
@@ -260,15 +282,14 @@ function Page() {
                                         width={48}
                                         height={45}
                                     />
-                                    {!pdfFile && <p className="text-gray-500 ml-4">Upload dalam format .pdf</p>}
-                                    {pdfFile && <p className="ml-4 text-gray-700 truncate">{pdfFile.name}</p>}
+                                    {!pdfFile && pdfFileName && <p className="mt-2 text-gray-700">{pdfFileName}</p>}
                                     <input
                                         type="file"
                                         accept="application/pdf"
                                         onChange={handlePdfUpload}
                                         className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer"
-                                        required
                                     />
+                                    {pdfFile && <p className="mt-2 text-gray-700">{pdfFile.name}</p>}
                                 </div>
                             </div>
                         </div>
@@ -278,18 +299,14 @@ function Page() {
                         <button
                             type="submit"
                             className="w-32 bg-red text-white rounded-lg py-2 px-4 font-semibold text-sm hover:bg-red-600 shadow-md focus:outline-none focus:ring-2 focus:ring-red-300"
-                            disabled={loading}
                         >
-                            {loading ? 'Loading...' : 'Selesai'}
+                            Selesai
                         </button>
                     </div>
                 </form>
             </div>
 
-            <NotificationSuccessful 
-                show={showNotification} 
-                onHide={() => setShowNotification(false)} 
-            />
+            <NotificationSuccessful show={showNotification} />
         </div>
     );
 }

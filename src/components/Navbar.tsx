@@ -29,21 +29,21 @@ const Navbar: React.FC = () => {
     <>
       {/* Navbar */}
       <header className="w-full fixed top-0 left-0 bg-white shadow-md z-50 h-20">
-  <div className="w-full px-4 md:px-6 flex justify-between items-center h-full space-x-2 md:space-x-4">
-    {/* Logo and Menu Icon */}
-    <div className="flex items-center space-x-2 md:space-x-4">
+  <div className="w-full px-3 md:px-6 flex items-center justify-between h-full">
+    {/* Left: Menu + Logo */}
+    <div className="flex items-center flex-shrink-0 space-x-2">
       <button
         onClick={toggleSidebar}
-        className="focus:outline-none p-2"
+        className="p-2 focus:outline-none"
       >
         <Image src="/assets/Class/menu.png" alt="Menu" width={24} height={24} />
       </button>
 
       <div
-        className="flex-shrink-0 cursor-pointer"
+        className="cursor-pointer flex-shrink-0"
         onClick={() => handleNavigation("/homepage")}
       >
-        {/* Logo kecil muncul di mobile */}
+        {/* Logo kecil untuk mobile */}
         <Image
           src="/assets/Class/iconstelkbook.png"
           alt="Logo Small"
@@ -51,7 +51,7 @@ const Navbar: React.FC = () => {
           height={40}
           className="block md:hidden w-10 h-10 object-contain"
         />
-        {/* Logo besar muncul di desktop */}
+        {/* Logo besar untuk desktop */}
         <Image
           src="/assets/Class/Stelk_bookTitle.png"
           alt="Logo Full"
@@ -62,11 +62,11 @@ const Navbar: React.FC = () => {
       </div>
     </div>
 
-    {/* Search Bar */}
-    <div className="flex-grow flex justify-center relative px-2 md:px-0">
+    {/* Center: Search Bar */}
+    <div className="flex-grow flex justify-center mx-2">
       <form
         onSubmit={handleSearchSubmit}
-        className="w-full max-w-[200px] sm:max-w-[250px] md:max-w-xs flex items-center bg-[#F5F5F5] rounded-full px-3 py-1 md:py-2 shadow-sm"
+        className="w-full max-w-[160px] sm:max-w-[200px] md:max-w-xs flex items-center bg-[#F5F5F5] rounded-full px-3 py-1 md:py-2 shadow-sm"
       >
         <Image src="/assets/Class/Search_icon.png" alt="Search Icon" width={18} height={18} className="mr-2" />
         <input
@@ -79,10 +79,10 @@ const Navbar: React.FC = () => {
       </form>
     </div>
 
-    {/* Profile Icon */}
-    <div className="flex items-center space-x-2 md:space-x-4">
+    {/* Right: Profile Icon */}
+    <div className="flex items-center flex-shrink-0 space-x-2">
       <div
-        className="flex-shrink-0 cursor-pointer p-2"
+        className="cursor-pointer p-2"
         onClick={() => handleNavigation("/profile")}
       >
         <Image src="/assets/Class/icon_user.png" alt="User Icon" width={30} height={30} className="rounded-full md:w-[35px] md:h-[35px]" />
@@ -90,6 +90,7 @@ const Navbar: React.FC = () => {
     </div>
   </div>
 </header>
+
 
       {/* Sidebar */}
       <Sidebar

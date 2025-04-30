@@ -7,10 +7,10 @@ import WarningModal from './WarningForgot';
 import { Eye, EyeOff } from 'lucide-react';
 
 const slides = [
-    { image: "/assets/Lab komputer.jpg", id: "01" },
-    { image: "/assets/Lab komputer.jpg", id: "02" },
-    { image: "/assets/Lab komputer.jpg", id: "03" },
-    { image: "/assets/Lab komputer.jpg", id: "04" },
+    { image: "/assets/Perpustakaan.jpg", id: "01" },
+    { image: "/assets/Perpustakaan.jpg", id: "02" },
+    { image: "/assets/Perpustakaan.jpg", id: "03" },
+    { image: "/assets/Perpustakaan.jpg", id: "04" },
 ];
 
 function Login() {
@@ -52,9 +52,8 @@ function Login() {
         }
     };
 
-    const handleForgotPasswordClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-        e.preventDefault();
-        setShowWarningModal(true);
+    const handleRegistrasiClick = () => {
+        router.push('/registrasi')
     };
 
     const handleCloseWarningModal = () => {
@@ -160,13 +159,13 @@ function Login() {
                         </div>
                     </form>
                     <div className="mt-4 text-right">
-                        <a
-                            href="#"
-                            onClick={handleForgotPasswordClick}
-                            className="text-sm text-red-500 hover:underline cursor-pointer"
+                        <button
+                            
+                            onClick={handleRegistrasiClick}
+                            className="text-sm text-red hover:underline cursor-pointer"
                         >
-                            Forgot Password?
-                        </a>
+                            Registrasi?
+                        </button>
                     </div>
                 </div>
 

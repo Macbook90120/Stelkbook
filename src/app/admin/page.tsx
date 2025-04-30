@@ -17,9 +17,7 @@ function HomePage() {
               router.push('/admin');
             } else if (user.role === 'Guru') {
               router.push('/homepage_guru');
-            } else if (user.role === 'Perpus') {
-              router.push('/perpustakaan');
-            } else {
+            }else {
               router.push('/homepage');
             }
           }
