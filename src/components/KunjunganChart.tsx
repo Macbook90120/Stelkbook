@@ -12,7 +12,7 @@ import {
 import React from 'react';
 
 interface ChartProps {
-  data: { name: string; pengunjung: number }\[];
+  data: { name: string; pengunjung: number }[];
 }
 
 export default function KunjunganChart({ data }: ChartProps) {
