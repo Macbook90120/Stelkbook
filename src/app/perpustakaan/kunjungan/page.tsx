@@ -53,7 +53,7 @@ export default function KunjunganPage() {
     <div className="min-h-screen px-6 mt-6 pt-20 bg-gray-50 p-4">
   <Navbar />
 
-  <button onClick={() => router.back()} className="mb-4 text-gray-600 hover:text-red-600 transition-colors">
+  <button onClick={() => router.back()} className="mb-4 text-gray-600 hover:text-red transition-colors">
     <ArrowLeft size={24} />
   </button>
 
@@ -70,7 +70,7 @@ export default function KunjunganPage() {
             onClick={() => setMode(item as 'hari' | 'bulan' | 'tahun')}
             className={`px-5 py-2 rounded-full font-semibold shadow-sm transition-all duration-200 ${
               mode === item
-                ? 'bg-red-600 text-white scale-105'
+                ? 'bg-OldRed text-white scale-105'
                 : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
             }`}
           >
@@ -84,7 +84,7 @@ export default function KunjunganPage() {
       {/* Box 1 - Kunjungan Hari Ini */}
       <div className="bg-white shadow-lg rounded-xl p-6 border border-gray-200">
         <h2 className="text-xl font-bold text-gray-800 mb-4">
-          Kunjungan Hari ini: <span className="text-red-600 font-semibold">1 pengunjung</span>
+          Kunjungan Hari ini: <span className="text-red font-semibold">1 pengunjung</span>
         </h2>
 
         <div className="space-y-3">
@@ -95,7 +95,7 @@ export default function KunjunganPage() {
           ].map((user, i) => (
             <div key={i} className="flex items-center justify-between border-b pb-3 border-gray-200">
               <div className="flex items-center gap-3">
-                <FaUserCircle size={32} className="text-red-500" />
+                <FaUserCircle size={32} className="text-red" />
                 <div>
                   <p className="font-medium text-gray-800">{user.name}</p>
                   <p className="text-sm text-gray-500">{user.nis}</p>
@@ -110,13 +110,13 @@ export default function KunjunganPage() {
       <div className="bg-white shadow-lg rounded-xl p-6 border border-gray-200">
         <div className="space-y-2">
           <p className="font-medium text-gray-700">
-            Kunjungan 7 Hari Lalu: <span className="text-red-600 font-semibold">3 pengunjung</span>
+            Kunjungan 7 Hari Lalu: <span className="text-OldRed font-semibold">3 pengunjung</span>
           </p>
           <p className="font-medium text-gray-700">
-            Kunjungan 1 Bulan Lalu: <span className="text-red-600 font-semibold">10 pengunjung</span>
+            Kunjungan 1 Bulan Lalu: <span className="text-OldRed font-semibold">10 pengunjung</span>
           </p>
           <p className="font-medium text-gray-700">
-            Kunjungan 1 Tahun Lalu: <span className="text-red-600 font-semibold">27 pengunjung</span>
+            Kunjungan 1 Tahun Lalu: <span className="text-OldRed font-semibold">27 pengunjung</span>
           </p>
         </div>
       </div>
