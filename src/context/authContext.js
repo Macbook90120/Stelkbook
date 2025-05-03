@@ -420,6 +420,90 @@ const register = async (username, email, password, kode, role, gender, sekolah, 
   }
 };
 
+// Register2 function (for pending approval)
+const register2 = async (username, email, password, kode, role, gender, sekolah, kelas, avatarFile) => {
+  try {
+    const formData = new FormData();
+    formData.append('username', username);
+    formData.append('email', email);
+    formData.append('password', password);
+    formData.append('kode', kode);
+    formData.append('role', role);
+    formData.append('gender', gender);
+    
+    if (['Siswa', 'Guru'].includes(role)) {
+      formData.append('sekolah', sekolah);
+    }
+    
+    if (role === 'Siswa') {
+      formData.append('kelas', kelas);
+    }
+
+    if (avatarFile) {
+      formData.append('avatar', avatarFile);
+    }
+
+    const response = await axios.post('/register2', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+
+    return response.data;
+  } catch (error) {
+    throw error.response?.data?.errors || error;
+  }
+};
+
+// Add functions to fetch pending users and handle approval/rejection
+const fetchPendingUsers = useCallback(async () => {
+  try {
+    const token = localStorage.getItem('auth_token');
+    if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+
+    const res = await axios.get('/users-pending', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    return res.data;
+  } catch (e) {
+    console.error("Gagal mengambil data pengguna pending:", e.response?.data?.message || e.message);
+    throw new Error(e.response?.data?.message || "Gagal mengambil data pengguna pending.");
+  }
+}, []);
+
+const approveUser = useCallback(async (id) => {
+  try {
+    const token = localStorage.getItem('auth_token');
+    if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+
+    const res = await axios.post(`/approve-user/${id}`, null, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    return res.data;
+  } catch (e) {
+    console.error("Gagal menyetujui pengguna:", e.response?.data?.message || e.message);
+    throw new Error(e.response?.data?.message || "Gagal menyetujui pengguna.");
+  }
+}, []);
+
+const rejectUser = useCallback(async (id) => {
+  try {
+    const token = localStorage.getItem('auth_token');
+    if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+
+    const res = await axios.delete(`/reject-user/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    return res.data;
+  } catch (e) {
+    console.error("Gagal menolak pengguna:", e.response?.data?.message || e.message);
+    throw new Error(e.response?.data?.message || "Gagal menolak pengguna.");
+  }
+}, []);
+
 
   // Logout function
   const logout = async () => {
@@ -814,7 +898,8 @@ const updateGuruSmk = async (id, form) => {
       perpusDetail, 
       login, 
       logout, 
-      register, 
+      register,
+      register2, 
       changePassword, 
       deleteUser, 
       deleteSiswa,
@@ -845,6 +930,9 @@ const updateGuruSmk = async (id, form) => {
       fetchGuruSmp,
       fetchGuruSmk,
       fetchPerpus,
+      fetchPendingUsers,
+      approveUser,
+      rejectUser,
       fetchAllSiswa, 
       fetchAllGuru, 
       fetchAllPerpus,

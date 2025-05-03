@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import ConfirmationModal from "./hapus_user";
-import Navbar from "@/components/Navbar_Admin_Guru_SMK";
+import Navbar from "@/components/Navbar_Admin_Perpus_Guru_SMK";
 import { useAuth } from "@/context/authContext";
 
 interface Guru {

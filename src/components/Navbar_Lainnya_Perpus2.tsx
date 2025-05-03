@@ -4,8 +4,10 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Sidebar from "./Sidebar_perpus"; // Import the Sidebar component
+import { useAuth } from "@/context/authContext";
 
 const Navbar: React.FC = () => {
+  const {user} = useAuth();
   const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -54,14 +56,11 @@ const Navbar: React.FC = () => {
           <div className="flex items-center space-x-4">
             <div
               className="flex-shrink-0 cursor-pointer"
-              onClick={() => handleNavigation("/profile_perpus")}
+              onClick={() => handleNavigation("/profile_perpus2")}
             >
               <Image
-                src="/assets/Class/icon_user.png"
-                alt="User Icon"
-                width={35}
-                height={35}
-                className="rounded-full"
+                  src={user?.avatar ? `http://localhost:8000/storage/${user?.avatar}` : "/assets/Class/Icon_user.png"} alt="User Icon" width={30} height={30} quality={100}
+                 className="rounded-full object-cover md:w-[35px] md:h-[35px]"
               />
             </div>
           </div>

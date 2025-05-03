@@ -4,8 +4,10 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Sidebar from "./Sidebar";
+import { useAuth } from "@/context/authContext";
 
 const Navbar: React.FC = () => {
+  const {user} = useAuth()
   const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -82,10 +84,10 @@ const Navbar: React.FC = () => {
     {/* Right: Profile Icon */}
     <div className="flex items-center flex-shrink-0 space-x-2">
       <div
-        className="cursor-pointer p-2"
+        className="cursor-pointer p-2"  
         onClick={() => handleNavigation("/profile")}
       >
-        <Image src="/assets/Class/icon_user.png" alt="User Icon" width={30} height={30} className="rounded-full md:w-[35px] md:h-[35px]" />
+        <Image src={user?.avatar ? `http://localhost:8000/storage/${user?.avatar}` : "/assets/Class/Icon_user.png"} alt="User Icon" width={30} height={30} quality={100}className="rounded-full object-cover md:w-[35px] md:h-[35px]" />
       </div>
     </div>
   </div>

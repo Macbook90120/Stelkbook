@@ -4,8 +4,10 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Sidebar from "./Sidebar_perpus";
+import { useAuth } from "@/context/authContext";
 
 const Navbar_Perpus: React.FC = () => {
+  const {user} = useAuth();
   const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -86,11 +88,8 @@ const Navbar_Perpus: React.FC = () => {
               onClick={() => handleNavigation("/profile_perpus")}
             >
               <Image
-                src="/assets/Class/icon_user.png"
-                alt="User Icon"
-                width={30}
-                height={30}
-                className="rounded-full md:w-[35px] md:h-[35px]"
+                src={user?.avatar ? `http://localhost:8000/storage/${user?.avatar}` : "/assets/Class/Icon_user.png"} alt="User Icon" width={30} height={30} quality={100}
+                 className="rounded-full object-cover md:w-[35px] md:h-[35px]"
               />
             </div>
           </div>

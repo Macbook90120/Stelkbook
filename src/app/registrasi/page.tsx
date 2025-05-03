@@ -5,7 +5,7 @@ import { useAuth } from '@/context/authContext';
 
 function Page() {
   const router = useRouter();
-  const { register } = useAuth();
+  const { register2 } = useAuth(); // Changed from register to register2
 
   const [showWarning, setShowWarning] = useState(false);
   const [showSekolahField, setShowSekolahField] = useState(false);
@@ -20,6 +20,7 @@ function Page() {
   const [kode, setKode] = useState('');
   const [role, setRole] = useState('');
   const [avatar, setAvatar] = useState<string | null>(null);
+  const [avatarFile, setAvatarFile] = useState<File | null>(null); // Added for file upload
   const [errorMessage, setErrorMessage] = useState('');
 
   const handleStatusChange = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -43,16 +44,25 @@ function Page() {
   };
 
   const handleSelesaiClick = async () => {
-    if (sekolah === 'SMK' && kelas === 'XI') {
-      setShowWarning(true);
-      return;
-    }
-
     try {
-      await register({ username, email, password, role, sekolah, kelas, gender, kode });
+      // Call register2 with all required parameters
+      await register2(
+        username,
+        email,
+        password,
+        kode,
+        role,
+        gender,
+        sekolah,
+        kelas,
+        avatarFile
+      );
+      
+      // Show success message or redirect
+      setShowWarning(true); // Show the approval waiting message
     } catch (e: any) {
       console.error("Registrasi gagal:", e);
-      const msg = e.response?.data?.message || "Registrasi gagal.";
+      const msg = e.response?.data?.message || "Registrasi gagal. Silakan coba lagi.";
       setErrorMessage(msg);
     }
   };
@@ -106,7 +116,8 @@ function Page() {
                 onChange={(e) => {
                   if (e.target.files && e.target.files[0]) {
                     const file = e.target.files[0];
-                    setAvatar(URL.createObjectURL(file));
+                    setAvatarFile(file); // Store the file object
+                    setAvatar(URL.createObjectURL(file)); // Create preview URL
                   }
                 }}
               />
@@ -122,16 +133,18 @@ function Page() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
+                required
               />
             </div>
 
             <div>
               <label className="block text-gray-700 text-sm font-medium mb-2">Email</label>
               <input
-                type="text"
+                type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
+                required
               />
             </div>
 
@@ -142,6 +155,18 @@ function Page() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-gray-700 text-sm font-medium mb-2">Kode (NIS/NIP)</label>
+              <input
+                type="text"
+                value={kode}
+                onChange={(e) => setKode(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
+                required
               />
             </div>
 
@@ -151,6 +176,7 @@ function Page() {
                 value={role}
                 onChange={handleStatusChange}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
+                required
               >
                 <option value="">Pilih Status</option>
                 <option value="Siswa">Siswa</option>
@@ -167,6 +193,7 @@ function Page() {
                   value={sekolah}
                   onChange={handleSekolahChange}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
+                  required
                 >
                   <option value="">Pilih Sekolah</option>
                   <option value="SD">SD</option>
@@ -183,6 +210,7 @@ function Page() {
                   value={kelas}
                   onChange={(e) => setKelas(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
+                  required
                 >
                   <option value="">Pilih Kelas</option>
                   {renderKelasOptions()}
@@ -196,6 +224,7 @@ function Page() {
                 value={gender}
                 onChange={(e) => setGender(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
+                required
               >
                 <option value="">Pilih Gender</option>
                 <option value="Laki-Laki">Laki-Laki</option>
@@ -232,8 +261,11 @@ function Page() {
 
             <div className="flex justify-center mt-8">
               <button
-                className="bg-red text-white px-6 py-2 rounded-lg shadow-md hover:bg-OldRed focus:outline-none focus:ring-2 focus:ring-red-400"
+                className="bg-red text-white px-6 py-2 rounded-lg shadow-md hover:bg-OldRed focus:outline-none focus:ring-2 focus:ring-red"
                 onClick={handleSelesaiClick}
+                disabled={!username || !email || !password || !kode || !role || !gender || 
+                  (showSekolahField && !sekolah) || 
+                  (showKelasField && !kelas)}
               >
                 Selesai
               </button>
