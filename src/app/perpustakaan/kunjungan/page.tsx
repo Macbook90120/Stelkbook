@@ -1,6 +1,6 @@
 'use client';
 
-import KunjunganChart from '@/components/Barchart';
+import KunjunganChart from '@/components/KunjunganChart';
 import React, { useState } from 'react';
 import Navbar from '@/components/Navbar_Lainnya_Perpus2';
 import { ArrowLeft } from 'lucide-react';
