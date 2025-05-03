@@ -2,10 +2,17 @@
 import React, { ChangeEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/authContext';
+import { MdEdit } from 'react-icons/md'; // Material Design
+import { FaUser } from 'react-icons/fa';
+import Image from "next/image";
+import { Eye, EyeOff } from 'lucide-react';
+
 
 function Page() {
   const router = useRouter();
   const { register2 } = useAuth(); // Changed from register to register2
+
+  const [showPassword, setShowPassword] = useState(false);
 
   const [showWarning, setShowWarning] = useState(false);
   const [showSekolahField, setShowSekolahField] = useState(false);
@@ -93,36 +100,47 @@ function Page() {
   return (
     <div className="min-h-screen p-8 bg-gray-50">
       <div className="mb-8 flex justify-center">
-        <h1 className="text-3xl font-bold text-gray-700">Registrasi</h1>
+      <div className="flex items-center gap-4">
+          <Image 
+          src="/assets/icon/stelkbook-logo-navbar.svg" 
+          alt="Logo" 
+          width={148} height={88} />
+          <h1 className="text-3xl font-bold text-gray-700">Registrasi</h1>
+        </div>
       </div>
 
       <div className="flex justify-center">
-        <div className="bg-white border border-gray-300 rounded-lg p-8 shadow-lg max-w-4xl w-full flex items-center space-x-8">
-          {/* Avatar upload */}
-          <div className="flex flex-col items-center">
-            <div className="w-24 h-24 sm:w-32 sm:h-32 bg-gray-300 rounded-full flex items-center justify-center overflow-hidden">
-              {avatar ? (
-                <img src={avatar} alt="Avatar" className="w-full h-full object-cover" />
-              ) : (
-                <span className="text-gray-500 text-xs"></span>
-              )}
-            </div>
-            <label className="mt-2 cursor-pointer text-sm text-blue-500 hover:underline">
-              Pilih Icon
-              <input
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={(e) => {
-                  if (e.target.files && e.target.files[0]) {
-                    const file = e.target.files[0];
-                    setAvatarFile(file); // Store the file object
-                    setAvatar(URL.createObjectURL(file)); // Create preview URL
-                  }
-                }}
-              />
-            </label>
-          </div>
+  <div className="bg-white border border-gray-300 rounded-lg p-6 sm:p-8 shadow-lg w-full max-w-md flex flex-col items-center">
+    
+{/* Avatar Upload */}
+<div className="relative group w-24 h-24 sm:w-32 sm:h-32">
+  <div className="w-full h-full rounded-full bg-gray-300 overflow-hidden flex items-center justify-center">
+    {avatar ? (
+      <img
+        src={avatar}
+        alt="Avatar"
+        className="w-full h-full object-cover rounded-full"
+      />
+    ) : (
+      <FaUser className="text-gray-700 text-3xl sm:text-4xl" />
+    )}
+  </div>
+  <label className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 flex items-center justify-center rounded-full cursor-pointer transition duration-200">
+    <MdEdit className="text-white text-xl opacity-0 group-hover:opacity-100 transition duration-200" />
+    <input
+      type="file"
+      accept="image/*"
+      className="hidden"
+      onChange={(e) => {
+        if (e.target.files && e.target.files[0]) {
+          const file = e.target.files[0];
+          setAvatarFile(file);
+          setAvatar(URL.createObjectURL(file));
+        }
+      }}
+    />
+  </label>
+</div>
 
           {/* Form */}
           <div className="grid gap-4 w-full">
@@ -149,15 +167,25 @@ function Page() {
             </div>
 
             <div>
-              <label className="block text-gray-700 text-sm font-medium mb-2">Password</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
-                required
-              />
-            </div>
+  <label className="block text-gray-700 text-sm font-medium mb-2">Password</label>
+  <div className="relative">
+    <input
+      type={showPassword ? 'text' : 'password'}
+      value={password}
+      onChange={(e) => setPassword(e.target.value)}
+      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red pr-10"
+      required
+    />
+    <button
+      type="button"
+      onClick={() => setShowPassword(!showPassword)}
+      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+    >
+      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+    </button>
+  </div>
+</div>
+
 
             <div>
               <label className="block text-gray-700 text-sm font-medium mb-2">Kode (NIS/NIP)</label>

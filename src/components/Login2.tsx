@@ -11,6 +11,7 @@ const slides = [
     { image: "/assets/Perpustakaan.jpg", id: "02" },
     { image: "/assets/Perpustakaan.jpg", id: "03" },
     { image: "/assets/Perpustakaan.jpg", id: "04" },
+    { image: "/assets/Perpustakaan.jpg", id: "05" },
 ];
 
 function Login() {
