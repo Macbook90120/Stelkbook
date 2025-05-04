@@ -110,7 +110,7 @@ export default function Home() {
             />
             <div className="absolute bottom-4 left-4">
               <p className="text-white font-bold italic text-2xl lg:text-3xl leading-snug">
-                Kunjungan Hari ini: {'\n'} 1 Pengunjung
+                Kunjungan Hari ini
               </p>
               <button
                 onClick={() => handleNavigation('perpustakaan/kunjungan')}

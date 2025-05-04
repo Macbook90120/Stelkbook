@@ -26,6 +26,9 @@ const [guruSmkData, setGuruSmkData] = useState(null); // Data semua guru SMK
 const [guruSmpDetail, setGuruSmpDetail] = useState(null); // Data spesifik guru SMP berdasarkan ID
 const [guruSmkDetail, setGuruSmkDetail] = useState(null); // Data spesifik guru SMK berdasarkan ID
   const [perpusDetail, setPerpusDetail] = useState(null); // State untuk data perpus spesifik
+  const [kunjunganData, setKunjunganData] = useState(null);
+  const [rekapKunjunganData, setRekapKunjunganData] = useState(null);
+
   const router = useRouter();
 
   // Fetch user data on initial load
@@ -874,6 +877,41 @@ const updateGuruSmk = async (id, form) => {
     }
   };
 
+  const fetchKunjungan = useCallback(async () => {
+    try {
+      const token = localStorage.getItem('auth_token');
+      if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+
+      const res = await axios.get('/kunjungans', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setKunjunganData(res.data.data);
+      return res.data;
+    } catch (e) {
+      console.error("Gagal mengambil data kunjungan:", e.response?.data?.message || e.message);
+      throw new Error(e.response?.data?.message || "Gagal mengambil data kunjungan.");
+    }
+  }, []);
+
+  // Fungsi untuk mengambil rekap data kunjungan
+  const fetchRekapKunjungan = useCallback(async () => {
+    try {
+      const token = localStorage.getItem('auth_token');
+      if (!token) throw new Error("Token tidak ditemukan, silakan login kembali.");
+
+      const res = await axios.get('/kunjungans/rekap', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setRekapKunjunganData(res.data);
+      return res.data;
+    } catch (e) {
+      console.error("Gagal mengambil rekap data kunjungan:", e.response?.data?.message || e.message);
+      throw new Error(e.response?.data?.message || "Gagal mengambil rekap data kunjungan.");
+    }
+  }, []);
+
   return (
     <AuthContext.Provider value={{ 
       user, 
@@ -896,6 +934,10 @@ const updateGuruSmk = async (id, form) => {
       guruSmpDetail,
       guruSmkDetail,
       perpusDetail, 
+      kunjunganData,
+      rekapKunjunganData,
+      fetchKunjungan,
+      fetchRekapKunjungan,
       login, 
       logout, 
       register,
