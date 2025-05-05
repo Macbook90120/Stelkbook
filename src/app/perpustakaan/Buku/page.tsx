@@ -20,7 +20,7 @@ interface Book {
   cover: string;
 }
 
-const Page: React.FC = () => {
+const Page: React.FC = () => { 
   const [showWarningModal, setShowWarningModal] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -53,13 +53,23 @@ const Page: React.FC = () => {
       await deleteBook(id);
       setShowWarningModal(false);
       console.log("Buku dihapus");
-      router.push("/perpustakaan");
+      router.push("/perpustakaan/Daftar_Buku");
     } catch (error) {
       console.error("Gagal menghapus buku:", error);
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-gray-50">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-10 h-10 border-4 border-red border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-gray-600">Memuat buku...</p>
+        </div>
+      </div>
+    );
+  }
+  
   if (!book) return null;
 
   const pdfUrl = `http://localhost:8000/storage/${book.isi}`; 

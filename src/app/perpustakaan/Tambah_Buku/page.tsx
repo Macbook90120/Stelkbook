@@ -57,7 +57,7 @@ function Page() {
             await addBook(formData);
             setShowNotification(true);
             setTimeout(() => {
-                router.push('/perpustakaan'); // Ganti dengan path tampilan awal kamu
+                router.push('/perpustakaan/Daftar_Buku'); // Ganti dengan path tampilan awal kamu
             }, 2000);
             // Reset form setelah berhasil
             setJudul('');
