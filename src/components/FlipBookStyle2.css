@@ -1,0 +1,27 @@
+.book-container {
+    width: 800px;
+    height: 533px;
+    margin: auto;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+
+  .book-container:hover {
+    transform: scale(1.01);
+  }
+  
+  .page {
+    width: 400px;
+    height: 533px;
+    overflow: hidden;
+    background-color: white;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  }
+  
+  .page canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  

@@ -72,7 +72,8 @@ const Page: React.FC = () => {
   
   if (!book) return null;
 
-  const pdfUrl = `http://localhost:8000/storage/${book.isi}`; 
+// With this:
+const pdfUrl = book.isi.startsWith('http') ? book.isi : `http://localhost:8000/storage/${book.isi}`;
 
   return (
     <div className="h-screen p-8 bg-gray-50 overflow-y-auto">
@@ -139,20 +140,20 @@ const Page: React.FC = () => {
 
         {/* Kanan */}
         <div className="flex-grow overflow-x-auto">
-        <div className="bg-gradient-to-r from-red to-slate-300 p-2 rounded-lg">
+        {/* <div className="bg-gradient-to-r from-red to-slate-300 p-2 rounded-lg">
     <iframe
       src={pdfUrl}
       width="100%"
       height="600px"
       className="rounded-lg"
     ></iframe>
-  </div>
+  </div> */}
           
-          {/* {pdfUrl ? (
+          {pdfUrl ? (
             <PageFlipBook pdfUrl={pdfUrl} />
           ) : (
             <p className="text-gray-500">Memuat buku...</p>
-          )} */}
+          )}
         </div>
       </div>
 
