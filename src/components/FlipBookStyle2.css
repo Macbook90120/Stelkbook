@@ -12,6 +12,9 @@
   }
   
   .page {
+    display: block;
+    width: 100%;
+    height: auto;
     width: 400px;
     height: 533px;
     overflow: hidden;

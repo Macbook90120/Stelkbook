@@ -31,8 +31,16 @@ const PageFlipBook: React.FC<PageFlipBookProps> = ({ pdfUrl }) => {
         const container = bookContainerRef.current
         if (!container) return
 
-        container.innerHTML = ''
+        // Sembunyikan container selama loading
+        container.style.visibility = 'hidden'
 
+        // Buat div temporary untuk render halaman
+        const tempContainer = document.createElement('div')
+        tempContainer.style.position = 'absolute'
+        tempContainer.style.left = '-9999px'
+        document.body.appendChild(tempContainer)
+
+        const pages = []
         for (let i = 1; i <= pdfInstance.numPages; i++) {
           const page = await pdfInstance.getPage(i)
           const viewport = page.getViewport({ scale: 1.1 })
@@ -48,22 +56,37 @@ const PageFlipBook: React.FC<PageFlipBookProps> = ({ pdfUrl }) => {
 
           const pageWrapper = document.createElement('div')
           pageWrapper.className = 'page'
+          pageWrapper.dataset.density = 'hard'
           pageWrapper.appendChild(canvas)
-          container.appendChild(pageWrapper)
+          pages.push(pageWrapper)
+          tempContainer.appendChild(pageWrapper)
         }
 
+        // Inisialisasi PageFlip setelah semua halaman siap
         const pageFlip = new PageFlip(container, {
           width: 400,
           height: 533,
           size: 'fixed' as SizeType,
           maxShadowOpacity: 0.5,
           showCover: true,
-          flippingTime: 800, 
+          flippingTime: 800,
           mobileScrollSupport: false,
+          usePortrait: false,
+          disableFlipByClick: false,
         })
+
+        // Kosongkan container dan tambahkan halaman
+        container.innerHTML = ''
+        pages.forEach(page => container.appendChild(page))
 
         pageFlip.loadFromHTML(container.querySelectorAll('.page'))
         pageFlipRef.current = pageFlip
+
+        // Tampilkan container setelah semua siap
+        container.style.visibility = 'visible'
+
+        // Hapus temporary container
+        document.body.removeChild(tempContainer)
 
       } catch (err) {
         console.error('PDF render error:', err)
@@ -86,7 +109,11 @@ const PageFlipBook: React.FC<PageFlipBookProps> = ({ pdfUrl }) => {
 
   return (
     <div className="flex justify-center">
-      <div ref={bookContainerRef} className="book-container" />
+      <div 
+        ref={bookContainerRef} 
+        className="book-container"
+        style={{ visibility: isLoading ? 'hidden' : 'visible' }}
+      />
     </div>
   )
 }
