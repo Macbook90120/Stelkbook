@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Navbar from "@/components/Navbar_Lainnya_Guru";
-import PageFlipBook from "@/components/PageFlipBook";
+import PageFlipBook from "@/components/PageFlipBook2";
 import { useBook } from "@/context/bookContext";
 
 interface Book {
@@ -105,15 +105,19 @@ const Page = () => {
 
           {/* Flipbook */}
           <div className="flex-grow">
-          <div className="bg-gradient-to-r from-red to-slate-300 p-2 rounded-lg">
+          {/* <div className="bg-gradient-to-r from-red to-slate-300 p-2 rounded-lg">
     <iframe
       src={pdfUrl}
       width="100%"
       height="600px"
       className="rounded-lg"
     ></iframe>
-  </div>
-            {/* <PageFlipBook pdfPath={pdfUrl} /> */}
+  </div> */}
+             {pdfUrl ? (
+                        <PageFlipBook pdfUrl={pdfUrl} />
+                      ) : (
+                        <p className="text-gray-500">Memuat buku...</p>
+                      )}
           </div>
         </div>
       </main>
