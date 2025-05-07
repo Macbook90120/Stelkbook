@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import useAuthMiddleware from '@/hooks/auth';
 import { useAuth } from '@/context/authContext';
 import { useEffect, useState } from 'react';
+import { FaBookOpen } from 'react-icons/fa6';
 
 export default function Home() {
   useAuthMiddleware();
@@ -79,53 +80,69 @@ export default function Home() {
       <div className="px-6 mt-6 pt-20 space-y-6">
         <h1 className="text-xl font-semibold text-gray-800">Selamat datang, {user?.username}</h1>
 
-        {/* Atas: Buku & Kunjungan Hari Ini */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Kiri: Tambah Buku dan Daftar Buku */}
-          <div className="flex gap-4">
-            {/* Tambah Buku */}
-            <div className="w-[324px] h-56 md:h-64 bg-gradient-to-tr from-indigo-700 to-purple-600 text-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 flex flex-col items-center justify-center cursor-pointer group">
-              <FaPlus size={36} className="group-hover:scale-110 transition-transform duration-300" />
-              <p className="mt-3 text-white font-bold italic text-2xl lg:text-3xl leading-snug group-hover:underline"
-                onClick={() => handleNavigation('/perpustakaan/Tambah_Buku')}>
-                Tambah Buku
-              </p>
-            </div>
+{/* Atas: Tambah Buku, Daftar Buku, Pengunjung, Kunjungan Buku */}
+<div className='flex justify-center'>
+<div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl w-full">
+  {/* CARD COMPONENT TEMPLATE */}
+  {[
+    {
+      title: 'Tambah Buku',
+      icon: <FaPlus size={36} />,
+      path: '/perpustakaan/Tambah_Buku',
+      gradient: 'from-indigo-700 to-purple-600',
+    },
+    {
+      title: 'Daftar Buku',
+      icon: <FaBook size={36} />,
+      path: '/perpustakaan/Daftar_Buku',
+      gradient: 'from-rose-600 to-red-500',
+    },
+    {
+      title: 'Pengunjung',
+      icon: <FaUserCircle size={36} />,
+      path: '/perpustakaan/kunjungan',
+      gradient: 'from-green-600 to-emerald-500',
+    },
+    {
+      title: 'Kunjungan Buku',
+      icon: <FaBookOpen size={36} />,
+      path: '/perpustakaan/kunjungan_buku',
+      gradient: 'from-blue-600 to-cyan-500',
+    },
+  ].map(({ title, icon, path, gradient }, index) => (
+    <div
+      key={index}
+      onClick={() => handleNavigation(path)}
+      className={`relative cursor-pointer rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 flex flex-col items-center justify-center aspect-square md:h-64 bg-gradient-to-tr ${gradient} text-white`}
+    >
+      {/* Texture background overlay */}
+      <div className="absolute inset-0">
+        <Image
+          src="/assets/texture/008.svg"
+          alt="texture"
+          fill
+          className="object-cover opacity-10 rounded-2xl"
+        />
+      </div>
 
-            {/* Daftar Buku */}
-            <div className="w-[324px] h-56 md:h-64 bg-gradient-to-tr from-rose-600 to-red-500 text-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 flex flex-col items-center justify-center cursor-pointer group">
-              <FaBook size={36} className="group-hover:scale-110 transition-transform duration-300" />
-              <p className="mt-3 text-white font-bold italic text-2xl lg:text-3xl leading-snug group-hover:underline"
-                onClick={() => handleNavigation('/perpustakaan/Daftar_Buku')}>
-                Daftar Buku
-              </p>
-            </div>
-          </div>
-
-          {/* Kunjungan Hari Ini */}
-          <div className="relative w-full h-56 md:h-64 mx-auto rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-200">
-            <Image
-              src="/assets/Admin/Card_Admin.png"
-              alt="Kunjungan Hari Ini"
-              fill
-              className="object-cover"
-            />
-            <div className="absolute bottom-4 left-4">
-              <p className="text-white font-bold italic text-2xl lg:text-3xl leading-snug">
-                Kunjungan Hari ini
-              </p>
-              <button
-                onClick={() => handleNavigation('perpustakaan/kunjungan')}
-                className="mt-2 bg-white text-red font-semibold text-sm py-2 px-8 rounded-full hover:bg-red hover:text-white transition-colors duration-200"
-              >
-                Lanjut
-              </button>
-            </div>
-          </div>
+      {/* Card Content */}
+      <div className="relative z-10 flex flex-col items-center justify-center">
+        <div className="group-hover:scale-110 transition-transform duration-300">
+          {icon}
         </div>
+        <p className="mt-3 font-bold italic text-2xl lg:text-3xl leading-snug group-hover:underline text-center">
+          {title}
+        </p>
+      </div>
+    </div>
+  ))}
+</div>
+</div>
+
 
         {/* Bawah: Persetujuan Registrasi & Daftar Database */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+        <div className='flex justify-center'>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6 max-w-6xl w-full">
           {/* Persetujuan Registrasi */}
           <div className="bg-white shadow-md hover:shadow-lg transition-shadow duration-200 p-5 rounded-2xl w-full max-w-[672px]">
             <h2 className="text-lg font-bold mb-4 text-center text-gray-800">
@@ -194,6 +211,7 @@ export default function Home() {
               </button>
             </div>
           </div>
+        </div>
         </div>
       </div>
     </main>
