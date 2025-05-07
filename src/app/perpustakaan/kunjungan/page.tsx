@@ -91,34 +91,34 @@ export default function KunjunganPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Chart Section */}
-        <div className="w-full h-64 bg-white shadow-lg rounded-xl p-4 border border-gray-200">
-          {rekapKunjunganData ? (
-            <KunjunganChart data={getData()} />
-          ) : (
-            <div className="flex items-center justify-center h-full">
-              <p>Memuat data chart...</p>
-            </div>
-          )}
+        <div className="w-full h-fit bg-white shadow-lg rounded-xl p-4 border border-gray-200">
+  {rekapKunjunganData ? (
+    <KunjunganChart data={getData()} />
+  ) : (
+    <div className="flex items-center justify-center h-64">
+      <p>Memuat data chart...</p>
+    </div>
+  )}
 
-          {/* Mode Selector Buttons */}
-          <div className="flex justify-center mt-6 gap-4">
-            {['hari', 'bulan', 'tahun'].map((item) => (
-              <button
-                key={item}
-                onClick={() => setMode(item as 'hari' | 'bulan' | 'tahun')}
-                className={`px-5 py-2 rounded-full font-semibold shadow-sm transition-all duration-200 ${
-                  mode === item
-                    ? 'bg-OldRed text-white scale-105'
-                    : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
-                }`}
-              >
-                {item === 'hari' ? 'Hari' : 
-                 item === 'bulan' ? 'Bulan' : 
-                 'Tahun'}
-              </button>
-            ))}
-          </div>
-        </div>
+  {/* Mode Selector Buttons - DIPINDAH KE SINI */}
+  <div className="flex justify-center mt-6 gap-4 flex-wrap">
+    {['hari', 'bulan', 'tahun'].map((item) => (
+      <button
+        key={item}
+        onClick={() => setMode(item as 'hari' | 'bulan' | 'tahun')}
+        className={`px-5 py-2 rounded-full font-semibold shadow-sm transition-all duration-200 ${
+          mode === item
+            ? 'bg-OldRed text-white scale-105'
+            : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+        }`}
+      >
+        {item === 'hari' ? 'Hari' : 
+         item === 'bulan' ? 'Bulan' : 
+         'Tahun'}
+      </button>
+    ))}
+  </div>
+</div>
 
         <div className="w-full flex flex-col gap-6">
           {/* Today's Visitors Box */}
