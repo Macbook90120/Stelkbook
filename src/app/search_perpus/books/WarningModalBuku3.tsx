@@ -32,7 +32,7 @@ const WarningModalBuku: React.FC<WarningModalProps> = ({
     try {
       await deleteBook(book.id);
       onClose();
-      router.push("/perpustakaan");
+      router.push("/perpustakaan/Daftar_Buku");
     } catch (error) {
       console.error("Gagal menghapus buku:", error);
     } finally {

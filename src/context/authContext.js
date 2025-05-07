@@ -375,19 +375,20 @@ const fetchAllPerpus = useCallback(async () => {
       setUser(res.data.user);
 
       // Redirect berdasarkan role
-      switch (res.data.user.role) {
-        case 'Admin':
-          router.push('/admin');
-          break;
-        case 'Guru':
-          router.push('/homepage_guru');
-          break;
-        case 'Perpus':
-          router.push('/perpustakaan');
-          break;
-        default:
-          router.push('/homepage');
-      }
+      // switch (res.data.user.role) {
+      //   case 'Admin':
+      //     router.push('/admin');
+      //     break;
+      //   case 'Guru':
+      //     router.push('/homepage_guru');
+      //     break;
+      //   case 'Perpus':
+      //     router.push('/perpustakaan');
+      //     break;
+      //   default:
+      //     router.push('/homepage');
+      // }
+      return res.data.user;
     } catch (e) {
       console.error("Login gagal:", e.response?.data?.message || e.message);
       throw new Error("Login gagal, periksa kembali kode dan password.");

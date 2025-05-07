@@ -41,13 +41,25 @@ const Page = () => {
 
     fetchData();
   }, [bookId, fetchGuruBookById]);
-
-  if (loading) return <div>Loading...</div>;
+  if (loading) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-gray-50">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-10 h-10 border-4 border-red border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-gray-600">Memuat buku...</p>
+        </div>
+      </div>
+    );
+  }
   if (!book) return <div>Buku tidak ditemukan.</div>;
 
   const pdfUrl = `http://localhost:8000/storage/${book.isi}`;
   const coverUrl = `http://localhost:8000/storage/${book.cover}`;
 
+  const handleDownload = () => {
+    window.open(pdfUrl, "_blank");
+  };
+  
   return (
     <div className="min-h-screen bg-gray-50 overflow-y-auto">
       {/* Navbar */}
@@ -91,6 +103,15 @@ const Page = () => {
                 <li><strong>Tahun:</strong> {book.tahun}</li>
                 <li><strong>ISBN:</strong> {book.ISBN}</li>
               </ul>
+
+              
+  {/* Tombol Unduh Buku */}
+  <button
+    onClick={handleDownload}
+    className="mt-4 w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600"
+  >
+    Unduh Buku
+  </button>
             </div>
           </div>
 

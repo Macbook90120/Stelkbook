@@ -45,7 +45,21 @@ function Login() {
         setErrorMessage('');
         setIsSubmitting(true);
         try {
-            await login(form);
+        const user =  await login(form);
+
+        switch (user.role) {
+            case 'Admin':
+              router.push('/admin');
+              break;
+            case 'Guru':
+              router.push('/homepage_guru');
+              break;
+            case 'Perpus':
+              router.push('/perpustakaan');
+              break;
+            default:
+              router.push('/homepage');
+        }
         } catch (error) {
             setErrorMessage('Login gagal. Periksa kembali kode atau password.');
         } finally {
