@@ -67,7 +67,10 @@ const SearchPage = () => {
     }
   }, [query, books]);
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  <div className="flex flex-col items-center gap-3">
+  <div className="w-10 h-10 border-4 border-red border-t-transparent rounded-full animate-spin"></div>
+  <p className="text-gray-600">Memuat buku...</p>
+</div>
   if (error) return <div className="min-h-screen flex items-center justify-center">Error: {error}</div>;
 
   return (
