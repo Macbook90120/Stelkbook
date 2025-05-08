@@ -98,7 +98,8 @@ const SearchPage = () => {
                 <Image
                   src={book.cover}
                   alt={book.judul}
-                  fill
+                  width={150}
+                  height={200}
                   className="rounded-md object-cover"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;

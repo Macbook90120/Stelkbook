@@ -1,30 +1,53 @@
 .book-container {
-    width: 800px;
-    height: 533px;
-    margin: auto;
-    position: relative;
-    cursor: pointer;
-    transition: transform 0.2s;
-  }
+  width: 100%;
+  max-width: 800px; /* Limit max width to 800px on larger screens */
+  height: auto;
+  margin: auto;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
 
-  .book-container:hover {
-    transform: scale(1.01);
+.book-container:hover {
+  transform: scale(1.01);
+}
+
+.page {
+  display: block;
+  width: 100%; /* Make page take full width of the container */
+  height: auto; /* Adjust height based on aspect ratio */
+  overflow: hidden;
+  background-color: white;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+.page canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .book-container {
+    width: 95%; /* Shrink container to fit on tablets and phones */
+    max-width: none;
+    height: auto;
   }
-  
   .page {
-    display: block;
+    width: 100%;
+  }
+}
+
+
+
+@media (max-width: 480px) {
+  .book-container {
+    width: 100%;
+    height: auto; /* Allow it to adjust dynamically on very small screens */
+  }
+  .page {
     width: 100%;
     height: auto;
-    width: 400px;
-    height: 533px;
-    overflow: hidden;
-    background-color: white;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
   }
-  
-  .page canvas {
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
-  
+}

@@ -17,6 +17,27 @@ const PageFlipBook: React.FC<PageFlipBookProps> = ({ pdfUrl }) => {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
+  const [bookDimensions, setBookDimensions] = useState({
+    width: 400,
+    height: 533
+  })
+
+  useEffect(() => {
+    const updateDimensions = () => {
+      const width = window.innerWidth < 768 ? window.innerWidth * 0.9 : 800;  // 90% of the window width or 800px for larger screens
+      const height = (width * 533) / 400;  // Maintain aspect ratio (400:533)
+
+      setBookDimensions({ width, height });
+    }
+
+    updateDimensions()
+    window.addEventListener('resize', updateDimensions)
+
+    return () => {
+      window.removeEventListener('resize', updateDimensions)
+    }
+  }, [])
+
   useEffect(() => {
     let pdfInstance: pdfjs.PDFDocumentProxy | null = null
 
@@ -31,10 +52,10 @@ const PageFlipBook: React.FC<PageFlipBookProps> = ({ pdfUrl }) => {
         const container = bookContainerRef.current
         if (!container) return
 
-        // Sembunyikan container selama loading
+        // Hide container while loading
         container.style.visibility = 'hidden'
 
-        // Buat div temporary untuk render halaman
+        // Create temporary container for pages
         const tempContainer = document.createElement('div')
         tempContainer.style.position = 'absolute'
         tempContainer.style.left = '-9999px'
@@ -62,10 +83,10 @@ const PageFlipBook: React.FC<PageFlipBookProps> = ({ pdfUrl }) => {
           tempContainer.appendChild(pageWrapper)
         }
 
-        // Inisialisasi PageFlip setelah semua halaman siap
+        // Initialize PageFlip after all pages are ready
         const pageFlip = new PageFlip(container, {
-          width: 400,
-          height: 533,
+          width: bookDimensions.width,
+          height: bookDimensions.height,
           size: 'fixed' as SizeType,
           maxShadowOpacity: 0.5,
           showCover: true,
@@ -75,17 +96,17 @@ const PageFlipBook: React.FC<PageFlipBookProps> = ({ pdfUrl }) => {
           disableFlipByClick: false,
         })
 
-        // Kosongkan container dan tambahkan halaman
+        // Clear container and add pages
         container.innerHTML = ''
         pages.forEach(page => container.appendChild(page))
 
         pageFlip.loadFromHTML(container.querySelectorAll('.page'))
         pageFlipRef.current = pageFlip
 
-        // Tampilkan container setelah semua siap
+        // Show container after all is ready
         container.style.visibility = 'visible'
 
-        // Hapus temporary container
+        // Remove temporary container
         document.body.removeChild(tempContainer)
 
       } catch (err) {
@@ -102,7 +123,7 @@ const PageFlipBook: React.FC<PageFlipBookProps> = ({ pdfUrl }) => {
       pdfInstance?.destroy()
       pageFlipRef.current?.destroy()
     }
-  }, [pdfUrl])
+  }, [pdfUrl, bookDimensions])
 
   if (error) return <div className="text-red-500 text-center">{error}</div>
   if (isLoading) return <div className="text-gray-600 text-center">Memuat buku...</div>

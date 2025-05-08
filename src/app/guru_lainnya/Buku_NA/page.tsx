@@ -42,6 +42,10 @@ const Page = () => {
     fetchData();
   }, [bookId, fetchNonAkademikBookById]);
 
+  const handleDownload = () => {
+    window.open(pdfUrl, "_blank");
+  };
+  
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center bg-gray-50">
@@ -101,7 +105,15 @@ const Page = () => {
                 <li><strong>Tahun:</strong> {book.tahun}</li>
                 <li><strong>ISBN:</strong> {book.ISBN}</li>
               </ul>
+              {/* Tombol Unduh Buku */}
+  <button
+    onClick={handleDownload}
+    className="mt-4 w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600"
+  >
+    Unduh Buku
+  </button>
             </div>
+            
           </div>
 
           {/* Flipbook */}

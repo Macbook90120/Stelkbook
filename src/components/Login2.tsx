@@ -126,7 +126,7 @@ function Login() {
                             className="mx-auto opacity-60"
                         />
                     </div>
-                    <form onSubmit={handleSubmit}>
+                    <form onSubmit={handleSubmit} method="POST">
                         <div className="mb-6">
                             <input
                                 type="text"
