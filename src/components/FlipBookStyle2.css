@@ -1,12 +1,13 @@
 .book-container {
   width: 100%;
-  max-width: 800px; /* Limit max width to 800px on larger screens */
+  max-width: 500px;
   height: auto;
-  margin: auto;
+  margin: 0 auto;
   position: relative;
   cursor: pointer;
   transition: transform 0.2s;
 }
+
 
 .book-container:hover {
   transform: scale(1.01);
@@ -14,8 +15,8 @@
 
 .page {
   display: block;
-  width: 100%; /* Make page take full width of the container */
-  height: auto; /* Adjust height based on aspect ratio */
+  width: 100%;
+  aspect-ratio: 3 / 4;
   overflow: hidden;
   background-color: white;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
@@ -30,7 +31,7 @@
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .book-container {
-    width: 95%; /* Shrink container to fit on tablets and phones */
+    width: 95%;
     max-width: none;
     height: auto;
   }
@@ -39,12 +40,10 @@
   }
 }
 
-
-
 @media (max-width: 480px) {
   .book-container {
     width: 100%;
-    height: auto; /* Allow it to adjust dynamically on very small screens */
+    height: auto;
   }
   .page {
     width: 100%;

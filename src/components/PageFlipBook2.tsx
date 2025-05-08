@@ -17,25 +17,24 @@ const PageFlipBook: React.FC<PageFlipBookProps> = ({ pdfUrl }) => {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  const [bookDimensions, setBookDimensions] = useState({
-    width: 400,
-    height: 533
-  })
+  const [bookDimensions, setBookDimensions] = useState({ width: 400, height: 533 })
+  const [isPortraitMode, setIsPortraitMode] = useState<boolean>(typeof window !== 'undefined' ? window.innerWidth < 768 : true)
 
+  // Handle resize
   useEffect(() => {
     const updateDimensions = () => {
-      const width = window.innerWidth < 768 ? window.innerWidth * 0.9 : 800;  // 90% of the window width or 800px for larger screens
-      const height = (width * 533) / 400;  // Maintain aspect ratio (400:533)
+      const screenWidth = window.innerWidth
+      const isMobile = screenWidth < 768
+      setIsPortraitMode(isMobile)
 
-      setBookDimensions({ width, height });
+      const width = isMobile ? screenWidth * 0.9 : Math.min(screenWidth * 0.5, 500)
+      const height = (width * 533) / 400      
+      setBookDimensions({ width, height })
     }
 
     updateDimensions()
     window.addEventListener('resize', updateDimensions)
-
-    return () => {
-      window.removeEventListener('resize', updateDimensions)
-    }
+    return () => window.removeEventListener('resize', updateDimensions)
   }, [])
 
   useEffect(() => {
@@ -52,10 +51,8 @@ const PageFlipBook: React.FC<PageFlipBookProps> = ({ pdfUrl }) => {
         const container = bookContainerRef.current
         if (!container) return
 
-        // Hide container while loading
         container.style.visibility = 'hidden'
 
-        // Create temporary container for pages
         const tempContainer = document.createElement('div')
         tempContainer.style.position = 'absolute'
         tempContainer.style.left = '-9999px'
@@ -83,7 +80,6 @@ const PageFlipBook: React.FC<PageFlipBookProps> = ({ pdfUrl }) => {
           tempContainer.appendChild(pageWrapper)
         }
 
-        // Initialize PageFlip after all pages are ready
         const pageFlip = new PageFlip(container, {
           width: bookDimensions.width,
           height: bookDimensions.height,
@@ -92,21 +88,17 @@ const PageFlipBook: React.FC<PageFlipBookProps> = ({ pdfUrl }) => {
           showCover: true,
           flippingTime: 800,
           mobileScrollSupport: false,
-          usePortrait: false,
+          usePortrait: isPortraitMode,
           disableFlipByClick: false,
         })
 
-        // Clear container and add pages
         container.innerHTML = ''
         pages.forEach(page => container.appendChild(page))
 
         pageFlip.loadFromHTML(container.querySelectorAll('.page'))
         pageFlipRef.current = pageFlip
 
-        // Show container after all is ready
         container.style.visibility = 'visible'
-
-        // Remove temporary container
         document.body.removeChild(tempContainer)
 
       } catch (err) {
@@ -123,19 +115,22 @@ const PageFlipBook: React.FC<PageFlipBookProps> = ({ pdfUrl }) => {
       pdfInstance?.destroy()
       pageFlipRef.current?.destroy()
     }
-  }, [pdfUrl, bookDimensions])
+  }, [pdfUrl, bookDimensions, isPortraitMode])
 
   if (error) return <div className="text-red-500 text-center">{error}</div>
   if (isLoading) return <div className="text-gray-600 text-center">Memuat buku...</div>
 
   return (
-    <div className="flex justify-center">
-      <div 
-        ref={bookContainerRef} 
-        className="book-container"
-        style={{ visibility: isLoading ? 'hidden' : 'visible' }}
-      />
-    </div>
+    <div
+  ref={bookContainerRef}
+  className="book-container"
+  style={{
+    visibility: isLoading ? 'hidden' : 'visible',
+    width: bookDimensions.width,
+    height: bookDimensions.height,
+    maxWidth: '100%',
+  }}
+/>
   )
 }
 
