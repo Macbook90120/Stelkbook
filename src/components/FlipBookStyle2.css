@@ -1,52 +1,57 @@
 .book-container {
   width: 100%;
   max-width: 500px;
-  height: auto;
   margin: 0 auto;
   position: relative;
   cursor: pointer;
   transition: transform 0.2s;
+  visibility: hidden;
+  overflow: hidden;
 }
-
 
 .book-container:hover {
   transform: scale(1.01);
 }
 
-.page {
+canvas {
   display: block;
+  margin: 0 auto;
+}
+
+body.no-scroll {
+  overflow: hidden;
+}
+
+
+.page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
-  aspect-ratio: 3 / 4;
+  height: 100%;
   overflow: hidden;
   background-color: white;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
 }
 
 .page canvas {
+  width: 100% !important;
+  height: auto !important;
+  object-fit: contain;
   display: block;
-  width: 100%;
-  height: 100%;
 }
 
-/* Responsive adjustments */
+
+/* Responsive */
 @media (max-width: 768px) {
   .book-container {
     width: 95%;
     max-width: none;
-    height: auto;
-  }
-  .page {
-    width: 100%;
   }
 }
 
 @media (max-width: 480px) {
   .book-container {
     width: 100%;
-    height: auto;
-  }
-  .page {
-    width: 100%;
-    height: auto;
   }
 }

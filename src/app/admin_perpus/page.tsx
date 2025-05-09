@@ -3,6 +3,7 @@ import React from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar_Lainnya_Perpus2';
+import { ArrowLeft } from 'lucide-react';
 import useAuthMiddleware from '@/hooks/auth';
 import { useAuth } from '@/context/authContext';
 import { useEffect } from 'react';
@@ -35,11 +36,17 @@ function HomePage() {
   return (
     <div className="min-h-screen p-4 bg-white">
       <Navbar />
-      <header className="flex justify-between items-center pt-20 px-8">
-        <div>
-          <p className="text-xl font-semibold text-left font-poppins">Database Anda</p>
-        </div>
-      </header>
+       
+    <header className="flex items-center justify-start pt-20 px-8">
+  <button
+    onClick={() => router.push('/perpustakaan')}
+    className="mr-4 text-gray-600 hover:text-red transition-colors"
+  >
+    <ArrowLeft size={24} />
+  </button>
+  <p className="text-xl font-semibold text-left font-poppins">Database Anda</p>
+</header>
+
 
       <main className="grid grid-cols-1 gap-y-8 md:grid-cols-2 md:gap-6 pt-4">
         {/* Siswa*/}

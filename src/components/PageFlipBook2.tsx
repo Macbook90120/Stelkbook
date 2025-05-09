@@ -53,11 +53,6 @@ const PageFlipBook: React.FC<PageFlipBookProps> = ({ pdfUrl }) => {
 
         container.style.visibility = 'hidden'
 
-        const tempContainer = document.createElement('div')
-        tempContainer.style.position = 'absolute'
-        tempContainer.style.left = '-9999px'
-        document.body.appendChild(tempContainer)
-
         const pages = []
         for (let i = 1; i <= pdfInstance.numPages; i++) {
           const page = await pdfInstance.getPage(i)
@@ -77,7 +72,6 @@ const PageFlipBook: React.FC<PageFlipBookProps> = ({ pdfUrl }) => {
           pageWrapper.dataset.density = 'hard'
           pageWrapper.appendChild(canvas)
           pages.push(pageWrapper)
-          tempContainer.appendChild(pageWrapper)
         }
 
         const pageFlip = new PageFlip(container, {
@@ -99,7 +93,6 @@ const PageFlipBook: React.FC<PageFlipBookProps> = ({ pdfUrl }) => {
         pageFlipRef.current = pageFlip
 
         container.style.visibility = 'visible'
-        document.body.removeChild(tempContainer)
 
       } catch (err) {
         console.error('PDF render error:', err)
@@ -122,15 +115,16 @@ const PageFlipBook: React.FC<PageFlipBookProps> = ({ pdfUrl }) => {
 
   return (
     <div
-  ref={bookContainerRef}
-  className="book-container"
-  style={{
-    visibility: isLoading ? 'hidden' : 'visible',
-    width: bookDimensions.width,
-    height: bookDimensions.height,
-    maxWidth: '100%',
-  }}
-/>
+      ref={bookContainerRef}
+      className="book-container"
+      style={{
+        visibility: isLoading ? 'hidden' : 'visible',
+        width: bookDimensions.width,
+        height: bookDimensions.height,
+        maxWidth: '100%',
+        margin: '0 auto',  // Center the book in the container
+      }}
+    />
   )
 }
 

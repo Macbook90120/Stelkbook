@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { ArrowLeft } from 'lucide-react';
 import Navbar from '@/components/Navbar_Perpus';
 import { useBook } from '@/context/bookContext'; // Import BookContext (JavaScript)
 import useAuthMiddleware from '@/hooks/auth';
@@ -71,15 +72,27 @@ function Page() {
   return (
     <div className="min-h-screen p-8 bg-gray-50 overflow-y-auto">
       <header className="flex justify-between items-center mb-4">
-        <Navbar />
-      </header>
+  <Navbar />
+</header>
 
-      {/* Text */}
-      <div className="mb-8 flex items-center pt-20 px-8">
-        <p className="text-xl font-semibold text-left font-poppins translate-y-[-15px]">
-          Perpus Anda
-        </p>
-      </div>
+
+
+
+<div className="mb-8 flex items-center pt-20 px-8 space-x-4">
+  <button
+    onClick={() => router.push('/perpustakaan')}
+    className="text-gray-600 hover:text-red transition-colors ml-0"
+  >
+    <ArrowLeft size={24} />
+  </button>
+  <p className="text-xl font-semibold text-left font-poppins ml-0">
+    Perpus Anda
+  </p>
+</div>
+
+
+
+ 
 
       {/* Buku Display Section */}
       <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">

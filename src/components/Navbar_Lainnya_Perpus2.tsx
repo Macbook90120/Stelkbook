@@ -58,10 +58,16 @@ const Navbar: React.FC = () => {
               className="flex-shrink-0 cursor-pointer"
               onClick={() => handleNavigation("/profile_perpus2")}
             >
-              <Image
-                  src={user?.avatar ? `http://localhost:8000/storage/${user?.avatar}` : "/assets/Class/Icon_user.png"} alt="User Icon" width={30} height={30} quality={100}
-                 className="rounded-full object-cover md:w-[35px] md:h-[35px]"
-              />
+             <Image
+  src={user?.avatar ? `http://localhost:8000/storage/${user?.avatar}` : "/assets/Class/Icon_user.png"}
+  alt="User Icon"
+  width={35}  // Sesuaikan dengan ukuran yang diinginkan
+  height={35} // Sesuaikan dengan ukuran yang diinginkan
+  quality={100} // Menetapkan kualitas gambar maksimal
+  className="rounded-full object-cover" // Agar gambar tetap terjaga proporsinya
+  style={{ imageRendering: "auto" }}  // Menghindari gambar buram
+/>
+
             </div>
           </div>
         </div>

@@ -23,6 +23,7 @@ export const BookProvider = ({ children }) => {
     const [kelas10Books, setKelas10Books] = useState([]);
     const [kelas11Books, setKelas11Books] = useState([]);   
     const [kelas12Books, setKelas12Books] = useState([]);
+    const [rekapKunjunganBooks, setRekapKunjunganBooks] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -928,6 +929,18 @@ const deleteBookKelas12 = async (id) => {
     }
 };
 
+ const fetchRekapKunjunganBooks = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get('/rekap-kunjungan-books');
+      setRekapKunjunganBooks(response.data.data); // ensure this matches the structure of the response
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
 
     // Ambil data buku saat komponen pertama kali di-mount
     useEffect(() => {
@@ -948,6 +961,7 @@ const deleteBookKelas12 = async (id) => {
         fetchKelas10Books();
         fetchKelas11Books();
         fetchKelas12Books();
+        fetchRekapKunjunganBooks();
     }, []);
 
     return (
@@ -973,6 +987,8 @@ const deleteBookKelas12 = async (id) => {
                 loading,
                 error,
                 fetchBooks,
+                fetchRekapKunjunganBooks,
+                rekapKunjunganBooks,
                 fetchSiswaBooks,
                 fetchKelas1Books,
                 fetchKelas2Books,
