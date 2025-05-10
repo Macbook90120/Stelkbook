@@ -12,7 +12,7 @@ interface RekapKunjunganBook {
   judul: string;
   cover: string;
   kategori: string;
-  sekolah: string;
+  sekolah: string | null;
   total_kunjungan: number;
   cover_url: string;
 }
@@ -69,21 +69,29 @@ export default function KunjunganPage() {
     );
   };
 
-  // Buku dengan sekolah sesuai jenjang atau kategori 'NA'
-  const bukuFilteredByJenjang = jenjang
-    ? jenjang === 'NA'
-      ? rekapKunjunganBooks.filter(book => book.kategori === 'NA')  // Filter berdasarkan kategori NA
-      : rekapKunjunganBooks.filter(book => book.sekolah === jenjang)
-    : [];
+  // Filter buku berdasarkan jenjang (dan menangani NA/null dengan benar)
+  const bukuFilteredByJenjang = (() => {
+    if (!jenjang) return [];
+
+    if (jenjang === 'NA') {
+      return rekapKunjunganBooks.filter(
+        (book) => book.kategori === 'NA' || book.sekolah === null
+      );
+    }
+
+    return rekapKunjunganBooks.filter((book) => book.sekolah === jenjang);
+  })();
 
   const bukuPalingSeringDibaca = bukuFilteredByJenjang[0];
 
+  // Filter data untuk chart (kelas bisa null)
   const filteredChartData = bukuFilteredByJenjang
-    .filter(book => {
+    .filter((book) => {
       if (!kelas) return true;
+      if (book.kategori === 'NA') return true;
       return book.kategori === toRoman(kelas);
     })
-    .map(book => ({
+    .map((book) => ({
       name: book.judul,
       total_kunjungan: book.total_kunjungan,
     }));
