@@ -93,7 +93,7 @@ function Page() {
         try {
             await updateNonAkademikBook(id, formData);
             setShowNotification(true);
-            router.push(`/perpus_lainnya/Buku_NA?id=${id}`);
+            router.push(`/perpus_lainnya`);
         } catch (err) {
             console.error('Error updating book:', err);
         }

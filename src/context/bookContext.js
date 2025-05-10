@@ -246,15 +246,7 @@ export const BookProvider = ({ children }) => {
     
 
     // Fungsi untuk mengambil dan menampilkan file PDF
-    const getBookPdfUrl = useCallback(async (id)=> {
-        try {
-          // ✅ Gunakan URL langsung ke endpoint PDF
-          return `http://localhost:8000/api/books/preview/${id}`;
-        } catch (error) {
-          console.error("Gagal mendapatkan URL PDF:", error);
-          throw error
-        }
-      }, [])
+
       
     
 
@@ -1022,7 +1014,6 @@ const deleteBookKelas12 = async (id) => {
                 fetchPerpusBookById,
                 fetchNonAkademikBookById,
                 fetchBookById,
-                getBookPdfUrl,
                 addBook,
                 updateBook,
                 updateKelas1Book,
