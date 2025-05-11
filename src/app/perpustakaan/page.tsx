@@ -168,6 +168,9 @@ export default function Home() {
                         <p className="text-xs text-gray-500">
                           {user.role === 'Siswa' ? `NIS: ${user.kode}` : `NIP: ${user.kode}`}
                         </p>
+                        <p className="text-xs text-gray-500 font-semibold">
+                         {user.sekolah}
+                        </p>
                         <p className="text-xs text-gray-500 capitalize">{user.role.toLowerCase()}</p>
                       </div>
                     </div>

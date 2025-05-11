@@ -2,7 +2,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import Navbar from '@/components/Navbar_Lainnya_Perpus2';
+import Navbar from '@/components/Navbar_Lainnya_Perpus3';
 import { ArrowLeft } from 'lucide-react';
 import useAuthMiddleware from '@/hooks/auth';
 import { useAuth } from '@/context/authContext';
