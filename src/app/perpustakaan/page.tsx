@@ -104,7 +104,7 @@ export default function Home() {
       gradient: 'from-green-600 to-emerald-500',
     },
     {
-      title: 'Kunjungan Buku',
+      title: 'Review Buku',
       icon: <FaBookOpen size={36} />,
       path: '/perpustakaan/kunjungan_buku',
       gradient: 'from-blue-600 to-cyan-500',
@@ -175,7 +175,7 @@ export default function Home() {
                       </div>
                     </div>
                     <div className="flex gap-2">
-                      <button 
+                      <button   
                         onClick={() => handleApprove(user.id)}
                         className="text-green-500 hover:text-green-600 transition-colors duration-200"
                         title="Setujui"
