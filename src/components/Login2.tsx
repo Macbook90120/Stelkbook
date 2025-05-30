@@ -10,7 +10,7 @@ const slides = [
     { image: "/assets/login/1.png", id: "01" },
     { image: "/assets/login/2.png", id: "02" },
     { image: "/assets/login/3.png", id: "03" },
-    { image: "/assets/login/6.png", id: "04" },
+    { image: "/assets/login/4.png", id: "04" },
     { image: "/assets/login/perpus.png", id: "05" },
 ];
 
