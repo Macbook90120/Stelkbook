@@ -51,7 +51,7 @@ const Navbar_Guru: React.FC = () => {
                 alt="Logo Small"
                 width={40}
                 height={40}
-                className="block md:hidden w-10 h-10 object-contain"
+                className="block md:hidden object-contain"
               />
               {/* Logo besar untuk desktop */}
               <Image
@@ -70,7 +70,13 @@ const Navbar_Guru: React.FC = () => {
               onSubmit={handleSearchSubmit}
               className="w-full max-w-[160px] sm:max-w-[200px] md:max-w-xs flex items-center bg-[#F5F5F5] rounded-full px-3 py-1 md:py-2 shadow-sm"
             >
-              <Image src="/assets/icon/search.svg" alt="Search Icon" width={18} height={18} className="mr-2" />
+            <img
+              src="/assets/icon/search.svg"
+              alt="Search Icon"
+              width={18}
+              height={18}
+              className="mr-2"
+            />
               <input
                 type="text"
                 value={searchTerm}

@@ -51,7 +51,7 @@ const Navbar_Perpus: React.FC = () => {
                 alt="Logo Small"
                 width={40}
                 height={40}
-                className="block md:hidden w-10 h-10 object-contain"
+                className="block md:hidden object-contain"
               />
               {/* Logo besar untuk desktop */}
               <Image
