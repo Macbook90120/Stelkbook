@@ -208,7 +208,7 @@ export const BookProvider = ({ children }) => {
         setLoading(true);
         try {
           const response = await axios.get('/books-perpus');
-          console.log('Response from API:', response.data); // Debugging
+        //   console.log('Response from API:', response.data); // Debugging
           setPerpusBooks(response.data);
         } catch (err) {
           setError(err.message);

@@ -23,8 +23,10 @@ function Login() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [currentSlide, setCurrentSlide] = useState(0);
     const [showPassword, setShowPassword] = useState(false);
+    const [isClient, setIsClient] = useState(false);
 
     useEffect(() => {
+        setIsClient(true);
         document.body.style.overflow = 'hidden';
         const interval = setInterval(() => {
             setCurrentSlide((prev) => (prev + 1) % slides.length);
@@ -45,21 +47,21 @@ function Login() {
         setErrorMessage('');
         setIsSubmitting(true);
         try {
-        const user =  await login(form);
+            const user = await login(form);
 
-        switch (user.role) {
-            case 'Admin':
-              router.push('/admin');
-              break;
-            case 'Guru':
-              router.push('/homepage_guru');
-              break;
-            case 'Perpus':
-              router.push('/perpustakaan');
-              break;
-            default:
-              router.push('/homepage');
-        }
+            switch (user.role) {
+                case 'Admin':
+                    router.push('/admin');
+                    break;
+                case 'Guru':
+                    router.push('/homepage_guru');
+                    break;
+                case 'Perpus':
+                    router.push('/perpustakaan');
+                    break;
+                default:
+                    router.push('/homepage');
+            }
         } catch (error) {
             setErrorMessage('Login gagal. Periksa kembali kode atau password.');
         } finally {
@@ -76,10 +78,10 @@ function Login() {
     };
 
     return (
-        <div className="flex min-h-screen">
-            {/* Left-side slideshow */}
+        <div className="flex min-h-screen flex-col lg:flex-row">
+            {/* Left-side slideshow - Hidden on mobile, shown on lg and up */}
             <div className="hidden lg:block lg:w-9/12 relative" style={{ height: '100vh' }}>
-                {slides.map((slide, index) => (
+                {isClient && slides.map((slide, index) => (
                     <div
                         key={slide.id}
                         className={`absolute inset-0 transition-opacity duration-1000 ${
@@ -90,40 +92,37 @@ function Login() {
                         <Image
                             src={slide.image}
                             alt={`Slide ${index + 1}`}
-                            layout="fill"
-                            objectFit="cover"
-                            priority
-                            className="brightness-75"
+                            fill
+                            className="object-cover brightness-75"
+                            priority={index === 0}
+                            sizes="(max-width: 1024px) 0px, 75vw"
+                            loading={index === 0 ? 'eager' : 'lazy'}
                         />
                     </div>
                 ))}
             </div>
 
             {/* Right-side login */}
-            <div
-                className="flex w-full lg:w-4/12 items-center justify-center p-8 bg-white lg:min-h-screen lg:shadow-lg lg:rounded-none"
-                style={{
-                    position: 'relative',
-                    boxShadow: 'none',
-                    borderTopRightRadius: '0px',
-                    borderBottomRightRadius: '0px',
-                }}
-            >
-                <div className="w-full h-full max-w-md p-8 bg-white rounded-lg">
+            <div className="flex w-full lg:w-4/12 items-center justify-center p-4 sm:p-8 bg-white lg:min-h-screen">
+                <div className="w-full max-w-md p-6 sm:p-8 bg-white rounded-lg">
                     <div className="text-center mb-8">
                         <Image
                             src="/assets/icon/stelkbook-logo.svg"
                             alt="StelkBook Logo"
-                            width={100}
-                            height={100}
+                            width={60}
+                            height={60}
                             className="mx-auto mb-4 opacity-90"
+                            style={{ width: 'auto', height: 'auto' }}
+                            priority // Ditambahkan untuk mengatasi warning LCP
                         />
                         <Image
                             src="/assets/icon/stelkbook-wordmark.svg"
                             alt="Title Text"
-                            width={200}
-                            height={50}
+                            width={180}
+                            height={45}
                             className="mx-auto opacity-60"
+                            style={{ width: 'auto', height: 'auto' }}
+                            priority // Ditambahkan karena ini juga bagian penting di atas fold
                         />
                     </div>
                     <form onSubmit={handleSubmit} method="POST">
@@ -175,19 +174,50 @@ function Login() {
                     </form>
                     <div className="mt-4 text-right">
                         <button
-                            
                             onClick={handleRegistrasiClick}
                             className="text-sm text-red hover:underline cursor-pointer"
                         >
                             Registrasi?
                         </button>
                     </div>
+
+                    {/* Powered by Telkom section - Mobile version */}
+                    <div className="mt-8 lg:hidden flex justify-center">
+                        <div className="flex items-center space-x-4">
+                            <Image 
+                                src="/assets/PoweredBy.png" 
+                                alt="Powered by Logo" 
+                                width={80} 
+                                height={20}
+                                style={{ width: 'auto', height: 'auto' }}
+                            />
+                            <Image 
+                                src="/assets/Telkom.schools.png" 
+                                alt="Telkom Logo" 
+                                width={80} 
+                                height={20}
+                                style={{ width: 'auto', height: 'auto' }}
+                            />
+                        </div>
+                    </div>
                 </div>
 
-                {/* Powered by Telkom section */}
-                <div className="absolute bottom-8 w-full text-center flex justify-center items-center space-x-4">
-                    <Image src="/assets/PoweredBy.png" alt="Powered by Logo" width={80} height={10} />
-                    <Image src="/assets/Telkom.schools.png" alt="Telkom Logo" width={80} height={10} />
+                {/* Powered by Telkom section - Desktop version */}
+                <div className="absolute bottom-8 w-full text-center hidden lg:flex justify-center items-center space-x-4">
+                    <Image 
+                        src="/assets/PoweredBy.png" 
+                        alt="Powered by Logo" 
+                        width={80} 
+                        height={20}
+                        style={{ width: 'auto', height: 'auto' }}
+                    />
+                    <Image 
+                        src="/assets/Telkom.schools.png" 
+                        alt="Telkom Logo" 
+                        width={80} 
+                        height={20}
+                        style={{ width: 'auto', height: 'auto' }}
+                    />
                 </div>
             </div>
 

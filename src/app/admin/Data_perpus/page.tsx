@@ -20,7 +20,7 @@ function Page() {
   const [selectedPerpus, setSelectedPerpus] = useState({ 
     id: "", 
     name: "", 
-    nip: "" ,
+    nip: "",
     avatar: ""
   });
   const { fetchAllPerpus, perpusData, deletePerpus } = useAuth();
@@ -42,8 +42,8 @@ function Page() {
     setSelectedPerpus({ 
       id: perpus.id, 
       name: perpus.username, 
-      nip: perpus.nip ,
-      avatar:perpus.avatar
+      nip: perpus.nip,
+      avatar: perpus.avatar
     });
     setIsModalOpen(true);
   };
@@ -84,6 +84,7 @@ function Page() {
             width={10}
             height={16}
             className="translate-y-[-15px] translate-x-[1px]"
+            style={{ width: 'auto', height: 'auto' }}
           />
         </div>
         <p className="text-xl font-semibold text-left font-poppins translate-y-[-15px]">
@@ -117,10 +118,11 @@ function Page() {
                       : "/assets/Class/icon_user.png"
                   }
                   alt="User Icon"
-                  width={40}
-                  height={40}
+                  width={48}
+                  height={48}
                   quality={100}
                   className="w-12 h-12 object-cover rounded-full mr-3"
+                  style={{ width: 'auto', height: 'auto' }}
                 />
                 <div>
                   <p className="font-semibold">{perpus.username}</p>
@@ -138,6 +140,7 @@ function Page() {
                     width={16}
                     height={16}
                     className="md:mr-2"
+                    style={{ width: 'auto', height: 'auto' }}
                   />
                   <span className="hidden md:block">Edit User</span>
                 </button>
@@ -152,6 +155,7 @@ function Page() {
                     width={16}
                     height={16}
                     className="md:mr-2"
+                    style={{ width: 'auto', height: 'auto' }}
                   />
                   <span className="hidden md:block">Hapus User</span>
                 </button>

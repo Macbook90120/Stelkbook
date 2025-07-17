@@ -32,6 +32,8 @@ function Page() {
     path: '/perpustakaan/Tambah_Buku',
   };
 
+  
+
   // Gabungkan data buku perpustakaan dengan data statis
   useEffect(() => {
     fetchBooks(); // Ambil data buku perpustakaan dari server
@@ -40,7 +42,7 @@ function Page() {
   useEffect(() => {
     const mappedBooks: Book[] = books.map((book: Book) => {
       const coverUrl = book.cover ? `http://localhost:8000/storage/${book.cover}` : '/assets/default-cover.png';
-      console.log(`Cover URL for Book ID ${book.id}:`, coverUrl); // Debugging
+      // console.log(`Cover URL for Book ID ${book.id}:`, coverUrl); // Debugging
       return {
         id: book.id,
         judul: book.judul,

@@ -6,22 +6,23 @@ import Navbar from '@/components/Navbar_Lainnya_Admin';
 import useAuthMiddleware from '@/hooks/auth';
 import { useAuth } from '@/context/authContext';
 import { useEffect } from 'react';
+
 function HomePage() {
-   useAuthMiddleware();
+  useAuthMiddleware();
   const router = useRouter();
-  const {user} = useAuth();
-   useEffect(() => {
-          // Check if user is not null before accessing its properties
-          if (user) {
-            if (user.role === 'Admin') {
-              router.push('/admin');
-            } else if (user.role === 'Guru') {
-              router.push('/homepage_guru');
-            }else {
-              router.push('/homepage');
-            }
-          }
-        }, [user, router]); 
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (user) {
+      if (user.role === 'Admin') {
+        router.push('/admin');
+      } else if (user.role === 'Guru') {
+        router.push('/homepage_guru');
+      } else {
+        router.push('/homepage');
+      }
+    }
+  }, [user, router]);
 
   const handleButtonClick = (destination: string) => {
     switch (destination) {
@@ -61,7 +62,9 @@ function HomePage() {
             src="/assets/Admin/Card_Admin.png"
             alt="Siswa"
             fill
+            sizes="(max-width: 768px) 100vw, 50vw"
             className="rounded-lg object-cover"
+            priority = {false}
           />
           <div className="absolute bottom-4 left-4">
             <p className="text-white font-bold italic text-3xl lg:text-4xl">Siswa</p>
@@ -80,7 +83,9 @@ function HomePage() {
             src="/assets/Admin/Card_Admin.png"
             alt="Guru"
             fill
+            sizes="(max-width: 768px) 100vw, 50vw"
             className="rounded-lg object-cover"
+            priority = {false}
           />
           <div className="absolute bottom-4 left-4">
             <p className="text-white font-bold italic text-3xl lg:text-4xl">Guru</p>
@@ -99,7 +104,9 @@ function HomePage() {
             src="/assets/Admin/Card_Admin.png"
             alt="Pengurus Perpus"
             fill
+            sizes="(max-width: 768px) 100vw, 50vw"
             className="rounded-lg object-cover"
+            priority = {false}
           />
           <div className="absolute bottom-4 left-4">
             <p className="text-white font-bold italic text-3xl lg:text-4xl">Pengurus Perpustakaan</p>
@@ -118,7 +125,9 @@ function HomePage() {
             src="/assets/Admin/Card_Admin.png"
             alt="Membuat User"
             fill
+            sizes="(max-width: 768px) 100vw, 50vw"
             className="rounded-lg object-cover"
+            priority = {false}
           />
           <div className="absolute bottom-4 left-4">
             <p className="text-white font-bold italic text-3xl lg:text-4xl">Membuat User</p>
