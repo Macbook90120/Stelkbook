@@ -14,7 +14,7 @@ interface ConfirmationModalProps {
   isOpen: boolean;
   onClose: () => void;
   guru: Guru;
-  onSuccess?: () => void; // Tambahan opsional seperti di perpus
+  onSuccess?: () => void;
 }
 
 const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
@@ -23,7 +23,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   guru,
   onSuccess,
 }) => {
-  const { deleteGuruSd, fetchAllGuruSd } = useAuth();
+  const { deleteGuruSd } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,12 +32,10 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
     setError(null);
 
     try {
-      console.log("Menghapus guru SD dengan ID:", guru.id);
       await deleteGuruSd(guru.id);
       onSuccess?.();
       onClose();
     } catch (err) {
-      console.error('Error deleting guru SD:', err);
       setError('Gagal menghapus guru SD. Silakan coba lagi.');
     } finally {
       setIsLoading(false);

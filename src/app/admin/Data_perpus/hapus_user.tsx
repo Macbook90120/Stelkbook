@@ -26,7 +26,7 @@ const HapusUserModal: React.FC<ConfirmationModalProps> = ({
 
     try {
       await deletePerpus(perpus.id);
-      console.log("Perpus berhasil dihapus");
+      // console.log("Perpus berhasil dihapus");
       onSuccess?.();
       onClose();
     } catch (err) {
@@ -57,6 +57,7 @@ const HapusUserModal: React.FC<ConfirmationModalProps> = ({
               width={48}
               height={48}
               className="rounded-full object-cover"
+              style={{ width: '48px', height: '48px' }}
             />
           </div>
           <div>

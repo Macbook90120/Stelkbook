@@ -44,9 +44,10 @@ const Navbar: React.FC = () => {
                   fill
                   sizes="50px"
                   className="object-contain"
+                  priority={true}
                 />
               </div>
-              
+                
               {/* Desktop Logo */}
               <div className="relative w-28 h-[35px] md:w-40 md:h-[50px] hidden md:block">
                 <Image
@@ -55,6 +56,7 @@ const Navbar: React.FC = () => {
                   fill
                   sizes="(max-width: 768px) 112px, 160px"
                   className="object-contain"
+                  priority={true}
                 />
               </div>
             </div>
@@ -78,6 +80,7 @@ const Navbar: React.FC = () => {
                   sizes="(max-width: 768px) 30px, 35px"
                   className="rounded-full object-cover"
                   quality={100}
+                  priority={false}
                 />
               </div>
             </div>

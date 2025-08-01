@@ -32,7 +32,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
     setError(null);
 
     try {
-      console.log("Menghapus guru SD dengan ID:", guru.id);
+      // console.log("Menghapus guru SD dengan ID:", guru.id);
       await deleteGuruSd(guru.id);
       onSuccess?.();
       onClose();

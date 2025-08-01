@@ -23,9 +23,9 @@ const HapusUserModal: React.FC<ConfirmationModalProps> = ({
     setError(null); // Reset error
 
     try {
-      console.log("Menghapus guru dengan ID:", guru.id); // Log ID yang dikirim
+      // console.log("Menghapus guru dengan ID:", guru.id); // Log ID yang dikirim
       await deleteGuru(guru.id); // Panggil fungsi deleteGuru dengan ID guru
-      console.log("Guru berhasil dihapus"); // Log keberhasilan
+      // console.log("Guru berhasil dihapus"); // Log keberhasilan
       await fetchAllGuru(); // Refresh data guru setelah penghapusan
       onClose(); // Tutup modal setelah berhasil
     } catch (err) {

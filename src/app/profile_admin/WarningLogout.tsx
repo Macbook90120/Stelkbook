@@ -3,9 +3,10 @@ import React from 'react';
 interface WarningModalProps {
   onClose: () => void; // Function to close the modal
   onConfirm: () => void; // Function to confirm the logout action
+  isLoading: boolean; // ← TAMBAHKAN INI
 }
 
-const WarningModal: React.FC<WarningModalProps> = ({ onClose, onConfirm }) => {
+const WarningModal: React.FC<WarningModalProps> = ({ onClose, onConfirm,isLoading }) => {
   return (
     <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
       <div className="bg-white rounded-lg shadow-xl p-6 w-[90%] max-w-md">
@@ -31,6 +32,7 @@ const WarningModal: React.FC<WarningModalProps> = ({ onClose, onConfirm }) => {
           <button
             className="px-4 py-2 bg-red text-white rounded-md hover:bg-red-600 transition-colors"
             onClick={onConfirm}
+            disabled={isLoading}
           >
             Log Out
           </button>

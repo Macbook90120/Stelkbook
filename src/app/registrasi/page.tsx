@@ -2,18 +2,16 @@
 import React, { ChangeEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/authContext';
-import { MdEdit } from 'react-icons/md'; // Material Design
+import { MdEdit } from 'react-icons/md';
 import { FaUser } from 'react-icons/fa';
 import Image from "next/image";
 import { Eye, EyeOff } from 'lucide-react';
 
-
 function Page() {
   const router = useRouter();
-  const { register2 } = useAuth(); // Changed from register to register2
+  const { register2 } = useAuth();
 
   const [showPassword, setShowPassword] = useState(false);
-
   const [showWarning, setShowWarning] = useState(false);
   const [showSekolahField, setShowSekolahField] = useState(false);
   const [showKelasField, setShowKelasField] = useState(false);
@@ -27,8 +25,9 @@ function Page() {
   const [kode, setKode] = useState('');
   const [role, setRole] = useState('');
   const [avatar, setAvatar] = useState<string | null>(null);
-  const [avatarFile, setAvatarFile] = useState<File | null>(null); // Added for file upload
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [errorMessage, setErrorMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false); // ✅ Spinner State
 
   const handleStatusChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const selectedRole = e.target.value;
@@ -52,7 +51,7 @@ function Page() {
 
   const handleSelesaiClick = async () => {
     try {
-      // Call register2 with all required parameters
+      setIsLoading(true); // ✅ Start Spinner
       await register2(
         username,
         email,
@@ -64,13 +63,13 @@ function Page() {
         kelas,
         avatarFile
       );
-      
-      // Show success message or redirect
-      setShowWarning(true); // Show the approval waiting message
+      setShowWarning(true);
     } catch (e: any) {
       console.error("Registrasi gagal:", e);
       const msg = e.response?.data?.message || "Registrasi gagal. Silakan coba lagi.";
       setErrorMessage(msg);
+    } finally {
+      setIsLoading(false); // ✅ Stop Spinner
     }
   };
 
@@ -99,51 +98,57 @@ function Page() {
 
   return (
     <div className="min-h-screen p-8 bg-gray-50">
-      <div className="mb-8 flex justify-center">
-      <div className="flex items-center gap-4">
-          <Image 
-          src="/assets/icon/stelkbook-logo-navbar.svg" 
-          alt="Logo" 
-          width={148} height={88} />
-          <h1 className="text-3xl font-bold text-gray-700">Registrasi</h1>
-        </div>
-      </div>
+     <div className="mb-8 flex justify-center">
+  <div className="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
+    <Image
+      src="/assets/icon/stelkbook-logo-navbar.svg"
+      alt="Logo"
+      width={148}
+      height={88}
+      style={{ width: 'auto', height: 'auto' }} // ✅ Perbaiki Warning
+      priority={true}
+    />
+    <h1 className="text-3xl font-bold text-gray-700">Registrasi</h1>
+  </div>
+</div>
+
 
       <div className="flex justify-center">
-  <div className="bg-white border border-gray-300 rounded-lg p-6 sm:p-8 shadow-lg w-full max-w-md flex flex-col items-center">
-    
-{/* Avatar Upload */}
-<div className="relative group w-24 h-24 sm:w-32 sm:h-32">
-  <div className="w-full h-full rounded-full bg-gray-300 overflow-hidden flex items-center justify-center">
-    {avatar ? (
-      <img
-        src={avatar}
-        alt="Avatar"
-        className="w-full h-full object-cover rounded-full"
-      />
-    ) : (
-      <FaUser className="text-gray-700 text-3xl sm:text-4xl" />
-    )}
-  </div>
-  <label className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 flex items-center justify-center rounded-full cursor-pointer transition duration-200">
-    <MdEdit className="text-white text-xl opacity-0 group-hover:opacity-100 transition duration-200" />
-    <input
-      type="file"
-      accept="image/*"
-      className="hidden"
-      onChange={(e) => {
-        if (e.target.files && e.target.files[0]) {
-          const file = e.target.files[0];
-          setAvatarFile(file);
-          setAvatar(URL.createObjectURL(file));
-        }
-      }}
-    />
-  </label>
-</div>
+        <div className="bg-white border border-gray-300 rounded-lg p-6 sm:p-8 shadow-lg w-full max-w-md flex flex-col items-center">
+
+          {/* Avatar Upload */}
+          <div className="relative group w-24 h-24 sm:w-32 sm:h-32">
+            <div className="w-full h-full rounded-full bg-gray-300 overflow-hidden flex items-center justify-center">
+              {avatar ? (
+                <img
+                  src={avatar}
+                  alt="Avatar"
+                  className="w-full h-full object-cover rounded-full"
+                />
+              ) : (
+                <FaUser className="text-gray-700 text-3xl sm:text-4xl" />
+              )}
+            </div>
+            <label className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 flex items-center justify-center rounded-full cursor-pointer transition duration-200">
+              <MdEdit className="text-white text-xl opacity-0 group-hover:opacity-100 transition duration-200" />
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  if (e.target.files && e.target.files[0]) {
+                    const file = e.target.files[0];
+                    setAvatarFile(file);
+                    setAvatar(URL.createObjectURL(file));
+                  }
+                }}
+              />
+            </label>
+          </div>
 
           {/* Form */}
           <div className="grid gap-4 w-full">
+            {/* Username */}
             <div>
               <label className="block text-gray-700 text-sm font-medium mb-2">Username</label>
               <input
@@ -155,6 +160,7 @@ function Page() {
               />
             </div>
 
+            {/* Email */}
             <div>
               <label className="block text-gray-700 text-sm font-medium mb-2">Email</label>
               <input
@@ -166,27 +172,28 @@ function Page() {
               />
             </div>
 
+            {/* Password */}
             <div>
-  <label className="block text-gray-700 text-sm font-medium mb-2">Password</label>
-  <div className="relative">
-    <input
-      type={showPassword ? 'text' : 'password'}
-      value={password}
-      onChange={(e) => setPassword(e.target.value)}
-      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red pr-10"
-      required
-    />
-    <button
-      type="button"
-      onClick={() => setShowPassword(!showPassword)}
-      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
-    >
-      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-    </button>
-  </div>
-</div>
+              <label className="block text-gray-700 text-sm font-medium mb-2">Password</label>
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red pr-10"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
+            </div>
 
-
+            {/* Kode */}
             <div>
               <label className="block text-gray-700 text-sm font-medium mb-2">Kode (NIS/NIP)</label>
               <input
@@ -198,6 +205,7 @@ function Page() {
               />
             </div>
 
+            {/* Status */}
             <div>
               <label className="block text-gray-700 text-sm font-medium mb-2">Status</label>
               <select
@@ -214,6 +222,7 @@ function Page() {
               </select>
             </div>
 
+            {/* Sekolah */}
             {showSekolahField && (
               <div>
                 <label className="block text-gray-700 text-sm font-medium mb-2">Sekolah</label>
@@ -231,6 +240,7 @@ function Page() {
               </div>
             )}
 
+            {/* Kelas */}
             {showKelasField && sekolah && (
               <div>
                 <label className="block text-gray-700 text-sm font-medium mb-2">Kelas</label>
@@ -246,6 +256,7 @@ function Page() {
               </div>
             )}
 
+            {/* Gender */}
             <div>
               <label className="block text-gray-700 text-sm font-medium mb-2">Gender</label>
               <select
@@ -287,17 +298,55 @@ function Page() {
               </div>
             )}
 
-            <div className="flex justify-center mt-8">
-              <button
-                className="bg-red text-white px-6 py-2 rounded-lg shadow-md hover:bg-OldRed focus:outline-none focus:ring-2 focus:ring-red"
-                onClick={handleSelesaiClick}
-                disabled={!username || !email || !password || !kode || !role || !gender || 
-                  (showSekolahField && !sekolah) || 
-                  (showKelasField && !kelas)}
-              >
-                Selesai
-              </button>
-            </div>
+          <div className="flex justify-center mt-8">
+  <button
+    type="button" // ✅ supaya tidak trigger submit default
+    className={`bg-red text-white px-6 py-2 rounded-lg shadow-md hover:bg-OldRed focus:outline-none focus:ring-2 focus:ring-red flex items-center gap-2 ${
+      isLoading ? 'opacity-75 cursor-not-allowed' : ''
+    }`}
+    onClick={handleSelesaiClick}
+    disabled={
+      isLoading ||
+      !username ||
+      !email ||
+      !password ||
+      !kode ||
+      !role ||
+      !gender ||
+      (showSekolahField && !sekolah) ||
+      (showKelasField && !kelas)
+    }
+  >
+    {isLoading ? (
+      <>
+        <svg
+          className="animate-spin h-5 w-5 text-white"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            className="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="4"
+          ></circle>
+          <path
+            className="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+          ></path>
+        </svg>
+        <span>Loading...</span>
+      </>
+    ) : (
+      'Selesai'
+    )}
+  </button>
+</div>
+
           </div>
         </div>
       </div>

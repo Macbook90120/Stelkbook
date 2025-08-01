@@ -8,13 +8,14 @@ interface Guru {
   username: string;
   nip: string;
   sekolah: string;
+  kelas: string;
 }
 
 interface ConfirmationModalProps {
   isOpen: boolean;
   onClose: () => void;
   guru: Guru;
-  onSuccess?: () => void; // Tambahan opsional seperti di perpus
+  onSuccess?: () => void;
 }
 
 const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
@@ -32,13 +33,11 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
     setError(null);
 
     try {
-      console.log("Menghapus guru SD dengan ID:", guru.id);
       await deleteGuruSmk(guru.id);
       onSuccess?.();
       onClose();
     } catch (err) {
-      console.error('Error deleting guru SD:', err);
-      setError('Gagal menghapus guru SD. Silakan coba lagi.');
+      setError('Gagal menghapus guru SMK. Silakan coba lagi.');
     } finally {
       setIsLoading(false);
     }
@@ -65,6 +64,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
           <div>
             <p className="font-bold">{guru.username}</p>
             <p className="font-semibold text-OldRed">{guru.sekolah}</p>
+            <p className="font-semibold text-OldRed">Kelas {guru.kelas}</p>
             <p className="text-gray-500">{guru.nip}</p>
           </div>
         </div>

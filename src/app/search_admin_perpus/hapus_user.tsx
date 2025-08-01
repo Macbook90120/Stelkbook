@@ -52,9 +52,10 @@ const HapusUserModal: React.FC<ConfirmationModalProps> = ({
             <Image
               src="/assets/Class/icon_user.png"
               alt="User Icon"
-              width={38}
-              height={38}
+              width={48}
+              height={48}
               className="rounded-full"
+              style={{ width: '48px', height: '48px' }}
             />
           </div>
           <div>

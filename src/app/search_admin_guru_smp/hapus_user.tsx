@@ -32,12 +32,12 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
     setError(null);
 
     try {
-      console.log("Menghapus guru SD dengan ID:", guru.id);
+      // console.log("Menghapus guru SD dengan ID:", guru.id);
       await deleteGuruSmp(guru.id);
       onSuccess?.();
       onClose();
     } catch (err) {
-      console.error('Error deleting guru SD:', err);
+      // console.error('Error deleting guru SD:', err);
       setError('Gagal menghapus guru SD. Silakan coba lagi.');
     } finally {
       setIsLoading(false);
