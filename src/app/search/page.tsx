@@ -21,26 +21,30 @@ const SearchPage = () => {
   const searchParams = useSearchParams();
   const query = searchParams.get("q")?.toLowerCase() || "";
   const [filteredBooks, setFilteredBooks] = useState<Book[]>([]);
-  
-  // Hanya menggunakan fetchBooks dari context
-  const { books, loading, error, fetchBooks } = useBook();
+  const [isLoading, setIsLoading] = useState(true); // ✅ Tambah loading state
+
+  const { books, error, fetchBooks } = useBook();
 
   const navigateToBook = (id: number) => {
     router.push(`search/books?id=${id}`);
   };
 
   useEffect(() => {
-    fetchBooks(); // Memuat data buku saat komponen mount
+    const loadData = async () => {
+      setIsLoading(true);
+      await fetchBooks(); // Tunggu ambil data
+      setIsLoading(false);
+    };
+    loadData();
   }, [fetchBooks]);
 
   useEffect(() => {
     if (query && books.length > 0) {
-      // Proses data buku untuk menambahkan URL cover dan path
       const processedBooks = books.map((book: any) => {
-        const coverUrl = book.cover 
-          ? `http://localhost:8000/storage/${book.cover}` 
-          : '/assets/default-cover.png';
-        
+        const coverUrl = book.cover
+          ? `http://localhost:8000/storage/${book.cover}`
+          : "/assets/default-cover.png";
+
         return {
           id: book.id,
           judul: book.judul,
@@ -48,30 +52,40 @@ const SearchPage = () => {
           subject: book.subject || "",
           penulis: book.penulis || "Unknown Author",
           kategori: book.kategori || "",
-          path: `search/books?id=${book.id}`
+          path: `search/books?id=${book.id}`,
         };
       });
 
-      // Filter buku berdasarkan query
       const results = processedBooks.filter(
-        (book:any) =>
+        (book: any) =>
           book.judul.toLowerCase().includes(query) ||
           (book.kategori && book.kategori.toLowerCase().includes(query)) ||
           (book.subject && book.subject.toLowerCase().includes(query)) ||
           (book.penulis && book.penulis.toLowerCase().includes(query))
       );
-      
+
       setFilteredBooks(results);
     } else {
       setFilteredBooks([]);
     }
   }, [query, books]);
 
-  <div className="flex flex-col items-center gap-3">
-  <div className="w-10 h-10 border-4 border-red border-t-transparent rounded-full animate-spin"></div>
-  <p className="text-gray-600">Memuat buku...</p>
-</div>
-  if (error) return <div className="min-h-screen flex items-center justify-center">Error: {error}</div>;
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex flex-col justify-center items-center bg-white">
+        <div className="w-14 h-14 border-4 border-red border-t-transparent rounded-full animate-spin"></div>
+        <p className="text-gray-600 mt-4 text-lg">Memuat buku...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        Error: {error}
+      </div>
+    );
+  }
 
   return (
     <div className="pt-28 px-6 md:px-16 lg:px-32 min-h-screen bg-white">
@@ -94,23 +108,27 @@ const SearchPage = () => {
               onClick={() => navigateToBook(book.id)}
               className="bg-white hover:bg-gray-100 hover:scale-105 transition-transform duration-200 rounded-lg p-4 cursor-pointer flex flex-col items-center"
             >
-              <div className="w-[150px] h-[200px] relative">
-                <Image
-                  src={book.cover}
-                  alt={book.judul}
-                  width={150}
-                  height={200}
-                  className="rounded-md object-cover"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = '/assets/default-cover.png';
-                  }}
-                />
-              </div>
+             <div className="w-[150px] h-[200px] relative">
+  <Image
+    src={book.cover}
+    alt={book.judul}
+    fill
+    sizes="300px"
+    className="rounded-md object-cover"
+    priority
+    onError={(e) => {
+      const target = e.target as HTMLImageElement;
+      target.src = '/assets/default-cover.png';
+    }}
+  />
+</div>
+
               <h3 className="mt-4 text-center text-sm font-semibold text-gray-800">
                 {book.judul}
               </h3>
-              {book.penulis && <p className="text-xs text-gray-500">{book.penulis}</p>}
+              {book.penulis && (
+                <p className="text-xs text-gray-500">{book.penulis}</p>
+              )}
               {book.kategori && (
                 <p className="text-xs text-gray-500 font-medium">
                   {book.kategori}

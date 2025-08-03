@@ -36,28 +36,28 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               className="flex items-center space-x-2 cursor-pointer hover:opacity-80"
               onClick={() => handleNavigation("/SD")}
             >
-              <Image src="/assets/Class/buku.svg" alt="Book Icon" width={20} height={20} />
+              <Image src="/assets/Class/buku.svg" alt="Book Icon" width={20} height={20} style={{width:'20px',height: "20px"}} />
               <span className="text-lg font-semibold">SD</span>
             </li>
             <li
               className="flex items-center space-x-2 cursor-pointer hover:opacity-80"
               onClick={() => handleNavigation("/SMP")}
             >
-              <Image src="/assets/Class/buku.svg" alt="Book Icon" width={20} height={20} />
+              <Image src="/assets/Class/buku.svg" alt="Book Icon" width={20} height={20}  style={{width:'20px',height: "20px"}} />
               <span className="text-lg font-semibold">SMP</span>
             </li>
             <li
               className="flex items-center space-x-2 cursor-pointer hover:opacity-80"
               onClick={() => handleNavigation("/SMK")}
             >
-              <Image src="/assets/Class/buku.svg" alt="Book Icon" width={20} height={20} />
+              <Image src="/assets/Class/buku.svg" alt="Book Icon" width={20} height={20}  style={{width:'20px',height: "20px"}} />
               <span className="text-lg font-semibold">SMK</span>
             </li>
             <li
               className="flex items-center space-x-2 cursor-pointer hover:opacity-80"
               onClick={() => handleNavigation("/lainnya")}
             >
-              <Image src="/assets/Class/buku.svg" alt="Book Icon" width={20} height={20} />
+              <Image src="/assets/Class/buku.svg" alt="Book Icon" width={20} height={20}  style={{width:'20px',height: "20px"}} />
               <span className="text-lg font-semibold">Non-Akademik</span>
             </li>
           </ul>

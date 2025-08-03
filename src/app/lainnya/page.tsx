@@ -21,22 +21,15 @@ function Page() {
   const { nonAkademikBooks, loading, error, fetchNonAkademikBooks } = useBook();
   const [displayBooks, setDisplayBooks] = useState<Book[]>([]);
 
-  // Redirect based on user role
-
-
-  // Fetch non-akademik books on component mount
   useEffect(() => {
     fetchNonAkademikBooks();
   }, [fetchNonAkademikBooks]);
 
-  // Process books data when it changes
   useEffect(() => {
     const processedBooks = nonAkademikBooks.map((book: Book) => {
       const coverUrl = book.cover 
         ? `http://localhost:8000/storage/${book.cover}` 
         : '/assets/default-cover.png';
-      
-      console.log(`Cover URL for Book ID ${book.id}:`, coverUrl);
       
       return {
         id: book.id,
@@ -53,18 +46,16 @@ function Page() {
     router.push(path);
   };
 
-    if (loading) {
-      return (
-        <div className="h-screen flex items-center justify-center bg-gray-50">
-          <div className="flex flex-col items-center gap-3">
-            <div className="w-10 h-10 border-4 border-red border-t-transparent rounded-full animate-spin"></div>
-            <p className="text-gray-600">Memuat buku...</p>
-          </div>
+  if (loading) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-gray-50">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-10 h-10 border-4 border-red border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-gray-600">Memuat buku...</p>
         </div>
-      );
-    }
-    
-
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen p-8 bg-gray-50 overflow-y-auto">
@@ -79,7 +70,7 @@ function Page() {
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
-        {displayBooks.map((book) => (
+        {displayBooks.map((book, index) => (
           <div
             key={book.id}
             className="text-center cursor-pointer hover:bg-gray-100 p-4 rounded-lg transition-colors"
@@ -87,16 +78,17 @@ function Page() {
           >
             <div className="w-[150px] h-[200px] relative mx-auto">
               <Image
-                src={book.cover}
-                alt={book.judul}
-                fill
-                className="object-cover rounded-lg shadow-md"
-                onError={(e) => {
-                  console.error(`Failed to load image: ${book.cover}`);
-                  const target = e.target as HTMLImageElement;
-                  target.src = '/assets/default-cover.png';
-                }}
-              />
+                 src={book.cover}
+                 alt={book.judul}
+                 fill
+                 sizes="300px"
+                 className="rounded-md object-cover"
+                 priority
+                 onError={(e) => {
+                   const target = e.target as HTMLImageElement;
+                   target.src = '/assets/default-cover.png';
+                 }}
+               />
             </div>
             <p className="mt-2 text-sm font-poppins font-semibold line-clamp-2">
               {book.judul}

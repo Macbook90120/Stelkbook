@@ -52,6 +52,7 @@ const Navbar: React.FC = () => {
           width={40}
           height={40}
           className="block md:hidden object-contain"
+          style={{width: 'auto', height:'auto'}}
         />
         {/* Logo besar untuk desktop */}
         <Image

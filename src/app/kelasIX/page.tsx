@@ -22,13 +22,14 @@ const BookCard = ({ book }: { book: Book }) => {
       onClick={() => book.path && router.push(book.path)}
     >
       <div className="w-[150px] h-[200px] relative">
-        <Image 
-          src={book.cover} 
-          alt={book.judul} 
+       <Image
+          src={book.cover}
+          alt={book.judul}
           fill
+          sizes="300px"
           className="rounded-md object-cover"
+          priority
           onError={(e) => {
-            console.error(`Failed to load image: ${book.cover}`);
             const target = e.target as HTMLImageElement;
             target.src = '/assets/default-cover.png';
           }}
