@@ -8,6 +8,7 @@ interface Guru {
   username: string;
   nip: string;
   sekolah: string;
+  avatar?:string;
 }
 
 interface ConfirmationModalProps {
@@ -52,13 +53,18 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
         </p>
         <div className="flex items-center justify-center space-x-4 mb-4">
           <div className="relative w-12 h-12">
-            <Image
-              src="/assets/Class/icon_user.png"
-              alt="User Icon"
-              width={38}
-              height={38}
-              className="rounded-full"
-            />
+             <Image
+                                     src={
+                                       guru.avatar
+                                         ? `http://localhost:8000/storage/${guru.avatar}`
+                                         : "/assets/Class/icon_user.png"
+                                     }
+                                     alt="User Icon"
+                                     width={48}
+                                     height={48}
+                                     className="rounded-full object-cover"
+                                     style={{width:'48px',height:'48px'}}
+                                   />
           </div>
           <div>
             <p className="font-bold">{guru.username}</p>

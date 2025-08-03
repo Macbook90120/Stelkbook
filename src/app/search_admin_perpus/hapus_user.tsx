@@ -6,7 +6,7 @@ import { useAuth } from '@/context/authContext';
 type ConfirmationModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  perpus: { id: string; name: string; nip: string };
+  perpus: { id: string; name: string; nip: string,avatar?: string};
   onSuccess?: () => void;
 };
 
@@ -50,12 +50,16 @@ const HapusUserModal: React.FC<ConfirmationModalProps> = ({
         <div className="flex items-center justify-center space-x-4 mb-4">
           <div className="relative w-12 h-12">
             <Image
-              src="/assets/Class/icon_user.png"
+              src={
+                perpus.avatar
+                  ? `http://localhost:8000/storage/${perpus.avatar}`
+                  : "/assets/Class/icon_user.png"
+              }
               alt="User Icon"
               width={48}
               height={48}
-              className="rounded-full"
-              style={{ width: '48px', height: '48px' }}
+              className="rounded-full object-cover"
+              style={{width:'48px',height:'48px'}}
             />
           </div>
           <div>

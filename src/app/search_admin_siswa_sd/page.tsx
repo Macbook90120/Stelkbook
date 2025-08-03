@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "@/context/authContext";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -12,21 +12,32 @@ interface Siswa {
   nis: string;
   sekolah: string;
   kelas: string;
-  avatar?: string; // <- tambahkan ini
+  avatar?: string;
 }
-
 
 const SearchSiswaSD: React.FC = () => {
   const { siswaSdData, fetchAllSiswaSd } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedSiswa, setSelectedSiswa] = useState<Siswa | null>(null);
   const [filteredSiswa, setFilteredSiswa] = useState<Siswa[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const searchParams = useSearchParams();
   const query = searchParams.get("q")?.toLowerCase() || "";
 
   useEffect(() => {
-    fetchAllSiswaSd(); // Ambil semua data siswa SD
+    const getSiswaData = async () => {
+      try {
+        setIsLoading(true);
+        await fetchAllSiswaSd(); // Ambil data siswa SD
+      } catch (error) {
+        console.error("Gagal mengambil data siswa:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    getSiswaData();
   }, [fetchAllSiswaSd]);
 
   useEffect(() => {
@@ -49,16 +60,19 @@ const SearchSiswaSD: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const handleButtonClick = (destination: string) => {
-    router.push(`/${destination}`);
-  };
-
   const handleDeleteSuccess = async () => {
     try {
+      setIsLoading(true);
       await fetchAllSiswaSd();
     } catch (error) {
       console.error("Gagal refresh data siswa:", error);
+    } finally {
+      setIsLoading(false);
     }
+  };
+
+  const handleButtonClick = (destination: string) => {
+    router.push(`/${destination}`);
   };
 
   return (
@@ -66,6 +80,8 @@ const SearchSiswaSD: React.FC = () => {
       <header className="flex justify-between items-center mb-4 pt-20 px-8">
         <Navbar />
       </header>
+
+      {/* Breadcrumb */}
       <div className="mb-8 flex items-center">
         <p 
           className="text-xl font-semibold text-left font-poppins translate-y-[-15px] hover:underline cursor-pointer"
@@ -80,6 +96,7 @@ const SearchSiswaSD: React.FC = () => {
             width={10}
             height={16}
             className="translate-y-[-15px] translate-x-[1px]"
+            style={{ width: 'auto', height: 'auto' }}
           />
         </div>
         <p className="text-xl font-semibold text-left font-poppins translate-y-[-15px]">
@@ -98,67 +115,82 @@ const SearchSiswaSD: React.FC = () => {
         </button>
       </div>
 
-      <div className="bg-white rounded-lg shadow p-4">
-        {filteredSiswa?.length > 0 ? (
-          filteredSiswa.map((siswa: Siswa) => (
-            <div key={siswa.id} className="grid grid-cols-12 gap-4 items-center py-4 border-b">
-              <div className="col-span-4 flex items-center">
-              <Image
-  src={
-    siswa.avatar
-      ? `http://localhost:8000/storage/${siswa.avatar}`
-      : "/assets/Class/icon_user.png"
-  }
-  alt="User Icon"
-  width={40}
-  height={40}
-  quality={100}
-                  className="w-12 h-12 object-cover rounded-full mr-3"
-/>
+      {isLoading ? (
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-500"></div>
+        </div>
+      ) : (
+        <div className="bg-white rounded-lg shadow p-4">
+          {filteredSiswa?.length > 0 ? (
+            filteredSiswa.map((siswa: Siswa) => (
+              <div
+                key={siswa.id}
+                className="grid grid-cols-12 gap-4 items-center py-4 border-b"
+              >
+                {/* Info Siswa */}
+                <div className="col-span-4 flex items-center">
+                  <Image
+                    src={
+                      siswa.avatar
+                        ? `http://localhost:8000/storage/${siswa.avatar}`
+                        : "/assets/Class/icon_user.png"
+                    }
+                    alt="User Icon"
+                    width={48}
+                    height={48}
+                    quality={100}
+                    className="object-cover rounded-full mr-3"
+                    style={{ width: '48px', height: '48px' }}
+                  />
+                  <div>
+                    <p className="font-semibold">{siswa.username}</p>
+                    <p className="text-sm text-gray-500">{siswa.nis}</p>
+                    <p className="font-semibold text-sm text-OldRed">Sekolah: {siswa.sekolah}</p>
+                    <p className="font-semibold text-sm text-OldRed">Kelas: {siswa.kelas}</p>
+                  </div>
+                </div>
 
-                <div>
-                  <p className="font-semibold">{siswa.username}</p>
-                  <p className="font-semibold text-OldRed">{siswa.sekolah}</p>
-                  <p className="font-semibold text-OldRed">Kelas {siswa.kelas}</p>
-                  <p className="text-sm text-gray-500">{siswa.nis}</p>
+                {/* Action Buttons */}
+                <div className="col-span-8 flex justify-end space-x-2">
+                  <button
+                    className="flex flex-col items-center justify-center w-12 h-12 md:w-auto md:h-auto md:flex-row md:px-8 md:py-2 text-white bg-green-500 rounded-lg hover:bg-green-600"
+                    onClick={() => router.push(`/admin/Sekolah_Siswa/Data_SD/Edit_user?id=${siswa.id}`)}
+                  >
+                    <Image
+                      src="/assets/icon/edit.svg"
+                      alt="Edit Icon"
+                      width={16}
+                      height={16}
+                      className="md:mr-2"
+                      style={{ width: 'auto', height: 'auto' }}
+                    />
+                    <span className="hidden md:block">Edit Siswa</span>
+                  </button>
+
+                  <button
+                    className="flex flex-col items-center justify-center w-12 h-12 md:w-auto md:h-auto md:flex-row md:px-8 md:py-2 text-white bg-red rounded-lg hover:bg-red-600"
+                    onClick={() => handleDeleteSiswa(siswa)}
+                  >
+                    <Image
+                      src="/assets/icon/delete.svg"
+                      alt="Delete Icon"
+                      width={16}
+                      height={16}
+                      className="md:mr-2"
+                      style={{ width: 'auto', height: 'auto' }}
+                    />
+                    <span className="hidden md:block">Hapus Siswa</span>
+                  </button>
                 </div>
               </div>
-              <div className="col-span-8 flex justify-end space-x-2">
-                <button
-                  className="flex flex-col items-center justify-center w-12 h-12 md:w-auto md:h-auto md:flex-row md:px-8 md:py-2 text-white bg-green-500 rounded-lg hover:bg-green-600"
-                  onClick={() => router.push(`/admin/Sekolah_Siswa/Data_SD/Edit_user?id=${siswa.id}`)}
-                >
-                  <Image
-                    src="/assets/Admin/Edit_user.png"
-                    alt="Edit Icon"
-                    width={16}
-                    height={16}
-                    className="md:mr-2"
-                  />
-                  <span className="hidden md:block">Edit Siswa</span>
-                </button>
-                <button
-                  className="flex flex-col items-center justify-center w-12 h-12 md:w-auto md:h-auto md:flex-row md:px-8 md:py-2 text-white bg-red rounded-lg hover:bg-red"
-                  onClick={() => handleDeleteSiswa(siswa)}
-                >
-                  <Image
-                    src="/assets/Admin/Delete_user.png"
-                    alt="Delete Icon"
-                    width={16}
-                    height={16}
-                    className="md:mr-2"
-                  />
-                  <span className="hidden md:block">Hapus Siswa</span>
-                </button>
-              </div>
-            </div>
-          ))
-        ) : (
-          <p className="text-gray-500 text-center py-4">
-            {query ? "Tidak ada hasil ditemukan untuk pencarian Anda." : "Tidak ada data siswa tersedia."}
-          </p>
-        )}
-      </div>
+            ))
+          ) : (
+            <p className="text-gray-500 text-center py-4">
+              {query ? "Tidak ada hasil ditemukan untuk pencarian Anda." : "Tidak ada data siswa SD tersedia."}
+            </p>
+          )}
+        </div>
+      )}
 
       {isModalOpen && selectedSiswa && (
         <ConfirmationModal
