@@ -7,11 +7,15 @@ import WarningModal from './WarningForgot';
 import { Eye, EyeOff } from 'lucide-react';
 
 const slides = [
-    { image: "/assets/login/1.png", id: "01" },
-    { image: "/assets/login/2.png", id: "02" },
-    { image: "/assets/login/3.png", id: "03" },
     { image: "/assets/login/4.png", id: "04" },
-    { image: "/assets/login/perpus.png", id: "05" },
+    { image: "/assets/login/2.png", id: "02" },
+    { image: "/assets/login/7.png", id: "07" },
+    { image: "/assets/login/3.png", id: "03" },
+    { image: "/assets/login/5.png", id: "05" },
+    { image: "/assets/login/6.png", id: "06" },
+    { image: "/assets/login/1.png", id: "01" },
+    { image: "/assets/login/8.png", id: "08" },
+    { image: "/assets/login/perpus.png", id: "09" },
 ];
 
 function Login() {
