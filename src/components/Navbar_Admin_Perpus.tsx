@@ -40,6 +40,7 @@ const Navbar: React.FC = () => {
                   fill
                   sizes="50px"
                   className="object-contain"
+                  // priority = {true}
                 />
               </div>
               

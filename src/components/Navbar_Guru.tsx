@@ -52,6 +52,7 @@ const Navbar_Guru: React.FC = () => {
                 width={40}
                 height={40}
                 className="block md:hidden object-contain"
+                // priority = {true}
                  style={{width: 'auto', height:'auto'}}
               />
               {/* Logo besar untuk desktop */}
@@ -61,6 +62,7 @@ const Navbar_Guru: React.FC = () => {
                 width={148}
                 height={88}
                 className="hidden md:block w-28 md:w-40 object-contain"
+                priority = {true}
               />
             </div>
           </div>

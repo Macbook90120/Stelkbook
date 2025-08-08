@@ -214,7 +214,9 @@ export default function Home() {
                   src="/assets/Admin/Card_Admin.png"
                   alt="Daftar Database"
                   fill
+                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   className="object-cover"
+                  priority = {true}
                 />
                 <div className="absolute bottom-4 left-4">
                   <p className="text-white font-bold italic text-3xl lg:text-4xl">

@@ -16,6 +16,7 @@ interface KunjunganUser {
 
 export default function KunjunganPage() {
   const [mode, setMode] = useState<'hari' | 'bulan' | 'tahun'>('hari');
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
   const { 
     rekapKunjunganData, 
@@ -27,16 +28,17 @@ export default function KunjunganPage() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        await fetchRekapKunjungan();
-        await fetchKunjungan();
+        setLoading(true);
+        await Promise.all([fetchRekapKunjungan(), fetchKunjungan()]);
       } catch (error) {
         console.error("Gagal memuat data:", error);
+      } finally {
+        setLoading(false);
       }
     };
     loadData();
   }, [fetchRekapKunjungan, fetchKunjungan]);
 
-  // Fungsi untuk mengubah bulan menjadi nama bulan dalam bahasa Indonesia
   const getMonthName = (month: string) => {
     const months = [
       'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
@@ -47,10 +49,8 @@ export default function KunjunganPage() {
 
   const getData = () => {
     if (!rekapKunjunganData) return [];
-    
     switch (mode) {
       case 'bulan':
-        // Hanya transform data bulan ke bahasa Indonesia
         return (rekapKunjunganData.bulan || []).map((item: any) => ({
           ...item,
           name: getMonthName(item.bulan),
@@ -62,7 +62,6 @@ export default function KunjunganPage() {
     }
   };
 
-  // Hitung total pengunjung dengan pengecekan ketat
   const total7Hari = rekapKunjunganData?.hari?.reduce(
     (sum: number, item: { pengunjung: number }) => sum + (item.pengunjung || 0),
     0
@@ -78,6 +77,15 @@ export default function KunjunganPage() {
     0
   ) || 0;
 
+  if (loading) {
+    return (
+      <div className="flex flex-col justify-center items-center h-screen gap-4 bg-gray-50">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-red-600"></div>
+        <p className="text-red-600 font-medium text-lg">Memuat...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen px-6 mt-6 pt-20 bg-gray-50 p-4">
       <Navbar />
@@ -92,33 +100,26 @@ export default function KunjunganPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Chart Section */}
         <div className="w-full h-fit bg-white shadow-lg rounded-xl p-4 border border-gray-200">
-  {rekapKunjunganData ? (
-    <KunjunganChart data={getData()} />
-  ) : (
-    <div className="flex items-center justify-center h-64">
-      <p>Memuat data chart...</p>
-    </div>
-  )}
+          <KunjunganChart data={getData()} />
 
-  {/* Mode Selector Buttons - DIPINDAH KE SINI */}
-  <div className="flex justify-center mt-6 gap-4 flex-wrap">
-    {['hari', 'bulan', 'tahun'].map((item) => (
-      <button
-        key={item}
-        onClick={() => setMode(item as 'hari' | 'bulan' | 'tahun')}
-        className={`px-5 py-2 rounded-full font-semibold shadow-sm transition-all duration-200 ${
-          mode === item
-            ? 'bg-OldRed text-white scale-105'
-            : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
-        }`}
-      >
-        {item === 'hari' ? 'Hari' : 
-         item === 'bulan' ? 'Bulan' : 
-         'Tahun'}
-      </button>
-    ))}
-  </div>
-</div>
+          <div className="flex justify-center mt-6 gap-4 flex-wrap">
+            {['hari', 'bulan', 'tahun'].map((item) => (
+              <button
+                key={item}
+                onClick={() => setMode(item as 'hari' | 'bulan' | 'tahun')}
+                className={`px-5 py-2 rounded-full font-semibold shadow-sm transition-all duration-200 ${
+                  mode === item
+                    ? 'bg-OldRed text-white scale-105'
+                    : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+                }`}
+              >
+                {item === 'hari' ? 'Hari' : 
+                 item === 'bulan' ? 'Bulan' : 
+                 'Tahun'}
+              </button>
+            ))}
+          </div>
+        </div>
 
         <div className="w-full flex flex-col gap-6">
           {/* Today's Visitors Box */}

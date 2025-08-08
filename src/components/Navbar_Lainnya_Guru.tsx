@@ -49,7 +49,7 @@ const Navbar: React.FC = () => {
                 width={50}
                 height={50}
                 className="block md:hidden"
-                priority
+                // priority = {true}
                 style={{ width: "auto", height: "auto" }}
               />
               {/* Desktop Logo */}
@@ -57,9 +57,9 @@ const Navbar: React.FC = () => {
                 src="/assets/icon/stelkbook-logo-navbar.svg"
                 alt="Logo Full"
                 width={148}
-                height={88}
+                height={88} 
                 className="w-28 md:w-40 hidden md:block"
-                priority
+                priority = {true}
                 style={{ width: "148px", height: "88px" }}
               />
             </div>

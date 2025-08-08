@@ -22,7 +22,7 @@ function Page() {
   const { user } = useAuth();
   const { guruBooks, fetchGuruBooks } = useBook();
   const [mappedBooks, setMappedBooks] = useState<Book[]>([]);
-  const [isLoading, setIsLoading] = useState(true); // loading state
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (user) {
@@ -68,42 +68,56 @@ function Page() {
   };
 
   return (
-    <div className="min-h-screen p-8 bg-gray-50 overflow-y-auto">
+    <div className="min-h-screen p-4 sm:p-8 bg-gray-50 overflow-y-auto">
       <header className="flex justify-between items-center mb-4">
         <Navbar />
       </header>
 
-      <div className="mb-8 flex items-center pt-20 px-8">
-        <p className="text-xl font-semibold text-left font-poppins translate-y-[-15px]">
+      <div className="mb-8 flex items-center pt-20 px-2 sm:px-8">
+        <p className="text-xl font-semibold font-poppins translate-y-[-15px]">
           Buku Ajar Anda
         </p>
       </div>
 
       {isLoading ? (
-        // Spinner Loading Merah di tengah
         <div className="flex justify-center items-center h-[60vh]">
           <div className="w-12 h-12 border-4 border-red-500 border-t-transparent rounded-full animate-spin"></div>
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
+        <div
+          className="
+            grid 
+            grid-cols-1 
+            sm:grid-cols-2 
+            md:grid-cols-3 
+            lg:grid-cols-4 
+            xl:grid-cols-5 
+            gap-6 
+            justify-items-center
+          "
+        >
           {mappedBooks.map((book, index) => (
             <div
-              key={index}
-              className="text-center cursor-pointer hover:bg-gray-100 p-2 rounded-lg"
+              key={book.id}
+              className="text-center cursor-pointer hover:bg-gray-100 p-2 rounded-lg w-full max-w-[180px]"
               onClick={() => handleBookClick(book.path!)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={e => { if (e.key === 'Enter') handleBookClick(book.path!) }}
             >
-              <Image
-                src={book.cover}
-                alt={book.judul}
-                width={150}
-                height={200}
-                priority={index < 3} // Hilangkan warning LCP
-                className="mx-auto rounded-lg shadow-md"
-                onError={(e) => {
-                  console.error(`Gagal memuat gambar: ${book.cover}`);
-                  e.currentTarget.src = '/assets/default-cover.png';
-                }}
-              />
+              <div className="relative w-full pb-[133%] rounded-lg overflow-hidden shadow-md mx-auto">
+                <Image
+                  src={book.cover}
+                  alt={book.judul}
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 180px"
+                  priority={index === 0}
+                  className="object-cover rounded-lg"
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src = '/assets/default-cover.png';
+                  }}
+                />
+              </div>
               <p className="mt-2 text-sm font-poppins font-semibold whitespace-pre-line text-center">
                 {book.judul}
               </p>

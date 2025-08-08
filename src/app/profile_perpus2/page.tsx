@@ -133,22 +133,25 @@ function Page() {
               </div>
             </div>
 
-            {/* Logout Button */}
-            <div className="flex justify-center mt-6">
-              <button
-                onClick={handleLogoutClick}
-                disabled={isLoading}
-                className="w-full md:w-auto bg-red text-white px-24 py-2 rounded-md hover:bg-red-600 disabled:opacity-50 flex items-center justify-center space-x-2"
-              >
-                <Image
-                  src="/assets/Class/logout.png"
-                  alt="Logout Icon"
-                  width={16}
-                  height={16}
-                />
-                <span>{isLoading ? 'Logging out...' : 'Logout'}</span>
-              </button>
-            </div>
+             {/* Action Buttons */}
+                      <div className="flex justify-center mt-6">
+                        <button
+                          onClick={handleLogoutClick}
+                          disabled={isLoading}
+                          className="w-full md:w-auto bg-red text-white px-10 py-2 rounded-md hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                        >
+                          <Image
+                            src="/assets/Class/logout.png"
+                            alt="Logout Icon"
+                            width={24} // lebih besar
+                            height={24}
+                            className="w-5 h-5 md:w-6 md:h-6 object-contain"
+                          />
+                          <span className="text-sm md:text-base">
+                            {isLoading ? 'Logging out...' : 'Logout'}
+                          </span>
+                        </button>
+                      </div>
           </div>
         </div>
       </div>

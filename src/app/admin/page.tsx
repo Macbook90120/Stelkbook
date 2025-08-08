@@ -64,7 +64,7 @@ function HomePage() {
             fill
             sizes="(max-width: 768px) 100vw, 50vw"
             className="rounded-lg object-cover"
-            priority = {false}
+            // priority = {true}
           />
           <div className="absolute bottom-4 left-4">
             <p className="text-white font-bold italic text-3xl lg:text-4xl">Siswa</p>

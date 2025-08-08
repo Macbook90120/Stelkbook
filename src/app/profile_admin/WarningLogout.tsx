@@ -11,7 +11,7 @@ const WarningModal: React.FC<WarningModalProps> = ({ onClose, onConfirm,isLoadin
     <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
       <div className="bg-white rounded-lg shadow-xl p-6 w-[90%] max-w-md">
         {/* Modal Title */}
-        <h2 className="text-xl font-bold mb-4 text-center">WARNING!</h2>
+        <h2 className="text-xl font-bold mb-4 text-center text-red-600">WARNING!</h2>
 
         {/* Modal Message */}
         <p className="text-gray-600 mb-6 text-center">

@@ -6,6 +6,7 @@ import Navbar from '@/components/Navbar_Lainnya_Perpus2';
 import { ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useBook } from '@/context/bookContext';
+import Image from 'next/image'; // Untuk contoh perbaikan image
 
 interface RekapKunjunganBook {
   book_id: number;
@@ -27,14 +28,24 @@ export default function KunjunganPage() {
     rekapKunjunganBooks,
     loading
   }: {
-    fetchRekapKunjunganBooks: () => void;
+    fetchRekapKunjunganBooks: () => Promise<void>;
     rekapKunjunganBooks: RekapKunjunganBook[];
     loading: boolean;
   } = useBook();
 
   useEffect(() => {
-    fetchRekapKunjunganBooks();
+    const loadData = async () => {
+      await fetchRekapKunjunganBooks();
+    };
+    loadData();
   }, [fetchRekapKunjunganBooks]);
+
+  useEffect(() => {
+    if (!loading && jenjang === null) {
+      setJenjang('SD');
+      setKelas(null);
+    }
+  }, [loading, jenjang]);
 
   const toRoman = (num: number): string => {
     const roman: { [key: number]: string } = {
@@ -61,6 +72,7 @@ export default function KunjunganPage() {
             className={`px-4 py-2 rounded-full font-medium transition-all border border-gray-300 shadow-sm ${
               kelas === num ? 'bg-OldRed text-white' : 'bg-white text-gray-700'
             }`}
+            aria-pressed={kelas === num}
           >
             Kelas {num}
           </button>
@@ -69,7 +81,6 @@ export default function KunjunganPage() {
     );
   };
 
-  // Filter buku berdasarkan jenjang (dan menangani NA/null dengan benar)
   const bukuFilteredByJenjang = (() => {
     if (!jenjang) return [];
 
@@ -84,7 +95,6 @@ export default function KunjunganPage() {
 
   const bukuPalingSeringDibaca = bukuFilteredByJenjang[0];
 
-  // Filter data untuk chart (kelas bisa null)
   const filteredChartData = bukuFilteredByJenjang
     .filter((book) => {
       if (!kelas) return true;
@@ -97,28 +107,42 @@ export default function KunjunganPage() {
     }));
 
   return (
-    <div className="min-h-screen px-6 mt-6 pt-20 bg-gray-50 p-4">
+    <div className="min-h-screen px-6 mt-6 pt-20 bg-gray-50 p-4 relative" aria-busy={loading}>
       <Navbar />
 
       <button
         onClick={() => router.back()}
         className="mb-4 text-gray-600 hover:text-red transition-colors"
+        aria-label="Kembali"
       >
         <ArrowLeft size={24} />
       </button>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Chart Section */}
+      {/* Fullscreen white loading overlay */}
+      {loading && (
+        <div
+          className="fixed inset-0 z-50 flex flex-col justify-center items-center bg-white"
+          role="alert"
+          aria-live="assertive"
+          aria-label="Memuat data"
+        >
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-red-600 mb-4"></div>
+          <p className="text-red-600 font-semibold text-lg">Memuat...</p>
+        </div>
+      )}
+
+      <div className={`${loading ? 'opacity-30 pointer-events-none' : ''} grid grid-cols-1 md:grid-cols-2 gap-6`}>
         <div className="w-full h-fit bg-white shadow-lg rounded-xl p-4 border border-gray-200">
           {!loading && filteredChartData.length > 0 ? (
             <KunjunganChart data={filteredChartData} />
           ) : (
-            <div className="flex items-center justify-center h-64">
-              <p>Tidak ada Data</p>
-            </div>
+            !loading && (
+              <div className="flex items-center justify-center h-64">
+                <p>Tidak ada Data</p>
+              </div>
+            )
           )}
 
-          {/* Jenjang Selector */}
           <div className="flex justify-center mt-6 gap-4 flex-wrap">
             {['SD', 'SMP', 'SMK', 'NA'].map((item) => (
               <button
@@ -132,6 +156,7 @@ export default function KunjunganPage() {
                     ? 'bg-OldRed text-white scale-105'
                     : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
                 }`}
+                aria-pressed={jenjang === item}
               >
                 {item}
               </button>
@@ -141,28 +166,42 @@ export default function KunjunganPage() {
           {renderKelasButtons()}
         </div>
 
-        {/* Buku Paling Sering Dibaca */}
         <div className="bg-white shadow-lg rounded-xl p-6 border border-gray-200 flex flex-col items-center text-center">
           <h2 className="text-xl font-bold text-gray-800 mb-4">
             Buku yang paling sering dibaca
           </h2>
 
-          {bukuPalingSeringDibaca ? (
-            <>
-              <img
-                src={`http://localhost:8000${bukuPalingSeringDibaca.cover_url}`}
-                alt={bukuPalingSeringDibaca.judul}
-                className="w-28 h-40 object-cover rounded mb-4"
-              />
-              <p className="text-lg font-semibold text-gray-700 mb-2 max-w-xs">
-                {bukuPalingSeringDibaca.judul}
-              </p>
-              <p className="text-red font-bold">
-                sebanyak {bukuPalingSeringDibaca.total_kunjungan} pembaca
-              </p>
-            </>
+          {!loading ? (
+            bukuPalingSeringDibaca ? (
+              <>
+             <div className="w-full max-w-[112px] mx-auto">
+  <div className="relative aspect-[3/4]"> {/* 3:4 aspect ratio (120:160) */}
+    <Image
+      src={`http://localhost:8000${bukuPalingSeringDibaca.cover_url}`}
+      alt={bukuPalingSeringDibaca.judul}
+      fill
+      className="object-cover rounded mb-4"
+      sizes="(max-width: 640px) 80px, (max-width: 768px) 100px, 112px"
+      priority={true}
+      // style = {{width:'auto', height:'auto'}}
+    />
+  </div>
+</div>
+                <p className="text-lg font-semibold text-gray-700 mb-2 max-w-xs">
+                  {bukuPalingSeringDibaca.judul}
+                </p>
+                <p className="text-red font-bold">
+                  sebanyak {bukuPalingSeringDibaca.total_kunjungan} pembaca
+                </p>
+              </>
+            ) : (
+              <p className="text-gray-500">Belum ada data buku dari jenjang ini</p>
+            )
           ) : (
-            <p className="text-gray-500">Belum ada data buku dari jenjang ini</p>
+            <div className="flex flex-col justify-center items-center h-40 gap-4">
+              <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-b-4 border-red-600"></div>
+              <p className="text-red-600 font-medium text-base">Memuat...</p>
+            </div>
           )}
         </div>
       </div>

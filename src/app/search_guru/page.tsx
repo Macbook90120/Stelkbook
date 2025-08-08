@@ -115,7 +115,7 @@ const SearchGuruPage = () => {
                   fill
                   sizes="300px"
                   className="rounded-md object-cover"
-                  priority
+                 priority = {true}
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
                     target.src = "/assets/default-cover.png";
