@@ -10,7 +10,7 @@ interface SidebarProps {
   onClose: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
+const SidebarGuru: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const router = useRouter();
 
   const handleNavigation = (path: string) => {
@@ -22,42 +22,66 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     <>
       {/* Sidebar with Slide Animation */}
       <aside
-  className={clsx(
-    "fixed top-20 left-0 w-64 h-[calc(100%-4rem)] bg-red shadow-md text-white z-50 transform transition-transform duration-300 ease-in-out",
-    {
-      "translate-x-0": isOpen,
-      "-translate-x-full": !isOpen,
-    }
-  )}
->
+        className={clsx(
+          "fixed top-20 left-0 w-64 h-[calc(100%-4rem)] bg-red-500 shadow-md text-white z-50 transform transition-transform duration-300 ease-in-out",
+          {
+            "translate-x-0": isOpen,
+            "-translate-x-full": !isOpen,
+          }
+        )}
+      >
         <nav className="p-4">
           <ul className="space-y-6">
             <li
               className="flex items-center space-x-2 cursor-pointer hover:opacity-80"
               onClick={() => handleNavigation("/SD_Guru")}
             >
-              <Image src="/assets/Class/buku.svg" alt="Book Icon" width={20} height={20} />
+              <Image
+                src="/assets/Class/buku.svg"
+                alt="Book Icon"
+                width={20}
+                height={20}
+                style={{ width: "20px", height: "20px" }}
+              />
               <span className="text-lg font-semibold">SD</span>
             </li>
             <li
               className="flex items-center space-x-2 cursor-pointer hover:opacity-80"
               onClick={() => handleNavigation("/SMP_Guru")}
             >
-              <Image src="/assets/Class/buku.svg" alt="Book Icon" width={20} height={20} />
+              <Image
+                src="/assets/Class/buku.svg"
+                alt="Book Icon"
+                width={20}
+                height={20}
+                style={{ width: "20px", height: "20px" }}
+              />
               <span className="text-lg font-semibold">SMP</span>
             </li>
             <li
               className="flex items-center space-x-2 cursor-pointer hover:opacity-80"
               onClick={() => handleNavigation("/SMK_Guru")}
             >
-              <Image src="/assets/Class/buku.svg" alt="Book Icon" width={20} height={20} />
+              <Image
+                src="/assets/Class/buku.svg"
+                alt="Book Icon"
+                width={20}
+                height={20}
+                style={{ width: "20px", height: "20px" }}
+              />
               <span className="text-lg font-semibold">SMK</span>
             </li>
             <li
               className="flex items-center space-x-2 cursor-pointer hover:opacity-80"
               onClick={() => handleNavigation("/guru_lainnya")}
             >
-              <Image src="/assets/Class/buku.svg" alt="Book Icon" width={20} height={20} />
+              <Image
+                src="/assets/Class/buku.svg"
+                alt="Book Icon"
+                width={20}
+                height={20}
+                style={{ width: "20px", height: "20px" }}
+              />
               <span className="text-lg font-semibold">Non-Akademik</span>
             </li>
           </ul>
@@ -75,4 +99,4 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   );
 };
 
-export default Sidebar;
+export default SidebarGuru;

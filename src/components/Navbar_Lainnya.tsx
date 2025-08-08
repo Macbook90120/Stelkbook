@@ -33,6 +33,7 @@ const Navbar: React.FC = () => {
                 alt="Menu"
                 width={20}
                 height={20}
+                priority = {true}
               />
             </button>
 
