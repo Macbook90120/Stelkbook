@@ -39,6 +39,7 @@ const Navbar: React.FC = () => {
                 width={50}
                 height={50}
                 className="block md:hidden"
+                style={{width: 'auto', height:'auto'}}
               />
               <Image
                 src="/assets/icon/stelkbook-logo-navbar.svg"
@@ -46,6 +47,7 @@ const Navbar: React.FC = () => {
                 width={148}
                 height={88}
                 className="w-28 md:w-40 hidden md:block"
+                style={{width: 'auto', height:'auto'}}
               />
             </div>
           </div>

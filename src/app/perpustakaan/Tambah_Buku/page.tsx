@@ -145,11 +145,10 @@ function Page() {
                                             key={sekolah}
                                             type="button"
                                             onClick={() => setSelectedSekolah(sekolah)}
-                                            className={`py-2 px-4 text-sm font-semibold border rounded-lg transition ${
-                                                selectedSekolah === sekolah 
-                                                    ? 'bg-red text-white border-red-500' 
+                                            className={`py-2 px-4 text-sm font-semibold border rounded-lg transition ${selectedSekolah === sekolah
+                                                    ? 'bg-red text-white border-red-500'
                                                     : 'bg-white text-gray-700 border-gray-300'
-                                            }`}
+                                                }`}
                                         >
                                             {sekolah}
                                         </button>
@@ -166,11 +165,10 @@ function Page() {
                                                 key={kelas}
                                                 type="button"
                                                 onClick={() => setSelectedKelas(kelas)}
-                                                className={`py-2 px-4 text-sm font-semibold border rounded-lg transition ${
-                                                    selectedKelas === kelas 
-                                                        ? 'bg-red text-white border-red-500' 
+                                                className={`py-2 px-4 text-sm font-semibold border rounded-lg transition ${selectedKelas === kelas
+                                                        ? 'bg-red text-white border-red-500'
                                                         : 'bg-white text-gray-700 border-gray-300'
-                                                }`}
+                                                    }`}
                                             >
                                                 {kelas}
                                             </button>
@@ -233,10 +231,10 @@ function Page() {
                                 <label className="block text-gray-700 font-medium mb-2">Cover Buku</label>
                                 <div className="border border-gray-300 rounded-lg p-6 bg-gray-50 relative">
                                     {coverFile ? (
-                                        <img 
-                                            src={URL.createObjectURL(coverFile)} 
-                                            alt="Book Cover" 
-                                            className="w-full h-full object-cover rounded-lg" 
+                                        <img
+                                            src={URL.createObjectURL(coverFile)}
+                                            alt="Book Cover"
+                                            className="w-full h-full object-cover rounded-lg"
                                         />
                                     ) : (
                                         <p className="text-gray-500">Upload dalam format .jpg/.png</p>
@@ -253,15 +251,12 @@ function Page() {
 
                             <div className="relative">
                                 <label className="block text-gray-700 font-medium mb-2">Isi Buku</label>
-                                <div className="border border-gray-300 rounded-lg flex items-center justify-center p-6 bg-gray-50 cursor-pointer">
-                                    <Image
-                                        src="/assets/icon/add-file.svg"
-                                        alt="Book Content"
-                                        width={48}
-                                        height={45}
-                                    />
-                                    {!pdfFile && <p className="text-gray-500 ml-4">Upload dalam format .pdf</p>}
-                                    {pdfFile && <p className="ml-4 text-gray-700 truncate">{pdfFile.name}</p>}
+                                <div className="border border-gray-300 rounded-lg p-6 bg-gray-50 relative">
+                                    {pdfFile ? (
+                                        <p className="ml-2 text-gray-700 truncate">{pdfFile.name}</p>
+                                    ) : (
+                                        <p className="text-gray-500">Upload dalam format .pdf</p>
+                                    )}
                                     <input
                                         type="file"
                                         accept="application/pdf"
@@ -286,9 +281,9 @@ function Page() {
                 </form>
             </div>
 
-            <NotificationSuccessful 
-                show={showNotification} 
-                onHide={() => setShowNotification(false)} 
+            <NotificationSuccessful
+                show={showNotification}
+                onHide={() => setShowNotification(false)}
             />
         </div>
     );
