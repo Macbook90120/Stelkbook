@@ -9,6 +9,7 @@ interface Siswa {
   nis: string;
   sekolah: string;
   kelas: string;
+  avatar?:string;
 }
 
 interface ConfirmationModalProps {
@@ -50,12 +51,17 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ isOpen, onClose, 
         <div className="flex items-center justify-center space-x-4 mb-4">
           <div className="relative w-12 h-12">
             <Image
-              src="/assets/Class/icon_user.png"
-              alt="User Icon"
-              width={38}
-              height={38}
-              className="rounded-full"
-            />
+                                                          src={
+                                                            siswa.avatar
+                                                              ? `http://localhost:8000/storage/${siswa.avatar}`
+                                                              : "/assets/Class/icon_user.png"
+                                                          }
+                                                          alt="User Icon"
+                                                          width={48}
+                                                          height={48}
+                                                          className="rounded-full object-cover"
+                                                          style={{width:'48px',height:'48px'}}
+                                                        />
           </div>
           <div>
             <p className="font-bold">{siswa.username}</p>
