@@ -60,6 +60,8 @@ const WarningModalBuku: React.FC<WarningModalProps> = ({
               width={70}
               height={100}
               className="rounded shadow-md"
+                 priority = {true}
+            style={{width:'auto', height:'auto'}}
               onError={(e) => {
                 e.currentTarget.src = "/assets/default-cover.png";
               }}

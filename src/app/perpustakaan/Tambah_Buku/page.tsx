@@ -17,6 +17,7 @@ function Page() {
     const [isbn, setIsbn] = useState('');
     const [selectedKelas, setSelectedKelas] = useState('');
     const [selectedSekolah, setSelectedSekolah] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [kelasOptions, setKelasOptions] = useState<string[]>([]);
     const [penerbit, setPenerbit] = useState('');
     const router = useRouter();
@@ -40,6 +41,7 @@ function Page() {
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
+        setIsSubmitting(true)
 
         const formData = new FormData();
         formData.append('judul', judul);
@@ -72,6 +74,8 @@ function Page() {
             setCoverFile(null);
         } catch (err) {
             console.error('Error adding book:', err);
+        }finally{
+            setIsSubmitting(false)
         }
     };
 
@@ -273,9 +277,9 @@ function Page() {
                         <button
                             type="submit"
                             className="w-32 bg-red text-white rounded-lg py-2 px-4 font-semibold text-sm hover:bg-red-600 shadow-md focus:outline-none focus:ring-2 focus:ring-red-300"
-                            disabled={loading}
+                            disabled={isSubmitting}
                         >
-                            {loading ? 'Loading...' : 'Selesai'}
+                            {isSubmitting ? 'Loading...' : 'Selesai'}
                         </button>
                     </div>
                 </form>

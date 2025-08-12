@@ -7,7 +7,7 @@ import Sidebar from "./Sidebar_perpus";
 import { useAuth } from "@/context/authContext";
 
 const Navbar_Perpus: React.FC = () => {
-  const {user} = useAuth();
+  const { user } = useAuth();
   const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -34,11 +34,13 @@ const Navbar_Perpus: React.FC = () => {
         <div className="w-full px-3 md:px-6 flex items-center justify-between h-full">
           {/* Left: Menu + Logo */}
           <div className="flex items-center flex-shrink-0 space-x-2">
-            <button
-              onClick={toggleSidebar}
-              className="p-2 focus:outline-none"
-            >
-              <Image src="/assets/Class/menu.png" alt="Menu" width={24} height={24} />
+            <button onClick={toggleSidebar} className="p-2 focus:outline-none">
+              <Image
+                src="/assets/Class/menu.png"
+                alt="Menu"
+                width={24}
+                height={24}
+              />
             </button>
 
             <div
@@ -52,6 +54,7 @@ const Navbar_Perpus: React.FC = () => {
                 width={40}
                 height={40}
                 className="block md:hidden object-contain"
+                style={{ width: "auto", height: "auto" }}
               />
               {/* Logo besar untuk desktop */}
               <Image
@@ -60,6 +63,7 @@ const Navbar_Perpus: React.FC = () => {
                 width={148}
                 height={88}
                 className="hidden md:block w-28 md:w-40 object-contain"
+                priority={true}
               />
             </div>
           </div>
@@ -70,7 +74,13 @@ const Navbar_Perpus: React.FC = () => {
               onSubmit={handleSearchSubmit}
               className="w-full max-w-[160px] sm:max-w-[200px] md:max-w-xs flex items-center bg-[#F5F5F5] rounded-full px-3 py-1 md:py-2 shadow-sm"
             >
-              <Image src="/assets/icon/search.svg" alt="Search Icon" width={18} height={18} className="mr-2" />
+              <img
+                src="/assets/icon/search.svg"
+                alt="Search Icon"
+                width={18}
+                height={18}
+                className="mr-2"
+              />
               <input
                 type="text"
                 value={searchTerm}
@@ -88,8 +98,16 @@ const Navbar_Perpus: React.FC = () => {
               onClick={() => handleNavigation("/profile_perpus")}
             >
               <Image
-                src={user?.avatar ? `http://localhost:8000/storage/${user?.avatar}` : "/assets/Class/Icon_user.png"} alt="User Icon" width={30} height={30} quality={100}
-                 className="rounded-full object-cover md:w-[35px] md:h-[35px]"
+                src={
+                  user?.avatar
+                    ? `http://localhost:8000/storage/${user?.avatar}`
+                    : "/assets/Class/Icon_user.png"
+                }
+                alt="User Icon"
+                width={30}
+                height={30}
+                quality={100}
+                className="rounded-full object-cover md:w-[35px] md:h-[35px]"
               />
             </div>
           </div>

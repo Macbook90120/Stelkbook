@@ -28,7 +28,7 @@ const NotificationEditSuccessful: React.FC<NotificationProps> = ({ show }) => {
                 visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
             }`}
         >
-            Edit Buku Successful!
+            Berhasil Mengedit Buku!
         </div>
     );
 };

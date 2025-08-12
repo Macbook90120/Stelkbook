@@ -87,9 +87,9 @@ const pdfUrl = book.isi.startsWith('http') ? book.isi : `http://localhost:8000/s
       {/* Breadcrumb */}
       <div className="mb-8 flex items-center">
         <p className="text-xl font-semibold font-poppins">Studi Anda</p>
-        <Image src="/assets/Kelas_X/Primary_Direct.png" alt=">" width={10} height={16} className="mx-2" />
+        <Image src="/assets/Kelas_X/Primary_Direct.png" alt=">" width={10} height={16} className="mx-1" />
         <p className="text-xl font-semibold font-poppins">{book.kategori}</p>
-        <Image src="/assets/Kelas_X/Primary_Direct.png" alt=">" width={10} height={16} className="mx-2" />
+        <Image src="/assets/Kelas_X/Primary_Direct.png" alt=">" width={10} height={16} className="mx-1" />
         <p className="text-xl font-semibold font-poppins">{book.judul}</p>
       </div>
 
@@ -103,6 +103,8 @@ const pdfUrl = book.isi.startsWith('http') ? book.isi : `http://localhost:8000/s
             width={200}
             height={280}
             className="rounded-lg shadow-md mb-6"
+            priority = {true}
+            style={{width:'auto', height:'auto'}}
             onError={(e) => {
               e.currentTarget.src = "/assets/default-cover.png";
             }}
@@ -124,7 +126,7 @@ const pdfUrl = book.isi.startsWith('http') ? book.isi : `http://localhost:8000/s
               onClick={() => router.push(`/perpustakaan/Buku/Edit_Buku?id=${book.id}`)}
               className="bg-green-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-600 flex items-center gap-2"
             >
-              <Image src="/assets/icon/edit.svg" alt="Edit Icon" width={16} height={16} />
+              <Image src="/assets/icon/edit.svg" alt="Edit Icon" width={16} height={16}  style={{width:'auto',height: "auto" }}/>
               <span>Edit Buku</span>
             </button>
 
@@ -132,7 +134,15 @@ const pdfUrl = book.isi.startsWith('http') ? book.isi : `http://localhost:8000/s
               onClick={() => setShowWarningModal(true)}
               className="bg-red text-white px-4 py-2 rounded-lg shadow-md hover:bg-red flex items-center gap-2"
             >
-              <Image src="/assets/Admin/Delete_user.png" alt="Delete Icon" width={16} height={16} />
+             <div style={{ position: 'relative', width: 16, height: 16 }}>
+  <Image 
+    src="/assets/Admin/Delete_user.png" 
+    alt="Delete Icon" 
+    fill 
+    sizes="16px"
+    style={{ objectFit: 'contain' }} 
+  />
+</div>
               <span>Hapus Buku</span>
             </button>
           </div>

@@ -4,58 +4,53 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import Navbar from '@/components/Navbar_Perpus';
-import { useBook } from '@/context/bookContext'; // Import BookContext (JavaScript)
-import useAuthMiddleware from '@/hooks/auth';
+import { useBook } from '@/context/bookContext';
 import { useAuth } from '@/context/authContext';
+
 interface Book {
   id: number;
   judul: string;
   cover: string;
-  path?: string; // Optional karena path akan di-generate
+  path?: string;
 }
 
 function Page() {
-  
   const router = useRouter();
-  
-  const {user} = useAuth();
-  const { books, loading, error, fetchBooks } = useBook(); // Ambil data buku perpustakaan dari context
+  const { user } = useAuth();
+  const { books, fetchBooks, loading } = useBook();
   const [combinedBooks, setCombinedBooks] = useState<Book[]>([]);
-
-
 
   // Data statis untuk "Menambahkan Buku"
   const staticBook: Book = {
-    id: 0, // ID khusus untuk buku statis
+    id: 0,
     judul: 'Menambahkan Buku',
     cover: '/assets/icon/add-file.svg',
     path: '/perpustakaan/Tambah_Buku',
   };
 
-  
-
-  // Gabungkan data buku perpustakaan dengan data statis
   useEffect(() => {
-    fetchBooks(); // Ambil data buku perpustakaan dari server
+    fetchBooks();
   }, [fetchBooks]);
 
   useEffect(() => {
-    const mappedBooks: Book[] = books.map((book: Book) => {
-      const coverUrl = book.cover ? `http://localhost:8000/storage/${book.cover}` : '/assets/default-cover.png';
-      // console.log(`Cover URL for Book ID ${book.id}:`, coverUrl); // Debugging
-      return {
-        id: book.id,
-        judul: book.judul,
-        cover: coverUrl,
-        path: `/perpustakaan/Buku?id=${book.id}`,
-      };
-    });
+    if (books) {
+      const mappedBooks: Book[] = books.map((book: Book) => {
+        const coverUrl = book.cover
+          ? `http://localhost:8000/storage/${book.cover}`
+          : '/assets/default-cover.png';
 
-    setCombinedBooks([staticBook, ...mappedBooks]); // Pastikan staticBook selalu ada
+        return {
+          id: book.id,
+          judul: book.judul,
+          cover: coverUrl,
+          path: `/perpustakaan/Buku?id=${book.id}`,
+        };
+      });
+
+      setCombinedBooks([staticBook, ...mappedBooks]);
+    }
   }, [books]);
 
-
-  // Fungsi untuk navigasi
   const handleNavigationClick = (path: string) => {
     router.push(path);
   };
@@ -64,7 +59,7 @@ function Page() {
     return (
       <div className="h-screen flex items-center justify-center bg-gray-50">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 border-4 border-red border-t-transparent rounded-full animate-spin"></div>
+          <div className="w-10 h-10 border-4 border-red-500 border-t-transparent rounded-full animate-spin"></div>
           <p className="text-gray-600">Memuat buku...</p>
         </div>
       </div>
@@ -72,71 +67,81 @@ function Page() {
   }
 
   return (
-    <div className="min-h-screen p-8 bg-gray-50 overflow-y-auto">
+    <div className="min-h-screen p-4 sm:p-8 bg-gray-50 overflow-y-auto">
       <header className="flex justify-between items-center mb-4">
-  <Navbar />
-</header>
+        <Navbar />
+      </header>
 
+      <div className="mb-8 flex items-center pt-20 px-2 sm:px-8 space-x-4">
+        <button
+          onClick={() => router.push('/perpustakaan')}
+          className="text-gray-600 hover:text-red transition-colors"
+        >
+          <ArrowLeft size={24} />
+        </button>
+        <p className="text-xl font-semibold font-poppins">Perpus Anda</p>
+      </div>
 
-
-
-<div className="mb-8 flex items-center pt-20 px-8 space-x-4">
-  <button
-    onClick={() => router.push('/perpustakaan')}
-    className="text-gray-600 hover:text-red transition-colors ml-0"
-  >
-    <ArrowLeft size={24} />
-  </button>
-  <p className="text-xl font-semibold text-left font-poppins ml-0">
-    Perpus Anda
-  </p>
-</div>
-
-
-
- 
-
-      {/* Buku Display Section */}
-      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
+      <div
+        className="
+          grid
+          grid-cols-1
+          sm:grid-cols-2
+          md:grid-cols-3
+          lg:grid-cols-4
+          xl:grid-cols-5
+          gap-6
+          justify-items-center
+        "
+      >
         {combinedBooks.map((book, index) => (
           <div
-            key={index}
-            className="text-center cursor-pointer hover:bg-gray-100"
+            key={book.id}
+            className="text-center cursor-pointer hover:bg-gray-100 p-2 rounded-lg w-full max-w-[180px]"
             onClick={() => handleNavigationClick(book.path!)}
+            role="button"
+            tabIndex={0}
+            onKeyDown={e => {
+              if (e.key === 'Enter') handleNavigationClick(book.path!);
+            }}
           >
-            {book.id === 0 ? (
-              // Custom Cover untuk "Menambahkan Buku"
-              <div className="w-[150px] h-[200px] bg-gradient-to-b from-red to-red rounded-lg shadow-md flex flex-col items-center justify-center relative">
-                <div className="absolute top-2 left-2 text-white text-xs font-bold"></div>
-                <div className="text-white text-lg font-bold px-2 text-center leading-tight"></div>
+           {book.id === 0 ? (
+  <div className="relative w-full pb-[133%] bg-gradient-to-b from-red to-red rounded-lg shadow-md">
+    <div className="absolute inset-0 flex items-center justify-center">
+      <Image
+        src={book.cover}
+        alt="Tambah Buku"
+        width={80} // ikon besar
+        height={80}
+        priority
+        className="object-contain"
+        style={{width: 'auto', height: 'auto'}}
+      />
+    </div>
+    <div className="absolute bottom-3 right-3 text-white font-bold text-2xl">+</div>
+  </div>
+) : (
+
+
+              <div className="relative w-full pb-[133%] rounded-lg overflow-hidden shadow-md mx-auto">
                 <Image
-                  src="/assets/icon/add-file.svg"
-                  alt="Tambah Buku"
-                  width={40}
-                  height={40}
-                  className="mt-4"
+                  src={book.cover}
+                  alt={book.judul}
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 180px"
+                  priority={true}
+                  className="object-cover rounded-lg"
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src = '/assets/default-cover.png';
+                  }}
                 />
-                <div className="absolute bottom-2 right-2 text-white font-bold text-lg">+</div>
               </div>
-            ) : (
-              <Image
-                src={book.cover}
-                alt={book.judul}
-                width={150}
-                height={200}
-                className="mx-auto rounded-lg shadow-md"
-                onError={(e) => {
-                  console.error(`Gagal memuat gambar: ${book.cover}`);
-                  e.currentTarget.src = '/assets/default-cover.png';
-                }}
-              />
             )}
             <p className="mt-2 text-sm font-poppins font-semibold whitespace-pre-line text-center">
               {book.judul}
             </p>
           </div>
         ))}
-
       </div>
     </div>
   );

@@ -51,7 +51,8 @@ const Navbar: React.FC = () => {
                 width={50}
                 height={50}
                 className="block md:hidden"
-                // priority = {true}
+                priority = {true}
+                 style={{ width: "auto", height: "auto" }}
               />
               <Image
                 src="/assets/icon/stelkbook-logo-navbar.svg"

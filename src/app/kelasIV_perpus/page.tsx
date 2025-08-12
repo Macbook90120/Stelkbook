@@ -36,7 +36,7 @@ function Page() {
         ? `http://localhost:8000/storage/${book.cover}` 
         : '/assets/default-cover.png';
       
-      console.log(`Cover URL for Book ID ${book.id}:`, coverUrl);
+      // console.log(`Cover URL for Book ID ${book.id}:`, coverUrl);
       
       return {
         id: book.id,
@@ -85,17 +85,18 @@ function Page() {
             onClick={() => handleNavigationClick(book.path!)}
           >
             <div className="w-[150px] h-[200px] relative mx-auto">
-              <Image
-                src={book.cover}
-                alt={book.judul}
-                fill
-                className="object-cover rounded-lg shadow-md"
-                onError={(e) => {
-                  console.error(`Failed to load image: ${book.cover}`);
-                  const target = e.target as HTMLImageElement;
-                  target.src = '/assets/default-cover.png';
-                }}
-              />
+               <Image
+                              src={book.cover}
+                              alt={book.judul}
+                              fill
+                              sizes="300px"
+                              className="rounded-md object-cover shadow-md"
+                              priority
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.src = '/assets/default-cover.png';
+                              }}
+                            />
             </div>
             <p className="mt-2 text-sm font-poppins font-semibold line-clamp-2">
               {book.judul}
