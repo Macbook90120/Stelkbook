@@ -33,5 +33,10 @@
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
-  }
+  },
+  "description": "📚 **STELKbook** adalah platform eLibrary khusus untuk siswa yang dirancang untuk memudahkan akses terhadap berbagai koleksi buku digital, baik buku pelajaran maupun bacaan penunjang lainnya. Dengan tampilan yang ramah pengguna dan sistem pencarian yang efisien, Stelkbook membantu siswa dalam menemukan dan membaca buku dengan cepat, kapan saja dan di mana saja.",
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
