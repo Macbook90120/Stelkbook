@@ -26,20 +26,17 @@ const Page: React.FC = () => {
   const searchParams = useSearchParams();
   const bookId = parseInt(searchParams.get("id") || "0", 10);
 
-  const { fetchKelas6BookById, deleteBookKelas6, getBookPdfUrl } = useBook(); // ✅ Ambil fungsi getBookPdfUrl
+  const { fetchKelas6BookById, deleteBookKelas6, getBookPdfUrl } = useBook();
   const [book, setBook] = useState<Book | null>(null);
   const [loading, setLoading] = useState(true);
-
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const data = await fetchKelas6BookById(bookId);
         setBook(data);
-
-        // ✅ Ambil PDF URL dari context
       } catch (error) {
-        console.error("Error fetching book or PDF URL:", error);
+        console.error("Error fetching book:", error);
       } finally {
         setLoading(false);
       }
@@ -69,10 +66,12 @@ const Page: React.FC = () => {
       </div>
     );
   }
-  
+
   if (!book) return null;
 
-  const pdfUrl = `http://localhost:8000/storage/${book.isi}`; 
+  const pdfUrl = book.isi.startsWith("http")
+    ? book.isi
+    : `http://localhost:8000/storage/${book.isi}`;
 
   return (
     <div className="h-screen p-8 bg-gray-50 overflow-y-auto">
@@ -86,9 +85,21 @@ const Page: React.FC = () => {
       {/* Breadcrumb */}
       <div className="mb-8 flex items-center">
         <p className="text-xl font-semibold font-poppins">Studi Anda</p>
-        <Image src="/assets/Kelas_X/Primary_Direct.png" alt=">" width={10} height={16} className="mx-2" />
+        <Image
+          src="/assets/Kelas_X/Primary_Direct.png"
+          alt=">"
+          width={10}
+          height={16}
+          className="mx-1"
+        />
         <p className="text-xl font-semibold font-poppins">{book.kategori}</p>
-        <Image src="/assets/Kelas_X/Primary_Direct.png" alt=">" width={10} height={16} className="mx-2" />
+        <Image
+          src="/assets/Kelas_X/Primary_Direct.png"
+          alt=">"
+          width={10}
+          height={16}
+          className="mx-1"
+        />
         <p className="text-xl font-semibold font-poppins">{book.judul}</p>
       </div>
 
@@ -102,6 +113,8 @@ const Page: React.FC = () => {
             width={200}
             height={280}
             className="rounded-lg shadow-md mb-6"
+            priority={true}
+            style={{ width: "auto", height: "auto" }}
             onError={(e) => {
               e.currentTarget.src = "/assets/default-cover.png";
             }}
@@ -110,20 +123,36 @@ const Page: React.FC = () => {
           <div className="text-center lg:text-left">
             <h2 className="text-lg font-bold">{book.judul}</h2>
             <ul className="mt-2 text-sm space-y-1">
-              <li><strong>Penerbit:</strong> {book.penerbit}</li>
-              <li><strong>Penulis:</strong> {book.penulis}</li>
-              <li><strong>Tahun:</strong> {book.tahun}</li>
-              <li><strong>ISBN:</strong> {book.ISBN}</li>
+              <li>
+                <strong>Penerbit:</strong> {book.penerbit}
+              </li>
+              <li>
+                <strong>Penulis:</strong> {book.penulis}
+              </li>
+              <li>
+                <strong>Tahun:</strong> {book.tahun}
+              </li>
+              <li>
+                <strong>ISBN:</strong> {book.ISBN}
+              </li>
             </ul>
           </div>
 
           {/* Tombol */}
           <div className="mt-4 flex flex-col gap-2">
             <button
-              onClick={() => router.push(`/kelasVI_perpus/buku6/Edit_Buku?id=${book.id}`)}
+              onClick={() =>
+                router.push(`/kelasVI_perpus/buku6/Edit_Buku?id=${book.id}`)
+              }
               className="bg-green-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-600 flex items-center gap-2"
             >
-              <Image src="/assets/icon/edit.svg" alt="Edit Icon" width={16} height={16} />
+              <Image
+                src="/assets/icon/edit.svg"
+                alt="Edit Icon"
+                width={16}
+                height={16}
+                style={{ width: "auto", height: "auto" }}
+              />
               <span>Edit Buku</span>
             </button>
 
@@ -131,7 +160,15 @@ const Page: React.FC = () => {
               onClick={() => setShowWarningModal(true)}
               className="bg-red text-white px-4 py-2 rounded-lg shadow-md hover:bg-red flex items-center gap-2"
             >
-              <Image src="/assets/Admin/Delete_user.png" alt="Delete Icon" width={16} height={16} />
+              <div style={{ position: "relative", width: 16, height: 16 }}>
+                <Image
+                  src="/assets/Admin/Delete_user.png"
+                  alt="Delete Icon"
+                  fill
+                  sizes="16px"
+                  style={{ objectFit: "contain" }}
+                />
+              </div>
               <span>Hapus Buku</span>
             </button>
           </div>
@@ -139,15 +176,6 @@ const Page: React.FC = () => {
 
         {/* Kanan */}
         <div className="flex-grow overflow-x-auto">
-        {/* <div className="bg-gradient-to-r from-red to-slate-300 p-2 rounded-lg">
-    <iframe
-      src={pdfUrl}
-      width="100%"
-      height="600px"
-      className="rounded-lg"
-    ></iframe>
-  </div> */}
-          
           {pdfUrl ? (
             <PageFlipBook pdfUrl={pdfUrl} />
           ) : (

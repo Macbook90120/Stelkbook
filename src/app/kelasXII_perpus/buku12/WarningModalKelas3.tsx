@@ -54,16 +54,18 @@ const WarningModalBuku: React.FC<WarningModalProps> = ({
         <div className="flex items-center gap-4 mb-6">
           {/* Book Cover */}
           <div>
-            <Image
-              src={`http://localhost:8000/storage/${book.cover}`}
-              alt={book.judul}
-              width={70}
-              height={100}
-              className="rounded shadow-md"
-              onError={(e) => {
-                e.currentTarget.src = "/assets/default-cover.png";
-              }}
-            />
+         <Image
+                                  src={`http://localhost:8000/storage/${book.cover}`}
+                                  alt={book.judul}
+                                  width={70}
+                                  height={100}
+                                  className="rounded shadow-md"
+                                  priority = {true}
+                                style={{width:'auto', height:'auto'}}
+                                  onError={(e) => {
+                                    e.currentTarget.src = "/assets/default-cover.png";
+                                  }}
+                                />
           </div>
 
           {/* Book Metadata */}

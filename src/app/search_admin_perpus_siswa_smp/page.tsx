@@ -155,14 +155,14 @@ const SearchSiswaSMP: React.FC = () => {
                     className="flex flex-col items-center justify-center w-12 h-12 md:w-auto md:h-auto md:flex-row md:px-8 md:py-2 text-white bg-green-500 rounded-lg hover:bg-green-600"
                     onClick={() => router.push(`/admin_perpus/Sekolah_Siswa/Data_SMP/Edit_user?id=${siswa.id}`)}
                   >
-                    <Image
-                      src="/assets/Admin/Edit_user.png"
-                      alt="Edit Icon"
-                      width={16}
-                      height={16}
-                      className="md:mr-2"
-                      style={{ width: 'auto', height: 'auto' }}
-                    />
+                   <Image
+                                         src="/assets/icon/edit.svg"
+                                         alt="Edit Icon"
+                                         width={16}
+                                         height={16}
+                                         className="md:mr-2"
+                                         style={{ width: 'auto', height: 'auto' }}
+                                       />
                     <span className="hidden md:block">Edit Siswa</span>
                   </button>
 
@@ -170,14 +170,14 @@ const SearchSiswaSMP: React.FC = () => {
                     className="flex flex-col items-center justify-center w-12 h-12 md:w-auto md:h-auto md:flex-row md:px-8 md:py-2 text-white bg-red rounded-lg hover:bg-red-600"
                     onClick={() => handleDeleteSiswa(siswa)}
                   >
-                    <Image
-                      src="/assets/Admin/Delete_user.png"
-                      alt="Delete Icon"
-                      width={16}
-                      height={16}
-                      className="md:mr-2"
-                      style={{ width: 'auto', height: 'auto' }}
-                    />
+                      <Image
+                                          src="/assets/icon/delete.svg"
+                                          alt="Delete Icon"
+                                          width={16}
+                                          height={16}
+                                          className="md:mr-2"
+                                          style={{ width: 'auto', height: 'auto' }}
+                                        />
                     <span className="hidden md:block">Hapus Siswa</span>
                   </button>
                 </div>

@@ -17,15 +17,19 @@ interface Guru {
 function DataGuruSMP() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedGuru, setSelectedGuru] = useState<Guru | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const { fetchAllGuruSmp, guruSmpData } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
     const getGuruData = async () => {
       try {
+        setIsLoading(true);
         await fetchAllGuruSmp();
       } catch (error) {
         console.error("Gagal mengambil data guru:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
     getGuruData();
@@ -42,9 +46,12 @@ function DataGuruSMP() {
 
   const handleDeleteSuccess = async () => {
     try {
+      setIsLoading(true);
       await fetchAllGuruSmp();
     } catch (error) {
       console.error("Gagal refresh data guru:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -59,9 +66,9 @@ function DataGuruSMP() {
       </header>
 
       <div className="mb-8 flex items-center">
-        <p 
+        <p
           className="text-xl font-semibold text-left font-poppins translate-y-[-15px] hover:underline cursor-pointer"
-          onClick={() => handleButtonClick('admin_perpus/Sekolah_Guru')}
+          onClick={() => handleButtonClick("admin_perpus/Sekolah_Guru")}
         >
           Database Anda
         </p>
@@ -72,6 +79,7 @@ function DataGuruSMP() {
             width={10}
             height={16}
             className="translate-y-[-15px] translate-x-[1px]"
+            style={{ width: "auto", height: "auto" }}
           />
         </div>
         <p className="text-xl font-semibold text-left font-poppins translate-y-[-15px]">
@@ -90,69 +98,80 @@ function DataGuruSMP() {
         </button>
       </div>
 
-      <div className="bg-white rounded-lg shadow p-4">
-        {guruSmpData?.length > 0 ? (
-          guruSmpData.map((guru: Guru) => (
-            <div
-              key={guru.id}
-              className="grid grid-cols-12 gap-4 items-center py-4 border-b"
-            >
-              <div className="col-span-4 flex items-center">
-                <Image
-                  src={
-                    guru.avatar
-                      ? `http://localhost:8000/storage/${guru.avatar}`
-                      : "/assets/Class/icon_user.png"
-                  }
-                  alt="User Icon"
-                  width={40}
-                  height={40}
-                  quality={100}
-                  className="w-12 h-12 object-cover rounded-full mr-3"
-                />
-                <div>
-                  <p className="font-semibold">{guru.username}</p>
-                  <p className="text-sm text-gray-500">{guru.nip}</p>
-                  <p className="font-semibold text-sm text-OldRed">Sekolah: {guru.sekolah}</p>
+      {isLoading ? (
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-500"></div>
+        </div>
+      ) : (
+        <div className="bg-white rounded-lg shadow p-4">
+          {guruSmpData?.length > 0 ? (
+            guruSmpData.map((guru: Guru) => (
+              <div
+                key={guru.id}
+                className="grid grid-cols-12 gap-4 items-center py-4 border-b"
+              >
+                <div className="col-span-4 flex items-center">
+                  <Image
+                    src={
+                      guru.avatar
+                        ? `http://localhost:8000/storage/${guru.avatar}`
+                        : "/assets/Class/icon_user.png"
+                    }
+                    alt="User Icon"
+                    width={48}
+                    height={48}
+                    quality={100}
+                    className="object-cover rounded-full mr-3"
+                    style={{ width: "48px", height: "48px" }}
+                  />
+                  <div>
+                    <p className="font-semibold">{guru.username}</p>
+                    <p className="text-sm text-gray-500">{guru.nip}</p>
+                    <p className="font-semibold text-sm text-OldRed">
+                      Sekolah: {guru.sekolah}
+                    </p>
+                  </div>
+                </div>
+                <div className="col-span-8 flex justify-end space-x-2">
+                  <button
+                    className="flex flex-col items-center justify-center w-12 h-12 md:w-auto md:h-auto md:flex-row md:px-8 md:py-2 text-white bg-green-500 rounded-lg hover:bg-green-600"
+                    onClick={() => handleEditUser(guru)}
+                  >
+                    <Image
+                      src="/assets/icon/edit.svg"
+                      alt="Edit Icon"
+                      width={16}
+                      height={16}
+                      className="md:mr-2"
+                      style={{ width: "auto", height: "auto" }}
+                    />
+                    <span className="hidden md:block">Edit Guru</span>
+                  </button>
+
+                  <button
+                    className="flex flex-col items-center justify-center w-12 h-12 md:w-auto md:h-auto md:flex-row md:px-8 md:py-2 text-white bg-red rounded-lg hover:bg-red-600"
+                    onClick={() => handleDeleteUser(guru)}
+                  >
+                    <Image
+                      src="/assets/icon/delete.svg"
+                      alt="Delete Icon"
+                      width={16}
+                      height={16}
+                      className="md:mr-2"
+                      style={{ width: "auto", height: "auto" }}
+                    />
+                    <span className="hidden md:block">Hapus Guru</span>
+                  </button>
                 </div>
               </div>
-              <div className="col-span-8 flex justify-end space-x-2">
-                <button
-                  className="flex flex-col items-center justify-center w-12 h-12 md:w-auto md:h-auto md:flex-row md:px-8 md:py-2 text-white bg-green-500 rounded-lg hover:bg-green-600"
-                  onClick={() => handleEditUser(guru)}
-                >
-                  <Image
-                    src="/assets/icon/edit.svg"
-                    alt="Edit Icon"
-                    width={16}
-                    height={16}
-                    className="md:mr-2"
-                  />
-                  <span className="hidden md:block">Edit Guru</span>
-                </button>
-
-                <button
-                  className="flex flex-col items-center justify-center w-12 h-12 md:w-auto md:h-auto md:flex-row md:px-8 md:py-2 text-white bg-red rounded-lg hover:bg-red-600"
-                  onClick={() => handleDeleteUser(guru)}
-                >
-                  <Image
-                    src="/assets/icon/delete.svg"
-                    alt="Delete Icon"
-                    width={16}
-                    height={16}
-                    className="md:mr-2"
-                  />
-                  <span className="hidden md:block">Hapus Guru</span>
-                </button>
-              </div>
-            </div>
-          ))
-        ) : (
-          <p className="text-gray-500 text-center py-4">
-            Tidak ada data guru SMP tersedia.
-          </p>
-        )}
-      </div>
+            ))
+          ) : (
+            <p className="text-gray-500 text-center py-4">
+              Tidak ada data guru SMP tersedia.
+            </p>
+          )}
+        </div>
+      )}
 
       {isModalOpen && selectedGuru && (
         <ConfirmationModal
