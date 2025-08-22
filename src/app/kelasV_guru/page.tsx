@@ -1,58 +1,46 @@
-'use client';
-import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import Navbar from '@/components/Navbar_Guru';
-import { useBook } from '@/context/bookContext';
-import useAuthMiddleware from '@/hooks/auth';
-import { useAuth } from '@/context/authContext';
+"use client";
+
+import React, { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import Image from "next/image";
+import Navbar from "@/components/Navbar_Lainnya_Guru"; // ✅ Navbar khusus Guru
+import PageFlipBook from "@/components/PageFlipBook2";
+import { useBook } from "@/context/bookContext";
 
 interface Book {
   id: number;
   judul: string;
+  penerbit: string;
+  penulis: string;
+  tahun: string;
+  kategori: string;
+  ISBN: string;
+  isi: string;
   cover: string;
-  path?: string;
 }
 
-function Page() {
-  useAuthMiddleware();
-  const router = useRouter();
-  const { user } = useAuth();
-  const { kelas5Books, loading, error, fetchKelas5Books } = useBook();
-  const [displayBooks, setDisplayBooks] = useState<Book[]>([]);
+const Page: React.FC = () => {
+  const searchParams = useSearchParams();
+  const bookId = parseInt(searchParams.get("id") || "0", 10);
+  const { fetchKelas3BookById} = useBook(); // ✅ versi Guru
 
-  // Redirect based on user role
+  const [book, setBook] = useState<Book | null>(null);
+  const [loading, setLoading] = useState(true);
 
-
-  // Fetch non-akademik books on component mount
   useEffect(() => {
-    fetchKelas5Books();
-  }, [fetchKelas5Books]);
+    const fetchData = async () => {
+      try {
+        const data = await fetchKelas3BookById(bookId);
+        setBook(data);
+      } catch (error) {
+        console.error("Gagal memuat data buku:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Process books data when it changes
-  useEffect(() => {
-    const processedBooks = kelas5Books.map((book: Book) => {
-      const coverUrl = book.cover 
-        ? `http://localhost:8000/storage/${book.cover}` 
-        : '/assets/default-cover.png';
-      
-      // console.log(`Cover URL for Book ID ${book.id}:`, coverUrl);
-      
-      return {
-        id: book.id,
-        judul: book.judul,
-        cover: coverUrl,
-        path: `/kelasV_guru/Buku?id=${book.id}`,
-      };
-    });
-
-    setDisplayBooks(processedBooks);
-  }, [kelas5Books]);
-
-  const handleNavigationClick = (path: string) => {
-    router.push(path);
-  };
-
+    fetchData();
+  }, [bookId, fetchKelas3BookById]);
 
   if (loading) {
     return (
@@ -64,48 +52,107 @@ function Page() {
       </div>
     );
   }
-  
+
+  if (!book) return <div>Buku tidak ditemukan.</div>;
+
+  // ✅ Samakan logika URL seperti kode kedua
+  const pdfUrl = book.isi.startsWith("http")
+    ? book.isi
+    : `http://localhost:8000/storage/${book.isi}`;
+  const coverUrl = book.cover.startsWith("http")
+    ? book.cover
+    : `http://localhost:8000/storage/${book.cover}`;
+
+  // ✅ fungsi download
+  const handleDownload = () => {
+    window.open(pdfUrl, "_blank");
+  };
+
   return (
-    <div className="min-h-screen p-8 bg-gray-50 overflow-y-auto">
+    <div className="h-screen p-8 bg-gray-50 overflow-y-auto">
+      {/* Navbar */}
       <header className="flex justify-between items-center mb-4">
-        <Navbar />
+        <div className="pt-12 px-8">
+          <Navbar />
+        </div>
       </header>
 
-      <div className="mb-8 flex items-center pt-20 px-8">
-        <p className="text-xl font-semibold text-left font-poppins translate-y-[-15px]">
-          Buku Kelas V
-        </p>
+      {/* Breadcrumb */}
+      <div className="mb-8 flex items-center">
+        <p className="text-xl font-semibold font-poppins">Studi Anda</p>
+        <Image
+          src="/assets/Kelas_X/Primary_Direct.png"
+          alt=">"
+          width={10}
+          height={16}
+          className="mx-1"
+        />
+        <p className="text-xl font-semibold font-poppins">{book.kategori}</p>
+        <Image
+          src="/assets/Kelas_X/Primary_Direct.png"
+          alt=">"
+          width={10}
+          height={16}
+          className="mx-1"
+        />
+        <p className="text-xl font-semibold font-poppins">{book.judul}</p>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
-        {displayBooks.map((book) => (
-          <div
-            key={book.id}
-            className="text-center cursor-pointer hover:bg-gray-100 p-4 rounded-lg transition-colors"
-            onClick={() => handleNavigationClick(book.path!)}
-          >
-            <div className="w-[150px] h-[200px] relative mx-auto">
-               <Image
-                                            src={book.cover}
-                                            alt={book.judul}
-                                            fill
-                                            sizes="300px"
-                                            className="rounded-md object-cover shadow-md"
-                                            priority
-                                            onError={(e) => {
-                                              const target = e.target as HTMLImageElement;
-                                              target.src = '/assets/default-cover.png';
-                                            }}
-                                          />
-            </div>
-            <p className="mt-2 text-sm font-poppins font-semibold line-clamp-2">
-              {book.judul}
-            </p>
+      {/* Konten Buku */}
+      <div className="flex flex-col lg:flex-row gap-8 items-center">
+        {/* Kiri */}
+        <div className="flex flex-col items-center lg:items-start">
+          <Image
+            src={coverUrl}
+            alt="Cover Buku"
+            width={200}
+            height={280}
+            className="rounded-lg shadow-md mb-6"
+            priority={true}
+            style={{ width: "auto", height: "auto" }}
+            onError={(e) => {
+              e.currentTarget.src = "/assets/default-cover.png";
+            }}
+          />
+
+          <div className="text-center lg:text-left">
+            <h2 className="text-lg font-bold">{book.judul}</h2>
+            <ul className="mt-2 text-sm space-y-1">
+              <li>
+                <strong>Penerbit:</strong> {book.penerbit}
+              </li>
+              <li>
+                <strong>Penulis:</strong> {book.penulis}
+              </li>
+              <li>
+                <strong>Tahun:</strong> {book.tahun}
+              </li>
+              <li>
+                <strong>ISBN:</strong> {book.ISBN}
+              </li>
+            </ul>
+
+            {/* ✅ Tombol Unduh tetap ada */}
+            <button
+              onClick={handleDownload}
+              className="mt-4 w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600"
+            >
+              Unduh Buku
+            </button>
           </div>
-        ))}
+        </div>
+
+        {/* Kanan */}
+        <div className="flex-grow overflow-x-auto">
+          {pdfUrl ? (
+            <PageFlipBook pdfUrl={pdfUrl} />
+          ) : (
+            <p className="text-gray-500">Memuat buku...</p>
+          )}
+        </div>
       </div>
     </div>
   );
-}
+};
 
 export default Page;
