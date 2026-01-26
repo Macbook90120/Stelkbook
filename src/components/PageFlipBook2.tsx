@@ -62,8 +62,14 @@ const PageFlipBook: React.FC<PageFlipBookProps> = ({ pdfUrl }) => {
 
   useEffect(() => {
     let pdfInstance: pdfjs.PDFDocumentProxy | null = null
+    let tempContainer: HTMLDivElement | null = null
 
     const loadPdf = async () => {
+      if (!pdfUrl) {
+        setIsLoading(false)
+        return
+      }
+
       try {
         setIsLoading(true)
         setError(null)
@@ -77,7 +83,12 @@ const PageFlipBook: React.FC<PageFlipBookProps> = ({ pdfUrl }) => {
 
         container.style.visibility = 'hidden'
 
-        const tempContainer = document.createElement('div')
+        // Clean up previous content properly
+        while (container.firstChild) {
+            container.removeChild(container.firstChild);
+        }
+
+        tempContainer = document.createElement('div')
         tempContainer.style.position = 'absolute'
         tempContainer.style.left = '-9999px'
         document.body.appendChild(tempContainer)
@@ -105,7 +116,10 @@ const PageFlipBook: React.FC<PageFlipBookProps> = ({ pdfUrl }) => {
         }
 
         const isMobile = window.innerWidth < 768
-
+        
+        // Ensure container is empty before initializing PageFlip
+        container.innerHTML = ''
+        
         const pageFlip = new PageFlip(container, {
           width: bookDimensions.width,
           height: bookDimensions.height,
@@ -118,7 +132,6 @@ const PageFlipBook: React.FC<PageFlipBookProps> = ({ pdfUrl }) => {
           disableFlipByClick: false,
         })
 
-        container.innerHTML = ''
         pages.forEach(page => container.appendChild(page))
 
         pageFlip.loadFromHTML(container.querySelectorAll('.page'))
@@ -130,13 +143,22 @@ const PageFlipBook: React.FC<PageFlipBookProps> = ({ pdfUrl }) => {
         })
 
         container.style.visibility = 'visible'
-        document.body.removeChild(tempContainer)
+        
+        if (tempContainer && document.body.contains(tempContainer)) {
+          document.body.removeChild(tempContainer)
+          tempContainer = null
+        }
 
       } catch (err) {
         console.error('PDF render error:', err)
         setError('Gagal memuat buku. Periksa koneksi atau format PDF.')
       } finally {
         setIsLoading(false)
+        // Ensure cleanup in finally block as well just in case, though usually handled in success or effect cleanup
+        if (tempContainer && document.body.contains(tempContainer)) {
+          document.body.removeChild(tempContainer)
+          tempContainer = null
+        }
       }
     }
 
@@ -145,6 +167,9 @@ const PageFlipBook: React.FC<PageFlipBookProps> = ({ pdfUrl }) => {
     return () => {
       pdfInstance?.destroy()
       pageFlipRef.current?.destroy()
+      if (tempContainer && document.body.contains(tempContainer)) {
+        document.body.removeChild(tempContainer)
+      }
     }
   }, [pdfUrl, bookDimensions])
 

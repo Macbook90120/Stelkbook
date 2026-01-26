@@ -26,12 +26,11 @@ function Page() {
 
   useEffect(() => {
     if (user) {
-      if (user.role === 'Admin') {
-        router.push('/admin');
-      } else if (user.role === 'Guru') {
-        // tetap di halaman ini
-      } else if (user.role === 'Perpus') {
+      const role = user.role.toLowerCase();
+      if (role === 'admin' || role === 'perpus' || role === 'pengurusperpustakaan') {
         router.push('/perpustakaan');
+      } else if (role === 'guru') {
+        // tetap di halaman ini
       } else {
         router.push('/homepage');
       }

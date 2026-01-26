@@ -26,13 +26,33 @@ export const BookProvider = ({ children }) => {
     const [rekapKunjunganBooks, setRekapKunjunganBooks] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [pagination, setPagination] = useState({
+        currentPage: 1,
+        lastPage: 1,
+        total: 0
+    });
 
     // Fungsi untuk mengambil semua buku
-    const fetchBooks = useCallback(async () => {
+    const fetchBooks = useCallback(async (page = 1) => {
         setLoading(true);
         try {
-          const res = await axios.get('/books');
-          setBooks(res.data.books); 
+          const res = await axios.get(`/books?page=${page}`);
+          // Handle paginated response
+          const { data, current_page, last_page, total } = res.data.books;
+          
+          setBooks(prevBooks => {
+              if (page === 1) return data;
+              // Avoid duplicates
+              const existingIds = new Set(prevBooks.map(b => b.id));
+              const newBooks = data.filter(b => !existingIds.has(b.id));
+              return [...prevBooks, ...newBooks];
+          });
+
+          setPagination({
+              currentPage: current_page,
+              lastPage: last_page,
+              total: total
+          });
         } catch (err) {
           setError(err.message);
         } finally {
@@ -224,7 +244,13 @@ export const BookProvider = ({ children }) => {
         setLoading(true);
         try {
             const response = await axios.get('/books-non-akademik');
-            setNonAkademikBooks(response.data);
+            const mappedData = response.data.map(b => ({
+                ...b,
+                cover: b.cover_image || b.cover,
+                isi: b.file_pdf || b.isi,
+                tahun: b.tahun_terbit || b.tahun,
+            }));
+            setNonAkademikBooks(mappedData);
         } catch (err) {
             setError(err.message);
         } finally {
@@ -236,7 +262,13 @@ export const BookProvider = ({ children }) => {
         setLoading(true);
         try {
             const response = await axios.get(`/books/${id}`);
-            return response.data;
+            const data = response.data;
+            return {
+                ...data,
+                cover: data.cover_image || data.cover,
+                isi: data.file_pdf || data.isi,
+                tahun: data.tahun_terbit || data.tahun,
+            };
         } catch (err) {
             setError(err.message);
         } finally {
@@ -294,7 +326,13 @@ const refreshNonAkademikBooks = useCallback(async () => {
     setLoading(true);
     try {
         const response = await axios.get('/books-non-akademik');
-        setNonAkademikBooks(response.data);
+        const mappedData = response.data.map(b => ({
+            ...b,
+            cover: b.cover_image || b.cover,
+            isi: b.file_pdf || b.isi,
+            tahun: b.tahun_terbit || b.tahun,
+        }));
+        setNonAkademikBooks(mappedData);
     } catch (err) {
         setError(err.message);
     } finally {
@@ -460,10 +498,12 @@ const fetchNonAkademikBookById = useCallback(async (id) => {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-            setBooks((prevBooks) => [...prevBooks, response.data.book]);
+            // Update books state with the new book data (structure based on backend response: { data: { ... } })
+            setBooks((prevBooks) => [response.data.book, ...prevBooks]);
             return response.data;
         } catch (err) {
             setError(err.message);
+            throw err;
         } finally {
             setLoading(false);
         }
@@ -922,15 +962,16 @@ const deleteBookKelas12 = async (id) => {
 };
 
  const fetchRekapKunjunganBooks = useCallback(async () => {
-    setLoading(true);
+    // Silent fetch - don't trigger global loading or error for this secondary data
     try {
       const response = await axios.get('/rekap-kunjungan-books');
-      setRekapKunjunganBooks(response.data.data); // ensure this matches the structure of the response
+      if (response.data && response.data.data) {
+          setRekapKunjunganBooks(response.data.data); 
+      }
     } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+      console.error('Failed to fetch rekap kunjungan:', err);
+      // Suppress global error to avoid blocking UI for secondary data
+    } 
   }, []);
 
 
@@ -976,6 +1017,7 @@ const deleteBookKelas12 = async (id) => {
                 kelas10Books,
                 kelas11Books,
                 kelas12Books,
+                pagination,
                 loading,
                 error,
                 fetchBooks,

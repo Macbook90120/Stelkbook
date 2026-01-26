@@ -52,19 +52,21 @@ function Login() {
         setIsSubmitting(true);
         try {
             const user = await login(form);
+            const role = user.role.toLowerCase();
 
-            switch (user.role) {
-                case 'Admin':
-                    router.push('/admin');
-                    break;
-                case 'Guru':
-                    router.push('/homepage_guru');
-                    break;
-                case 'Perpus':
+            switch (role) {
+                case 'admin':
+                case 'perpus':
+                case 'pengurusperpustakaan':
                     router.push('/perpustakaan');
                     break;
+                case 'guru':
+                    router.push('/homepage_guru');
+                    break;
+                case 'siswa':
                 default:
                     router.push('/homepage');
+                    break;
             }
         } catch (error) {
             setErrorMessage('Login gagal. Periksa kembali kode atau password.');

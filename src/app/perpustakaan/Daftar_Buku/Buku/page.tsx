@@ -100,6 +100,7 @@ const Page: React.FC = () => {
             alt="Cover Buku"
             width={200}
             height={280}
+            priority={true}
             className="rounded-lg shadow-md mb-6"
             onError={(e) => {
               e.currentTarget.src = "/assets/default-cover.png";

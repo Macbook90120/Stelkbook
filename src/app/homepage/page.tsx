@@ -14,14 +14,13 @@ function HomePage() {
   useEffect(() => {
     // Check if user is not null before accessing its properties
     if (user) {
-      if (user.role === 'Admin') {
-        router.push('/admin');
-      } else if (user.role === 'Guru') {
-        router.push('/homepage_guru');
-      } else if (user.role === 'Perpus') {
+      const role = user.role.toLowerCase();
+      if (role === 'admin' || role === 'perpus' || role === 'pengurusperpustakaan') {
         router.push('/perpustakaan');
+      } else if (role === 'guru') {
+        router.push('/homepage_guru');
       } else {
-        router.push('/homepage');
+        // tetap di halaman ini (untuk siswa)
       }
     }
   }, [user, router]); // Add `user` and `router` to the dependency array

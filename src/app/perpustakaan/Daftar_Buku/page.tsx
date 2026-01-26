@@ -17,7 +17,7 @@ interface Book {
 function Page() {
   const router = useRouter();
   const { user } = useAuth();
-  const { books, fetchBooks, loading } = useBook();
+  const { books, fetchBooks, loading, pagination, error } = useBook();
   const [combinedBooks, setCombinedBooks] = useState<Book[]>([]);
 
   // Data statis untuk "Menambahkan Buku"
@@ -33,11 +33,17 @@ function Page() {
   }, [fetchBooks]);
 
   useEffect(() => {
-    if (books) {
-      const mappedBooks: Book[] = books.map((book: Book) => {
-        const coverUrl = book.cover
-          ? `http://localhost:8000/storage/${book.cover}`
-          : '/assets/default-cover.png';
+    if (books && Array.isArray(books)) {
+      const mappedBooks: Book[] = books.map((book: any) => {
+        let coverUrl = '/assets/default-cover.png';
+        
+        if (book.cover_url) {
+             coverUrl = book.cover_url.startsWith('http') ? book.cover_url : `http://localhost:8000${book.cover_url}`;
+        } else if (book.cover_image) {
+             coverUrl = `http://localhost:8000/storage/${book.cover_image}`;
+        } else if (book.cover) {
+             coverUrl = `http://localhost:8000/storage/${book.cover}`;
+        }
 
         return {
           id: book.id,
@@ -55,7 +61,13 @@ function Page() {
     router.push(path);
   };
 
-  if (loading) {
+  const handleLoadMore = () => {
+    if (pagination && pagination.currentPage < pagination.lastPage) {
+        fetchBooks(pagination.currentPage + 1);
+    }
+  }
+
+  if (loading && books.length === 0) {
     return (
       <div className="h-screen flex items-center justify-center bg-gray-50">
         <div className="flex flex-col items-center gap-3">
@@ -81,6 +93,13 @@ function Page() {
         </button>
         <p className="text-xl font-semibold font-poppins">Perpus Anda</p>
       </div>
+
+      {error && (
+        <div className="mx-2 sm:mx-8 mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+          <strong className="font-bold">Error: </strong>
+          <span className="block sm:inline">{error}</span>
+        </div>
+      )}
 
       <div
         className="
@@ -129,7 +148,7 @@ function Page() {
                   alt={book.judul}
                   fill
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 180px"
-                  priority={true}
+                  priority={index < 8}
                   className="object-cover rounded-lg"
                   onError={(e) => {
                     (e.currentTarget as HTMLImageElement).src = '/assets/default-cover.png';
@@ -143,6 +162,25 @@ function Page() {
           </div>
         ))}
       </div>
+
+      {pagination && pagination.currentPage < pagination.lastPage && (
+        <div className="flex justify-center mt-8 pb-8">
+            <button 
+                onClick={handleLoadMore}
+                disabled={loading}
+                className="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:opacity-50 flex items-center gap-2 transition-colors"
+            >
+                {loading ? (
+                    <>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        Memuat...
+                    </>
+                ) : (
+                    'Muat Lebih Banyak'
+                )}
+            </button>
+        </div>
+      )}
     </div>
   );
 }

@@ -72,8 +72,18 @@ function Page() {
             setPenerbit('');
             setPdfFile(null);
             setCoverFile(null);
-        } catch (err) {
+        } catch (err: any) {
             console.error('Error adding book:', err);
+            let errorMessage = 'Gagal menambahkan buku.';
+            if (err.response && err.response.data && err.response.data.message) {
+                errorMessage = err.response.data.message;
+                if (err.response.data.error) {
+                     errorMessage += '\n' + err.response.data.error;
+                }
+            } else if (err.message) {
+                errorMessage += '\n' + err.message;
+            }
+            alert(errorMessage);
         }finally{
             setIsSubmitting(false)
         }

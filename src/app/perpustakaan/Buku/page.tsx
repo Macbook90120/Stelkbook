@@ -35,9 +35,15 @@ const Page: React.FC = () => {
     const fetchData = async () => {
       try {
         const data = await fetchBookById(bookId);
-        setBook(data);
-
-        // ✅ Ambil PDF URL dari context
+        if (data) {
+          const mappedBook = {
+            ...data,
+            cover: data.cover_image || data.cover,
+            isi: data.file_pdf || data.isi,
+            tahun: data.tahun_terbit || data.tahun,
+          };
+          setBook(mappedBook);
+        }
       } catch (error) {
         console.error("Error fetching book or PDF URL:", error);
       } finally {
@@ -70,10 +76,16 @@ const Page: React.FC = () => {
     );
   }
   
-  if (!book) return null;
+  if (!book) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-gray-50">
+        <p className="text-gray-600">Buku tidak ditemukan.</p>
+      </div>
+    );
+  }
 
 // With this:
-const pdfUrl = book.isi.startsWith('http') ? book.isi : `http://localhost:8000/storage/${book.isi}`;
+const pdfUrl = book.isi.startsWith('http') ? book.isi : `/api/pdf/${book.isi}`;
 
   return (
     <div className="h-screen p-8 bg-gray-50 overflow-y-auto">

@@ -21,12 +21,11 @@ export default function Home() {
   useEffect(() => {
     if (user) {
       setLoadingUser(false); // user sudah siap
-      if (user.role === 'Admin') {
-        router.push('/admin');
-      } else if (user.role === 'Guru') {
+      const role = user.role.toLowerCase();
+      if (role === 'admin' || role === 'perpus' || role === 'pengurusperpustakaan') {
+        // tetap di halaman ini
+      } else if (role === 'guru') {
         router.push('/homepage_guru');
-      } else if (user.role === 'Perpus') {
-        router.push('/perpustakaan');
       } else {
         router.push('/homepage');
       }
