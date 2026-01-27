@@ -110,8 +110,13 @@ function Page() {
     return (
         <div className="min-h-screen bg-gray-50 p-8 overflow-y-auto">
             <Navbar />
-            <div className="mb-6 flex items-center text-gray-700 pt-20 px-8">
-                <p className="text-xl font-semibold font-poppins">Perpus Anda</p>
+            <div className="mb-6 flex items-center text-gray-700 pt-20 px-8 relative z-10">
+                <p 
+                    className="text-xl font-semibold font-poppins cursor-pointer hover:underline"
+                    onClick={() => router.push("/perpustakaan/Daftar_Buku")}
+                >
+                    Perpus Anda
+                </p>
                 <div className="mx-2">
                     <Image
                         src="/assets/Kelas_X/Primary_Direct.png"

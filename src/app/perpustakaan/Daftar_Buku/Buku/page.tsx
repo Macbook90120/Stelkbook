@@ -84,10 +84,32 @@ const Page: React.FC = () => {
 
       {/* Breadcrumb */}
       <div className="mb-8 flex items-center">
-        <p className="text-xl font-semibold font-poppins">Studi Anda</p>
-        <Image src="/assets/Kelas_X/Primary_Direct.png" alt=">" width={10} height={16} className="mx-2" />
-        <p className="text-xl font-semibold font-poppins">{book.kategori}</p>
-        <Image src="/assets/Kelas_X/Primary_Direct.png" alt=">" width={10} height={16} className="mx-2" />
+        <p
+          className="text-xl font-semibold font-poppins cursor-pointer hover:underline"
+          onClick={() => router.push("/perpustakaan/Daftar_Buku")}
+        >
+          Studi Anda
+        </p>
+        <Image
+          src="/assets/Kelas_X/Primary_Direct.png"
+          alt=">"
+          width={10}
+          height={16}
+          className="mx-2"
+        />
+        <p
+          className="text-xl font-semibold font-poppins cursor-pointer hover:underline"
+          onClick={() => router.push("/perpustakaan/Daftar_Buku")}
+        >
+          {book.kategori}
+        </p>
+        <Image
+          src="/assets/Kelas_X/Primary_Direct.png"
+          alt=">"
+          width={10}
+          height={16}
+          className="mx-2"
+        />
         <p className="text-xl font-semibold font-poppins">{book.judul}</p>
       </div>
 
@@ -139,20 +161,11 @@ const Page: React.FC = () => {
 
         {/* Kanan */}
         <div className="flex-grow overflow-x-auto">
-        <div className="bg-gradient-to-r from-red to-slate-300 p-2 rounded-lg">
-    <iframe
-      src={pdfUrl}
-      width="100%"
-      height="600px"
-      className="rounded-lg"
-    ></iframe>
-  </div>
-          
-          {/* {pdfUrl ? (
+          {pdfUrl ? (
             <PageFlipBook pdfUrl={pdfUrl} />
           ) : (
             <p className="text-gray-500">Memuat buku...</p>
-          )} */}
+          )}
         </div>
       </div>
 

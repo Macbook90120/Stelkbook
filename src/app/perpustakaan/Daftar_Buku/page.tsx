@@ -49,7 +49,7 @@ function Page() {
           id: book.id,
           judul: book.judul,
           cover: coverUrl,
-          path: `/perpustakaan/Buku?id=${book.id}`,
+          path: `/perpustakaan/Daftar_Buku/Buku?id=${book.id}`,
         };
       });
 

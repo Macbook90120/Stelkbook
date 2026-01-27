@@ -6,7 +6,7 @@ import 'pdfjs-dist/web/pdf_viewer.css'
 import './FlipBookStyle2.css'
 import { MdFullscreen } from 'react-icons/md'
 
-pdfjs.GlobalWorkerOptions.workerSrc = '/assets/pdf.worker.min.mjs'
+pdfjs.GlobalWorkerOptions.workerSrc = '/assets/pdf.worker.min.js'
 
 interface PageFlipBookProps {
   pdfUrl: string
@@ -149,10 +149,7 @@ const PageFlipBook: React.FC<PageFlipBookProps> = ({ pdfUrl }) => {
           tempContainer = null
         }
 
-      } catch (err: any) {
-        if (err?.name === 'RenderingCancelledException') {
-            return;
-        }
+      } catch (err) {
         console.error('PDF render error:', err)
         setError('Gagal memuat buku. Periksa koneksi atau format PDF.')
       } finally {
