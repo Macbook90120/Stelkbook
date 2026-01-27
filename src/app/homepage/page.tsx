@@ -62,7 +62,7 @@ function HomePage() {
               <p className="text-white font-bold italic text-3xl lg:text-4xl">{title}</p>
               <button
                 onClick={() => handleButtonClick(title)}
-                className="mt-2 bg-white text-OldRed font-semibold text-sm py-2 px-8 rounded-full min-w-28 max-w-40"
+                className="mt-2 bg-white text-OldRed font-semibold text-sm py-2 px-8 rounded-full min-w-28 max-w-40 hover:bg-gray-100 transition-all duration-300 hover:scale-105 hover:shadow-lg active:scale-95"
               >
                 Lanjut
               </button>

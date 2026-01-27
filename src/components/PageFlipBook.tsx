@@ -48,7 +48,10 @@ const PageFlipBook: React.FC<PageFlipBookProps> = ({ pdfPath }) => {
         }
 
         setPages(canvases);
-      } catch (error) {
+      } catch (error: any) {
+        if (error?.name === 'RenderingCancelledException') {
+          return;
+        }
         console.error("Error rendering PDF:", error);
       }
     };

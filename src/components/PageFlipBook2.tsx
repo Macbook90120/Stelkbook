@@ -149,7 +149,10 @@ const PageFlipBook: React.FC<PageFlipBookProps> = ({ pdfUrl }) => {
           tempContainer = null
         }
 
-      } catch (err) {
+      } catch (err: any) {
+        if (err?.name === 'RenderingCancelledException') {
+            return;
+        }
         console.error('PDF render error:', err)
         setError('Gagal memuat buku. Periksa koneksi atau format PDF.')
       } finally {

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Navbar from "@/components/Navbar_Lainnya";
 import PageFlipBook from "@/components/PageFlipBook2";
@@ -21,11 +21,21 @@ interface Book {
 
 const Page: React.FC = () => {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const bookId = parseInt(searchParams.get("id") || "0", 10);
   const { fetchNonAkademikBookById } = useBook();
 
   const [book, setBook] = useState<Book | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const handleRouteNavigation = () => {
+    router.push("/lainnya");
+  };
+
+  const handleScrollToFlipBook = () => {
+    const flipBook = document.getElementById("flipbook");
+    flipBook?.scrollIntoView({ behavior: "smooth" });
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -74,7 +84,12 @@ const Page: React.FC = () => {
 
       {/* Breadcrumb */}
       <div className="mb-8 flex items-center">
-        <p className="text-xl font-semibold font-poppins">Studi Anda</p>
+        <p
+          className="text-xl font-semibold font-poppins cursor-pointer hover:underline"
+          onClick={() => router.push("/homepage")}
+        >
+          Studi Anda
+        </p>
         <Image
           src="/assets/Kelas_X/Primary_Direct.png"
           alt=">"
@@ -82,7 +97,12 @@ const Page: React.FC = () => {
           height={16}
           className="mx-1"
         />
-        <p className="text-xl font-semibold font-poppins">{book.kategori}</p>
+        <p
+          className="text-xl font-semibold font-poppins cursor-pointer hover:underline"
+          onClick={handleRouteNavigation}
+        >
+          {book.kategori}
+        </p>
         <Image
           src="/assets/Kelas_X/Primary_Direct.png"
           alt=">"
@@ -126,11 +146,26 @@ const Page: React.FC = () => {
                 <strong>ISBN:</strong> {book.ISBN}
               </li>
             </ul>
+
+            <div className="mt-4 space-y-2 w-full max-w-xs">
+              <button
+                onClick={handleRouteNavigation}
+                className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600"
+              >
+                Kembali
+              </button>
+              <button
+                onClick={handleScrollToFlipBook}
+                className="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 lg:hidden"
+              >
+                Read Now
+              </button>
+            </div>
           </div>
         </div>
 
         {/* Kanan */}
-        <div className="flex-grow overflow-x-auto">
+        <div id="flipbook" className="flex-grow overflow-x-auto">
           {pdfUrl ? (
             <PageFlipBook pdfUrl={pdfUrl} />
           ) : (
