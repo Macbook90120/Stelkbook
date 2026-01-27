@@ -369,6 +369,26 @@ const fetchAllPerpus = useCallback(async () => {
       throw new Error("Kode dan password harus diisi.");
     }
 
+    // Mock login for specific users
+    // if (form.kode === 'admin' && form.password === 'admin123') {
+    //     const mockUser = { id: 1, username: 'admin', role: 'Admin', email: 'admin@example.com' };
+    //     localStorage.setItem('auth_token', 'mock_admin_token');
+    //     setUser(mockUser);
+    //     return mockUser;
+    // }
+    // if (form.kode === 'siswa' && form.password === 'siswa123') {
+    //     const mockUser = { id: 2, username: 'siswa', role: 'Siswa', email: 'siswa@example.com' };
+    //     localStorage.setItem('auth_token', 'mock_siswa_token');
+    //     setUser(mockUser);
+    //     return mockUser;
+    // }
+    // if (form.kode === 'guru' && form.password === 'guru123') {
+    //     const mockUser = { id: 3, username: 'guru', role: 'Guru', email: 'guru@example.com' };
+    //     localStorage.setItem('auth_token', 'mock_guru_token');
+    //     setUser(mockUser);
+    //     return mockUser;
+    // }
+
     try {
       const res = await axios.post('/login', form);
       localStorage.setItem('auth_token', res.data.access_token);

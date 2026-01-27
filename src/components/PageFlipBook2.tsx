@@ -6,7 +6,7 @@ import 'pdfjs-dist/web/pdf_viewer.css'
 import './FlipBookStyle2.css'
 import { MdFullscreen } from 'react-icons/md'
 
-pdfjs.GlobalWorkerOptions.workerSrc = '/assets/pdf.worker.min.js'
+pdfjs.GlobalWorkerOptions.workerSrc = '/assets/pdf.worker.min.mjs'
 
 interface PageFlipBookProps {
   pdfUrl: string

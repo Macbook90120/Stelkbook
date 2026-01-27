@@ -5,7 +5,7 @@ import { PageFlip, SizeType } from "page-flip";
 import * as pdfjs from "pdfjs-dist";
 import "pdfjs-dist/web/pdf_viewer.css";
 
-pdfjs.GlobalWorkerOptions.workerSrc = "/assets/pdf.worker.js";
+pdfjs.GlobalWorkerOptions.workerSrc = "/assets/pdf.worker.min.mjs";
 
 interface PageFlipBookProps {
   pdfPath: string;
