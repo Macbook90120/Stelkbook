@@ -14,7 +14,7 @@ const Pagination: React.FC<PaginationProps> = ({
   onPageChange,
   isLoading = false,
 }) => {
-  const pages = [];
+  const pages: number[] = [];
   // Simple implementation:
   for (let i = 1; i <= totalPages; i++) {
     pages.push(i);
