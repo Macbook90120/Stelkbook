@@ -1,158 +1,174 @@
-"use client";
-
-import React, { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
-import Image from "next/image";
-import Navbar from "@/components/Navbar_Lainnya_Guru"; // ✅ Navbar khusus Guru
-import PageFlipBook from "@/components/PageFlipBook2";
-import { useBook } from "@/context/bookContext";
+'use client';
+import React, { useEffect, useState, Suspense } from 'react';
+import Image from 'next/image';
+import { useRouter, useSearchParams } from 'next/navigation';
+import Navbar from '@/components/Navbar_Guru';
+import { useBook } from '@/context/bookContext';
+import useAuthMiddleware from '@/hooks/auth';
+import { useAuth } from '@/context/authContext';
+import Pagination from '@/components/Pagination';
+import SortFilter, { SortOption } from '@/components/SortFilter';
 
 interface Book {
   id: number;
   judul: string;
-  penerbit: string;
-  penulis: string;
-  tahun: string;
-  kategori: string;
-  ISBN: string;
-  isi: string;
   cover: string;
+  path?: string;
 }
 
-const Page: React.FC = () => {
+function Kelas5GuruContent() {
+  useAuthMiddleware();
+  const router = useRouter();
   const searchParams = useSearchParams();
-  const bookId = parseInt(searchParams.get("id") || "0", 10);
-  const { fetchKelas3BookById} = useBook(); // ✅ versi Guru
+  const { user } = useAuth();
+  const { kelas5Books, kelas5Pagination, loading, error, fetchKelas5Books } = useBook();
+  const [displayBooks, setDisplayBooks] = useState<Book[]>([]);
+  const [sortOption, setSortOption] = useState<SortOption>(null);
 
-  const [book, setBook] = useState<Book | null>(null);
-  const [loading, setLoading] = useState(true);
+  const currentPage = Number(searchParams.get('page')) || 1;
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await fetchKelas3BookById(bookId);
-        setBook(data);
-      } catch (error) {
-        console.error("Gagal memuat data buku:", error);
-      } finally {
-        setLoading(false);
+    fetchKelas5Books(currentPage);
+  }, [fetchKelas5Books, currentPage]);
+
+  const handlePageChange = (page: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('page', page.toString());
+    router.push(`/kelasV_guru?${params.toString()}`);
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') {
+        if (currentPage > 1) handlePageChange(currentPage - 1);
+      } else if (e.key === 'ArrowRight') {
+        if (kelas5Pagination && currentPage < kelas5Pagination.lastPage) {
+          handlePageChange(currentPage + 1);
+        }
       }
     };
 
-    fetchData();
-  }, [bookId, fetchKelas3BookById]);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [currentPage, kelas5Pagination]);
+
+  useEffect(() => {
+    if (kelas5Books) {
+      const processedBooks = kelas5Books.map((book: any) => {
+        const coverUrl = book.cover 
+          ? `http://localhost:8000/storage/${book.cover}` 
+          : '/assets/default-cover.png';
+        
+        return {
+          id: book.id,
+          judul: book.judul,
+          cover: coverUrl,
+          path: `/kelasV_guru/Buku?id=${book.id}`,
+        };
+      });
+      if (sortOption === 'asc') {
+        processedBooks.sort((a: Book, b: Book) => a.judul.localeCompare(b.judul));
+      } else if (sortOption === 'desc') {
+        processedBooks.sort((a: Book, b: Book) => b.judul.localeCompare(a.judul));
+      }
+
+      setDisplayBooks(processedBooks);
+    }
+  }, [kelas5Books, sortOption]);
+
+  const handleNavigationClick = (path: string) => {
+    router.push(path);
+  };
 
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center bg-gray-50">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 border-4 border-red border-t-transparent rounded-full animate-spin"></div>
+          <div className="w-12 h-12 border-4 border-red-500 border-t-transparent rounded-full animate-spin"></div>
           <p className="text-gray-600">Memuat buku...</p>
         </div>
       </div>
     );
   }
 
-  if (!book) return <div>Buku tidak ditemukan.</div>;
-
-  // ✅ Samakan logika URL seperti kode kedua
-  const pdfUrl = book.isi.startsWith("http")
-    ? book.isi
-    : `http://localhost:8000/storage/${book.isi}`;
-  const coverUrl = book.cover.startsWith("http")
-    ? book.cover
-    : `http://localhost:8000/storage/${book.cover}`;
-
-  // ✅ fungsi download
-  const handleDownload = () => {
-    window.open(pdfUrl, "_blank");
-  };
-
   return (
-    <div className="h-screen p-8 bg-gray-50 overflow-y-auto">
-      {/* Navbar */}
-      <header className="flex justify-between items-center mb-4">
-        <div className="pt-12 px-8">
-          <Navbar />
-        </div>
-      </header>
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      <Navbar />
 
-      {/* Breadcrumb */}
-      <div className="mb-8 flex items-center">
-        <p className="text-xl font-semibold font-poppins">Studi Anda</p>
-        <Image
-          src="/assets/Kelas_X/Primary_Direct.png"
-          alt=">"
-          width={10}
-          height={16}
-          className="mx-1"
-        />
-        <p className="text-xl font-semibold font-poppins">{book.kategori}</p>
-        <Image
-          src="/assets/Kelas_X/Primary_Direct.png"
-          alt=">"
-          width={10}
-          height={16}
-          className="mx-1"
-        />
-        <p className="text-xl font-semibold font-poppins">{book.judul}</p>
-      </div>
-
-      {/* Konten Buku */}
-      <div className="flex flex-col lg:flex-row gap-8 items-center">
-        {/* Kiri */}
-        <div className="flex flex-col items-center lg:items-start">
-          <Image
-            src={coverUrl}
-            alt="Cover Buku"
-            width={200}
-            height={280}
-            className="rounded-lg shadow-md mb-6"
-            priority={true}
-            style={{ width: "auto", height: "auto" }}
-            onError={(e) => {
-              e.currentTarget.src = "/assets/default-cover.png";
-            }}
+      <main className="pt-24 px-4 sm:px-8 flex-grow flex flex-col pb-8">
+        <div className="mb-8 flex justify-between items-center">
+          <p className="text-xl font-semibold font-poppins">
+            Buku Kelas V
+          </p>
+          <SortFilter
+            currentSort={sortOption}
+            onSortChange={setSortOption}
           />
-
-          <div className="text-center lg:text-left">
-            <h2 className="text-lg font-bold">{book.judul}</h2>
-            <ul className="mt-2 text-sm space-y-1">
-              <li>
-                <strong>Penerbit:</strong> {book.penerbit}
-              </li>
-              <li>
-                <strong>Penulis:</strong> {book.penulis}
-              </li>
-              <li>
-                <strong>Tahun:</strong> {book.tahun}
-              </li>
-              <li>
-                <strong>ISBN:</strong> {book.ISBN}
-              </li>
-            </ul>
-
-            {/* ✅ Tombol Unduh tetap ada */}
-            <button
-              onClick={handleDownload}
-              className="mt-4 w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600"
-            >
-              Unduh Buku
-            </button>
-          </div>
         </div>
 
-        {/* Kanan */}
-        <div className="flex-grow overflow-x-auto">
-          {pdfUrl ? (
-            <PageFlipBook pdfUrl={pdfUrl} />
+        <div className="flex-grow">
+          {displayBooks.length > 0 ? (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 justify-items-center">
+              {displayBooks.map((book) => (
+                <div
+                  key={book.id}
+                  className="text-center cursor-pointer hover:bg-gray-100 p-2 rounded-lg w-full max-w-[180px]"
+                  onClick={() => handleNavigationClick(book.path!)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={e => { if (e.key === 'Enter' && book.path) router.push(book.path) }}
+                >
+                  <div className="relative w-full pb-[133%] rounded-lg overflow-hidden shadow-md mx-auto">
+                    <Image
+                      src={book.cover}
+                      alt={book.judul}
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 180px"
+                      className="object-cover rounded-lg"
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).src = '/assets/default-cover.png';
+                      }}
+                    />
+                  </div>
+                  <p className="mt-2 text-sm font-poppins font-semibold whitespace-pre-line text-center">
+                    {book.judul}
+                  </p>
+                </div>
+              ))}
+            </div>
           ) : (
-            <p className="text-gray-500">Memuat buku...</p>
+            <div className="flex justify-center items-center h-64 text-gray-500">
+              Tidak ada buku ditemukan.
+            </div>
           )}
         </div>
-      </div>
+
+        {kelas5Pagination && (
+          <div className="mt-8 flex justify-center">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={kelas5Pagination.lastPage || 1}
+              onPageChange={handlePageChange}
+              isLoading={loading}
+            />
+          </div>
+        )}
+      </main>
     </div>
   );
-};
+}
 
-export default Page;
+export default function Page() {
+  return (
+    <Suspense fallback={
+      <div className="h-screen flex items-center justify-center bg-gray-50">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-12 h-12 border-4 border-red-500 border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-gray-600">Memuat...</p>
+        </div>
+      </div>
+    }>
+      <Kelas5GuruContent />
+    </Suspense>
+  );
+}

@@ -1,11 +1,13 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Navbar from '@/components/Navbar_Guru';
 import { useBook } from '@/context/bookContext';
 import useAuthMiddleware from '@/hooks/auth';
 import { useAuth } from '@/context/authContext';
+import Pagination from '@/components/Pagination';
+import SortFilter, { SortOption } from '@/components/SortFilter';
 
 interface Book {
   id: number;
@@ -16,13 +18,52 @@ interface Book {
   sekolah?: string;
 }
 
-function Page() {
+const BookCard = ({ book }: { book: Book }) => {
+  const router = useRouter();
+
+  return (
+    <div
+      className="text-center cursor-pointer hover:bg-gray-100 p-2 rounded-lg w-full max-w-[180px]"
+      onClick={() => book.path && router.push(book.path)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={e => { if (e.key === 'Enter' && book.path) router.push(book.path) }}
+    >
+      <div className="relative w-full pb-[133%] rounded-lg overflow-hidden shadow-md mx-auto">
+        <Image
+          src={book.cover}
+          alt={book.judul}
+          fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 180px"
+          className="object-cover rounded-lg"
+          onError={(e) => {
+            (e.currentTarget as HTMLImageElement).src = '/assets/default-cover.png';
+          }}
+        />
+      </div>
+      <p className="mt-2 text-sm font-poppins font-semibold whitespace-pre-line text-center">
+        {book.judul}
+      </p>
+      {book.kategori && (
+        <p className="text-xs text-gray-500">Kelas {book.kategori}</p>
+      )}
+      {book.sekolah && (
+        <p className="text-xs text-gray-500">{book.sekolah}</p>
+      )}
+    </div>
+  );
+};
+
+function GuruPageContent() {
   useAuthMiddleware();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user } = useAuth();
-  const { guruBooks, fetchGuruBooks } = useBook();
+  const { guruBooks, guruPagination, loading, fetchGuruBooks } = useBook();
   const [mappedBooks, setMappedBooks] = useState<Book[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [sortOption, setSortOption] = useState<SortOption>(null);
+
+  const currentPage = Number(searchParams.get('page')) || 1;
 
   useEffect(() => {
     if (user) {
@@ -37,14 +78,35 @@ function Page() {
     }
   }, [user, router]);
 
+  const handlePageChange = (page: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('page', page.toString());
+    router.push(`/homepage_guru?${params.toString()}`);
+  };
+
   useEffect(() => {
-    setIsLoading(true);
-    fetchGuruBooks().finally(() => setIsLoading(false));
-  }, [fetchGuruBooks]);
+    fetchGuruBooks(currentPage);
+  }, [fetchGuruBooks, currentPage]);
+
+  useEffect(() => {
+    // Add keyboard listener for arrow keys
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') {
+        if (currentPage > 1) handlePageChange(currentPage - 1);
+      } else if (e.key === 'ArrowRight') {
+        if (guruPagination && currentPage < guruPagination.lastPage) {
+          handlePageChange(currentPage + 1);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [currentPage, guruPagination]);
 
   useEffect(() => {
     if (guruBooks) {
-      const processedBooks = guruBooks.map((book: Book) => {
+      const processedBooks = guruBooks.map((book: any) => {
         const coverUrl = book.cover
           ? `http://localhost:8000/storage/${book.cover}`
           : '/assets/default-cover.png';
@@ -58,80 +120,94 @@ function Page() {
           sekolah: book.sekolah
         };
       });
+
+      if (sortOption === 'asc') {
+        processedBooks.sort((a: Book, b: Book) => a.judul.localeCompare(b.judul));
+      } else if (sortOption === 'desc') {
+        processedBooks.sort((a: Book, b: Book) => b.judul.localeCompare(a.judul));
+      }
+
       setMappedBooks(processedBooks);
     }
-  }, [guruBooks]);
+  }, [guruBooks, sortOption]);
 
-  const handleBookClick = (path: string) => {
-    router.push(path);
-  };
+  if (loading) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-gray-50">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-12 h-12 border-4 border-red-500 border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-gray-600">Memuat buku...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen p-4 sm:p-8 bg-gray-50 overflow-y-auto">
-      <header className="flex justify-between items-center mb-4">
-        <Navbar />
-      </header>
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      <Navbar />
 
-      <div className="mb-8 flex items-center pt-20 px-2 sm:px-8">
-        <p className="text-xl font-semibold font-poppins translate-y-[-15px]">
-          Buku Ajar Anda
-        </p>
-      </div>
-
-      {isLoading ? (
-        <div className="flex justify-center items-center h-[60vh]">
-          <div className="w-12 h-12 border-4 border-red-500 border-t-transparent rounded-full animate-spin"></div>
+      <main className="pt-24 px-4 sm:px-8 flex-grow flex flex-col pb-8">
+        <div className="mb-8 flex justify-between items-center">
+          <p className="text-xl font-semibold font-poppins">
+            Buku Ajar Anda
+          </p>
+          <SortFilter
+            currentSort={sortOption}
+            onSortChange={setSortOption}
+          />
         </div>
-      ) : (
-        <div
-          className="
-            grid 
-            grid-cols-1 
-            sm:grid-cols-2 
-            md:grid-cols-3 
-            lg:grid-cols-4 
-            xl:grid-cols-5 
-            gap-6 
-            justify-items-center
-          "
-        >
-          {mappedBooks.map((book, index) => (
+
+        <div className="flex-grow">
+          {mappedBooks.length > 0 ? (
             <div
-              key={book.id}
-              className="text-center cursor-pointer hover:bg-gray-100 p-2 rounded-lg w-full max-w-[180px]"
-              onClick={() => handleBookClick(book.path!)}
-              role="button"
-              tabIndex={0}
-              onKeyDown={e => { if (e.key === 'Enter') handleBookClick(book.path!) }}
+              className="
+                grid 
+                grid-cols-1 
+                sm:grid-cols-2 
+                md:grid-cols-3 
+                lg:grid-cols-4 
+                xl:grid-cols-5 
+                gap-6 
+                justify-items-center
+              "
             >
-              <div className="relative w-full pb-[133%] rounded-lg overflow-hidden shadow-md mx-auto">
-                <Image
-                  src={book.cover}
-                  alt={book.judul}
-                  fill
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 180px"
-                  priority={index === 0}
-                  className="object-cover rounded-lg"
-                  onError={(e) => {
-                    (e.currentTarget as HTMLImageElement).src = '/assets/default-cover.png';
-                  }}
-                />
-              </div>
-              <p className="mt-2 text-sm font-poppins font-semibold whitespace-pre-line text-center">
-                {book.judul}
-              </p>
-              {book.kategori && (
-                <p className="text-xs text-gray-500">Kelas {book.kategori}</p>
-              )}
-              {book.sekolah && (
-                <p className="text-xs text-gray-500">{book.sekolah}</p>
-              )}
+              {mappedBooks.map((book) => (
+                <BookCard key={book.id} book={book} />
+              ))}
             </div>
-          ))}
+          ) : (
+            <div className="flex justify-center items-center h-64 text-gray-500">
+              Tidak ada buku ditemukan.
+            </div>
+          )}
         </div>
-      )}
+
+        {guruPagination && (
+          <div className="mt-8 flex justify-center">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={guruPagination.lastPage || 1}
+              onPageChange={handlePageChange}
+              isLoading={loading}
+            />
+          </div>
+        )}
+      </main>
     </div>
   );
 }
 
-export default Page;
+export default function Page() {
+  return (
+    <Suspense fallback={
+      <div className="h-screen flex items-center justify-center bg-gray-50">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-12 h-12 border-4 border-red-500 border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-gray-600">Memuat...</p>
+        </div>
+      </div>
+    }>
+      <GuruPageContent />
+    </Suspense>
+  );
+}

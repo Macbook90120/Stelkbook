@@ -1,10 +1,12 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import { useBook } from '@/context/bookContext';
 import useAuthMiddleware from '@/hooks/auth';
+import Pagination from '@/components/Pagination';
+import SortFilter, { SortOption } from '@/components/SortFilter';
 
 interface Book {
   id: number;
@@ -22,37 +24,62 @@ const BookCard = ({ book }: { book: Book }) => {
       onClick={() => book.path && router.push(book.path)}
     >
       <div className="w-[150px] h-[200px] relative">
-      <Image
-         src={book.cover}
-         alt={book.judul}
-         fill
-         sizes="300px"
-         className="rounded-md object-cover"
-         priority
-         onError={(e) => {
-           const target = e.target as HTMLImageElement;
-           target.src = '/assets/default-cover.png';
-         }}
-       />
+         <Image
+            src={book.cover}
+            alt={book.judul}
+            fill
+            sizes="300px"
+            className="rounded-md object-cover"
+            priority
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.src = '/assets/default-cover.png';
+            }}
+          />
       </div>
       <p className="mt-4 text-center text-sm font-semibold font-poppins">{book.judul}</p>
     </div>
   );
 };
 
-function Page() {
+function PageContent() {
   useAuthMiddleware();
   const router = useRouter();
-  const { kelas5Books, loading, error, fetchKelas5Books } = useBook();
+  const searchParams = useSearchParams();
+  const { kelas5Books, kelas5Pagination, loading, error, fetchKelas5Books } = useBook();
   const [displayBooks, setDisplayBooks] = useState<Book[]>([]);
+  const [sortOption, setSortOption] = useState<SortOption>(null);
+
+  const currentPage = Number(searchParams.get('page')) || 1;
 
   const handleStudiAndaClick = () => {
     router.push('/SD');
   };
 
+  const handlePageChange = (page: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('page', page.toString());
+    router.push(`/kelasV?${params.toString()}`);
+  };
+
   useEffect(() => {
-    fetchKelas5Books();
-  }, [fetchKelas5Books]);
+    fetchKelas5Books(currentPage);
+  }, [fetchKelas5Books, currentPage]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') {
+        if (currentPage > 1) handlePageChange(currentPage - 1);
+      } else if (e.key === 'ArrowRight') {
+        if (kelas5Pagination && currentPage < kelas5Pagination.lastPage) {
+          handlePageChange(currentPage + 1);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [currentPage, kelas5Pagination]);
 
   useEffect(() => {
     const processedBooks = kelas5Books.map((book: Book) => {
@@ -68,8 +95,14 @@ function Page() {
       };
     });
 
+    if (sortOption === 'asc') {
+      processedBooks.sort((a: Book, b: Book) => a.judul.localeCompare(b.judul));
+    } else if (sortOption === 'desc') {
+      processedBooks.sort((a: Book, b: Book) => b.judul.localeCompare(a.judul));
+    }
+
     setDisplayBooks(processedBooks);
-  }, [kelas5Books]);
+  }, [kelas5Books, sortOption]);
 
   if (loading) {
     return (
@@ -82,35 +115,66 @@ function Page() {
     );
   }
 
-
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white flex flex-col">
       {/* Navbar */}
       <Navbar />
 
-      <main className="pt-20 px-8"></main>
-
-      {/* Page Header */}
-      <div className="p-8">
-        <div className="flex items-center space-x-2 mb-6">
-          <h1 
-            className="text-xl font-bold text-gray-800 cursor-pointer hover:underline"
-            onClick={handleStudiAndaClick}
-          >
-            Studi Anda
-          </h1>
-          <Image src="/assets/Kelas_X/Primary_Direct.png" alt="Divider Icon" width={10} height={16} />
-          <h2 className="text-xl font-bold text-gray-800">Kelas V</h2>
+      <main className="pt-24 px-8 flex-grow flex flex-col pb-8">
+        {/* Page Header */}
+        <div className="flex justify-between items-center mb-6">
+          <div className="flex items-center space-x-2">
+            <h1 
+              className="text-xl font-bold text-gray-800 cursor-pointer hover:underline"
+              onClick={handleStudiAndaClick}
+            >
+              Studi Anda
+            </h1>
+            <Image src="/assets/Kelas_X/Primary_Direct.png" alt="Divider Icon" width={10} height={16} />
+            <h2 className="text-xl font-bold text-gray-800">Kelas V</h2>
+          </div>
+          <SortFilter 
+            currentSort={sortOption} 
+            onSortChange={setSortOption} 
+          />
         </div>
 
         {/* Books Section */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 justify-center">
-          {displayBooks.map((book) => (
-            <BookCard key={book.id} book={book} />
-          ))}
+        <div className="flex-grow">
+          {displayBooks.length > 0 ? (
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 justify-center">
+              {displayBooks.map((book) => (
+                <BookCard key={book.id} book={book} />
+              ))}
+            </div>
+          ) : (
+            <div className="flex justify-center items-center h-64 text-gray-500">
+              Tidak ada buku ditemukan.
+            </div>
+          )}
         </div>
-      </div>
+
+        {/* Pagination Section */}
+        {kelas5Pagination && (
+          <div className="mt-8 flex justify-center">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={kelas5Pagination.lastPage || 1}
+              onPageChange={handlePageChange}
+              isLoading={loading}
+            />
+          </div>
+        )}
+      </main>
     </div>
+  );
+}
+
+function Page() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <PageContent />
+    </Suspense>
   );
 }
 

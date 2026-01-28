@@ -1,11 +1,13 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import { useBook } from '@/context/bookContext';
 import useAuthMiddleware from '@/hooks/auth';
 import { useAuth } from '@/context/authContext';
+import Pagination from '@/components/Pagination';
+import SortFilter, { SortOption } from '@/components/SortFilter';
 
 interface Book {
   id: number;
@@ -14,19 +16,76 @@ interface Book {
   path?: string;
 }
 
-function Page() {
+const BookCard = ({ book }: { book: Book }) => {
+  const router = useRouter();
+
+  return (
+    <div
+      className="text-center cursor-pointer hover:bg-gray-100 p-4 rounded-lg transition-colors flex flex-col items-center"
+      onClick={() => book.path && router.push(book.path)}
+    >
+      <div className="w-[150px] h-[200px] relative mx-auto">
+        <Image
+           src={book.cover}
+           alt={book.judul}
+           fill
+           sizes="300px"
+           className="rounded-md object-cover"
+           priority
+           onError={(e) => {
+             const target = e.target as HTMLImageElement;
+             target.src = '/assets/default-cover.png';
+           }}
+         />
+      </div>
+      <p className="mt-2 text-sm font-poppins font-semibold line-clamp-2">
+        {book.judul}
+      </p>
+    </div>
+  );
+};
+
+function LainnyaContent() {
   useAuthMiddleware();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user } = useAuth();
-  const { nonAkademikBooks, loading, error, fetchNonAkademikBooks } = useBook();
+  const { nonAkademikBooks, nonAkademikPagination, loading, error, fetchNonAkademikBooks } = useBook();
   const [displayBooks, setDisplayBooks] = useState<Book[]>([]);
+  const [sortOption, setSortOption] = useState<SortOption>(null);
+
+  const currentPage = Number(searchParams.get('page')) || 1;
+
+  const handlePageChange = (page: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('page', page.toString());
+    router.push(`/lainnya?${params.toString()}`);
+  };
 
   useEffect(() => {
-    fetchNonAkademikBooks();
-  }, [fetchNonAkademikBooks]);
+    fetchNonAkademikBooks(currentPage);
+  }, [fetchNonAkademikBooks, currentPage]);
 
   useEffect(() => {
-    const processedBooks = nonAkademikBooks.map((book: Book) => {
+    // Add keyboard listener for arrow keys
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') {
+        if (currentPage > 1) handlePageChange(currentPage - 1);
+      } else if (e.key === 'ArrowRight') {
+        if (nonAkademikPagination && currentPage < nonAkademikPagination.lastPage) {
+          handlePageChange(currentPage + 1);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [currentPage, nonAkademikPagination]);
+
+  useEffect(() => {
+    if (!nonAkademikBooks) return;
+
+    const processedBooks = nonAkademikBooks.map((book: any) => {
       const coverUrl = book.cover 
         ? `http://localhost:8000/storage/${book.cover}` 
         : '/assets/default-cover.png';
@@ -39,12 +98,14 @@ function Page() {
       };
     });
 
-    setDisplayBooks(processedBooks);
-  }, [nonAkademikBooks]);
+    if (sortOption === 'asc') {
+      processedBooks.sort((a: Book, b: Book) => a.judul.localeCompare(b.judul));
+    } else if (sortOption === 'desc') {
+      processedBooks.sort((a: Book, b: Book) => b.judul.localeCompare(a.judul));
+    }
 
-  const handleNavigationClick = (path: string) => {
-    router.push(path);
-  };
+    setDisplayBooks(processedBooks);
+  }, [nonAkademikBooks, sortOption]);
 
   if (loading) {
     return (
@@ -58,46 +119,60 @@ function Page() {
   }
 
   return (
-    <div className="min-h-screen p-8 bg-gray-50 overflow-y-auto">
-      <header className="flex justify-between items-center mb-4">
-        <Navbar />
-      </header>
+    <div className="min-h-screen bg-white flex flex-col">
+      <Navbar />
 
-      <div className="mb-8 flex items-center pt-20 px-8">
-        <p className="text-xl font-semibold text-left font-poppins translate-y-[-15px]">
-          Buku Non-Akademik
-        </p>
-      </div>
+      <main className="pt-24 px-8 flex-grow flex flex-col pb-8">
+        <div className="mb-6 flex justify-between items-center relative">
+          <h1 className="text-xl font-bold text-gray-800 font-poppins">
+            Buku Non-Akademik
+          </h1>
+          <SortFilter 
+            currentSort={sortOption} 
+            onSortChange={setSortOption} 
+          />
+        </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
-        {displayBooks.map((book, index) => (
-          <div
-            key={book.id}
-            className="text-center cursor-pointer hover:bg-gray-100 p-4 rounded-lg transition-colors"
-            onClick={() => handleNavigationClick(book.path!)}
-          >
-            <div className="w-[150px] h-[200px] relative mx-auto">
-              <Image
-                 src={book.cover}
-                 alt={book.judul}
-                 fill
-                 sizes="300px"
-                 className="rounded-md object-cover"
-                 priority
-                 onError={(e) => {
-                   const target = e.target as HTMLImageElement;
-                   target.src = '/assets/default-cover.png';
-                 }}
-               />
+        <div className="flex-grow">
+          {displayBooks.length > 0 ? (
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
+              {displayBooks.map((book) => (
+                <BookCard key={book.id} book={book} />
+              ))}
             </div>
-            <p className="mt-2 text-sm font-poppins font-semibold line-clamp-2">
-              {book.judul}
-            </p>
+          ) : (
+            <div className="flex justify-center items-center h-64 text-gray-500">
+              Tidak ada buku ditemukan.
+            </div>
+          )}
+        </div>
+
+        {nonAkademikPagination && (
+          <div className="mt-8 flex justify-center">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={nonAkademikPagination.lastPage || 1}
+              onPageChange={handlePageChange}
+              isLoading={loading}
+            />
           </div>
-        ))}
-      </div>
+        )}
+      </main>
     </div>
   );
 }
 
-export default Page;
+export default function Page() {
+  return (
+    <Suspense fallback={
+      <div className="h-screen flex items-center justify-center bg-gray-50">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-10 h-10 border-4 border-red border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-gray-600">Memuat...</p>
+        </div>
+      </div>
+    }>
+      <LainnyaContent />
+    </Suspense>
+  );
+}

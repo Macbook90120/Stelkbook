@@ -1,11 +1,13 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import Navbar from '@/components/Navbar_Perpus';
 import { useBook } from '@/context/bookContext';
 import { useAuth } from '@/context/authContext';
+import Pagination from '@/components/Pagination';
+import SortFilter, { SortOption } from '@/components/SortFilter';
 
 interface Book {
   id: number;
@@ -14,11 +16,15 @@ interface Book {
   path?: string;
 }
 
-function Page() {
+function BookContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user } = useAuth();
   const { books, fetchBooks, loading, pagination, error } = useBook();
   const [combinedBooks, setCombinedBooks] = useState<Book[]>([]);
+  const [sortOption, setSortOption] = useState<SortOption>(null);
+
+  const currentPage = Number(searchParams.get('page')) || 1;
 
   // Data statis untuk "Menambahkan Buku"
   const staticBook: Book = {
@@ -29,8 +35,8 @@ function Page() {
   };
 
   useEffect(() => {
-    fetchBooks();
-  }, [fetchBooks]);
+    fetchBooks(currentPage);
+  }, [fetchBooks, currentPage]);
 
   useEffect(() => {
     if (books && Array.isArray(books)) {
@@ -53,19 +59,41 @@ function Page() {
         };
       });
 
+      if (sortOption === 'asc') {
+        mappedBooks.sort((a, b) => a.judul.localeCompare(b.judul));
+      } else if (sortOption === 'desc') {
+        mappedBooks.sort((a, b) => b.judul.localeCompare(a.judul));
+      }
+
       setCombinedBooks([staticBook, ...mappedBooks]);
     }
-  }, [books]);
+  }, [books, sortOption]);
+
+  const handlePageChange = (page: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('page', page.toString());
+    router.push(`/perpustakaan/Daftar_Buku?${params.toString()}`);
+  };
 
   const handleNavigationClick = (path: string) => {
     router.push(path);
   };
 
-  const handleLoadMore = () => {
-    if (pagination && pagination.currentPage < pagination.lastPage) {
-        fetchBooks(pagination.currentPage + 1);
-    }
-  }
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') {
+        if (currentPage > 1) handlePageChange(currentPage - 1);
+      } else if (e.key === 'ArrowRight') {
+        if (pagination && currentPage < pagination.lastPage) {
+          handlePageChange(currentPage + 1);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [currentPage, pagination]);
 
   if (loading && books.length === 0) {
     return (
@@ -79,19 +107,21 @@ function Page() {
   }
 
   return (
-    <div className="min-h-screen p-4 sm:p-8 bg-gray-50 overflow-y-auto">
-      <header className="flex justify-between items-center mb-4">
-        <Navbar />
-      </header>
-
-      <div className="mb-8 flex items-center pt-20 px-2 sm:px-8 space-x-4">
-        <button
-          onClick={() => router.push('/perpustakaan')}
-          className="text-gray-600 hover:text-red transition-colors"
-        >
-          <ArrowLeft size={24} />
-        </button>
-        <p className="text-xl font-semibold font-poppins">Perpus Anda</p>
+    <>
+      <div className="mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between pt-20 px-2 sm:px-8 gap-4 relative z-10">
+        <div className="flex items-center space-x-4">
+          <button
+            onClick={() => router.push('/perpustakaan')}
+            className="text-gray-600 hover:text-red transition-colors"
+          >
+            <ArrowLeft size={24} />
+          </button>
+          <p className="text-xl font-semibold font-poppins">Perpus Anda</p>
+        </div>
+        <SortFilter
+            currentSort={sortOption}
+            onSortChange={setSortOption}
+        />
       </div>
 
       {error && (
@@ -125,23 +155,21 @@ function Page() {
             }}
           >
            {book.id === 0 ? (
-  <div className="relative w-full pb-[133%] bg-gradient-to-b from-red to-red rounded-lg shadow-md">
-    <div className="absolute inset-0 flex items-center justify-center">
-      <Image
-        src={book.cover}
-        alt="Tambah Buku"
-        width={80} // ikon besar
-        height={80}
-        priority
-        className="object-contain"
-        style={{width: 'auto', height: 'auto'}}
-      />
-    </div>
-    <div className="absolute bottom-3 right-3 text-white font-bold text-2xl">+</div>
-  </div>
-) : (
-
-
+            <div className="relative w-full pb-[133%] bg-gradient-to-b from-red to-red rounded-lg shadow-md">
+                <div className="absolute inset-0 flex items-center justify-center">
+                <Image
+                    src={book.cover}
+                    alt="Tambah Buku"
+                    width={80} // ikon besar
+                    height={80}
+                    priority
+                    className="object-contain"
+                    style={{width: 'auto', height: 'auto'}}
+                />
+                </div>
+                <div className="absolute bottom-3 right-3 text-white font-bold text-2xl">+</div>
+            </div>
+            ) : (
               <div className="relative w-full pb-[133%] rounded-lg overflow-hidden shadow-md mx-auto">
                 <Image
                   src={book.cover}
@@ -163,24 +191,40 @@ function Page() {
         ))}
       </div>
 
-      {pagination && pagination.currentPage < pagination.lastPage && (
-        <div className="flex justify-center mt-8 pb-8">
-            <button 
-                onClick={handleLoadMore}
-                disabled={loading}
-                className="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:opacity-50 flex items-center gap-2 transition-colors"
-            >
-                {loading ? (
-                    <>
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        Memuat...
-                    </>
-                ) : (
-                    'Muat Lebih Banyak'
-                )}
-            </button>
+      {/* Pagination Controls */}
+      {pagination && (
+        <div className="mt-8 mb-4">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={pagination.lastPage || 1}
+            onPageChange={handlePageChange}
+            isLoading={loading}
+          />
         </div>
       )}
+    </>
+  );
+}
+
+function Page() {
+  const router = useRouter();
+  
+  return (
+    <div className="min-h-screen p-4 sm:p-8 bg-gray-50 overflow-y-auto">
+      <header className="flex justify-between items-center mb-4">
+        <Navbar />
+      </header>
+
+      <Suspense fallback={
+        <div className="h-[50vh] flex items-center justify-center">
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-10 h-10 border-4 border-red-500 border-t-transparent rounded-full animate-spin"></div>
+            <p className="text-gray-600">Memuat halaman...</p>
+          </div>
+        </div>
+      }>
+        <BookContent />
+      </Suspense>
     </div>
   );
 }

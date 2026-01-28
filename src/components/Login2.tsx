@@ -23,6 +23,7 @@ function Login() {
     const router = useRouter();
     const [form, setForm] = useState({ kode: '', password: '' });
     const [errorMessage, setErrorMessage] = useState('');
+    const [kodeError, setKodeError] = useState(''); // Added this line
     const [showWarningModal, setShowWarningModal] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [currentSlide, setCurrentSlide] = useState(0);
@@ -42,11 +43,26 @@ function Login() {
     }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        if (name === 'kode') {
+            if (/[^0-9]/.test(value)) {
+                setKodeError('Wajib mengisikan hanya dengan angka!');
+            } else {
+                setKodeError('');
+            }
+        }
+        setForm({ ...form, [name]: value });
     };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
+        // Validation check
+        if (/[^0-9]/.test(form.kode)) {
+            setKodeError('Wajib mengisikan dengan angka!');
+            return;
+        }
+
         if (isSubmitting) return;
         setErrorMessage('');
         setIsSubmitting(true);
@@ -139,10 +155,15 @@ function Login() {
                                 name="kode"
                                 value={form.kode}
                                 onChange={handleChange}
-                                className="w-full px-4 py-2 bg-gray-200 text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
+                                className={`w-full px-4 py-2 bg-gray-200 text-gray-900 rounded-md focus:outline-none focus:ring-2 ${kodeError ? 'ring-2 ring-red-500' : 'focus:ring-red'}`}
                                 placeholder="NIS/NIP"
                                 required
                             />
+                            {kodeError && (
+                                <div className="mt-2 text-red-500 text-sm">
+                                    {kodeError}
+                                </div>
+                            )}
                         </div>
                         <div className="mb-6 relative">
                             <input

@@ -23,6 +23,27 @@ export const BookProvider = ({ children }) => {
     const [kelas10Books, setKelas10Books] = useState([]);
     const [kelas11Books, setKelas11Books] = useState([]);   
     const [kelas12Books, setKelas12Books] = useState([]);
+
+    const paginationInitialState = {
+        currentPage: 1,
+        lastPage: 1,
+        total: 0
+    };
+
+    const [kelas1Pagination, setKelas1Pagination] = useState(paginationInitialState);
+    const [kelas2Pagination, setKelas2Pagination] = useState(paginationInitialState);
+    const [kelas3Pagination, setKelas3Pagination] = useState(paginationInitialState);
+    const [kelas4Pagination, setKelas4Pagination] = useState(paginationInitialState);
+    const [kelas5Pagination, setKelas5Pagination] = useState(paginationInitialState);
+    const [kelas6Pagination, setKelas6Pagination] = useState(paginationInitialState);
+    const [kelas7Pagination, setKelas7Pagination] = useState(paginationInitialState);
+    const [kelas8Pagination, setKelas8Pagination] = useState(paginationInitialState);
+    const [kelas9Pagination, setKelas9Pagination] = useState(paginationInitialState);
+    const [kelas10Pagination, setKelas10Pagination] = useState(paginationInitialState);
+    const [kelas11Pagination, setKelas11Pagination] = useState(paginationInitialState);
+    const [kelas12Pagination, setKelas12Pagination] = useState(paginationInitialState);
+    const [nonAkademikPagination, setNonAkademikPagination] = useState(paginationInitialState);
+    const [guruPagination, setGuruPagination] = useState(paginationInitialState);
     const [rekapKunjunganBooks, setRekapKunjunganBooks] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -40,13 +61,7 @@ export const BookProvider = ({ children }) => {
           // Handle paginated response
           const { data, current_page, last_page, total } = res.data.books;
           
-          setBooks(prevBooks => {
-              if (page === 1) return data;
-              // Avoid duplicates
-              const existingIds = new Set(prevBooks.map(b => b.id));
-              const newBooks = data.filter(b => !existingIds.has(b.id));
-              return [...prevBooks, ...newBooks];
-          });
+          setBooks(data);
 
           setPagination({
               currentPage: current_page,
@@ -73,11 +88,44 @@ export const BookProvider = ({ children }) => {
         }
     };
 
-    const fetchKelas1Books = useCallback(async () => {
+    const fetchKelas1Books = useCallback(async (page = 1) => {
         setLoading(true);
         try {
-            const response = await axios.get('/books-kelas-1');
-            setKelas1Books(response.data);
+            const response = await axios.get(`/books-kelas-1?page=${page}`);
+            let data = response.data;
+            let paginationMeta = {
+                currentPage: 1,
+                lastPage: 1,
+                total: 0
+            };
+
+            if (data.books && data.books.data) {
+                paginationMeta = {
+                    currentPage: data.books.current_page,
+                    lastPage: data.books.last_page,
+                    total: data.books.total
+                };
+                data = data.books.data;
+            } else if (data.data && data.current_page) {
+                paginationMeta = {
+                    currentPage: data.current_page,
+                    lastPage: data.last_page,
+                    total: data.total
+                };
+                data = data.data;
+            } else if (Array.isArray(data)) {
+                const perPage = 8;
+                paginationMeta.total = data.length;
+                paginationMeta.lastPage = Math.ceil(data.length / perPage);
+                paginationMeta.currentPage = Number(page);
+                
+                const start = (Number(page) - 1) * perPage;
+                const end = start + perPage;
+                data = data.slice(start, end);
+            }
+
+            setKelas1Books(data);
+            setKelas1Pagination(paginationMeta);
         } catch (err) {
             console.error(err);
         } finally {
@@ -85,22 +133,88 @@ export const BookProvider = ({ children }) => {
         }
     },[])
 
-    const fetchKelas2Books = useCallback(async () => {
+    const fetchKelas2Books = useCallback(async (page = 1) => {
         setLoading(true);
         try {
-            const response = await axios.get('/books-kelas-2');
-            setKelas2Books(response.data);
+            const response = await axios.get(`/books-kelas-2?page=${page}`);
+            let data = response.data;
+            let paginationMeta = {
+                currentPage: 1,
+                lastPage: 1,
+                total: 0
+            };
+
+            if (data.books && data.books.data) {
+                paginationMeta = {
+                    currentPage: data.books.current_page,
+                    lastPage: data.books.last_page,
+                    total: data.books.total
+                };
+                data = data.books.data;
+            } else if (data.data && data.current_page) {
+                paginationMeta = {
+                    currentPage: data.current_page,
+                    lastPage: data.last_page,
+                    total: data.total
+                };
+                data = data.data;
+            } else if (Array.isArray(data)) {
+                const perPage = 8;
+                paginationMeta.total = data.length;
+                paginationMeta.lastPage = Math.ceil(data.length / perPage);
+                paginationMeta.currentPage = Number(page);
+                
+                const start = (Number(page) - 1) * perPage;
+                const end = start + perPage;
+                data = data.slice(start, end);
+            }
+
+            setKelas2Books(data);
+            setKelas2Pagination(paginationMeta);
         } catch (err) {
             console.error(err);
         } finally {
             setLoading(false);
         }
     },[])
-    const fetchKelas3Books = useCallback(async () => {
+    const fetchKelas3Books = useCallback(async (page = 1) => {
         setLoading(true);
         try {
-            const response = await axios.get('/books-kelas-3');
-            setKelas3Books(response.data);
+            const response = await axios.get(`/books-kelas-3?page=${page}`);
+            let data = response.data;
+            let paginationMeta = {
+                currentPage: 1,
+                lastPage: 1,
+                total: 0
+            };
+
+            if (data.books && data.books.data) {
+                paginationMeta = {
+                    currentPage: data.books.current_page,
+                    lastPage: data.books.last_page,
+                    total: data.books.total
+                };
+                data = data.books.data;
+            } else if (data.data && data.current_page) {
+                paginationMeta = {
+                    currentPage: data.current_page,
+                    lastPage: data.last_page,
+                    total: data.total
+                };
+                data = data.data;
+            } else if (Array.isArray(data)) {
+                const perPage = 8;
+                paginationMeta.total = data.length;
+                paginationMeta.lastPage = Math.ceil(data.length / perPage);
+                paginationMeta.currentPage = Number(page);
+                
+                const start = (Number(page) - 1) * perPage;
+                const end = start + perPage;
+                data = data.slice(start, end);
+            }
+
+            setKelas3Books(data);
+            setKelas3Pagination(paginationMeta);
         } catch (err) {
             console.error(err);
         } finally {
@@ -108,22 +222,88 @@ export const BookProvider = ({ children }) => {
         }
     },[])
 
-    const fetchKelas4Books = useCallback(async () => {
+    const fetchKelas4Books = useCallback(async (page = 1) => {
         setLoading(true);
         try {
-            const response = await axios.get('/books-kelas-4');
-            setKelas4Books(response.data);
+            const response = await axios.get(`/books-kelas-4?page=${page}`);
+            let data = response.data;
+            let paginationMeta = {
+                currentPage: 1,
+                lastPage: 1,
+                total: 0
+            };
+
+            if (data.books && data.books.data) {
+                paginationMeta = {
+                    currentPage: data.books.current_page,
+                    lastPage: data.books.last_page,
+                    total: data.books.total
+                };
+                data = data.books.data;
+            } else if (data.data && data.current_page) {
+                paginationMeta = {
+                    currentPage: data.current_page,
+                    lastPage: data.last_page,
+                    total: data.total
+                };
+                data = data.data;
+            } else if (Array.isArray(data)) {
+                const perPage = 8;
+                paginationMeta.total = data.length;
+                paginationMeta.lastPage = Math.ceil(data.length / perPage);
+                paginationMeta.currentPage = Number(page);
+                
+                const start = (Number(page) - 1) * perPage;
+                const end = start + perPage;
+                data = data.slice(start, end);
+            }
+
+            setKelas4Books(data);
+            setKelas4Pagination(paginationMeta);
         } catch (err) {
             console.error(err);
         } finally {
             setLoading(false);
         }
     },[])
-    const fetchKelas5Books = useCallback(async () => {
+    const fetchKelas5Books = useCallback(async (page = 1) => {
         setLoading(true);
         try {
-            const response = await axios.get('/books-kelas-5');
-            setKelas5Books(response.data);
+            const response = await axios.get(`/books-kelas-5?page=${page}`);
+            let data = response.data;
+            let paginationMeta = {
+                currentPage: 1,
+                lastPage: 1,
+                total: 0
+            };
+
+            if (data.books && data.books.data) {
+                paginationMeta = {
+                    currentPage: data.books.current_page,
+                    lastPage: data.books.last_page,
+                    total: data.books.total
+                };
+                data = data.books.data;
+            } else if (data.data && data.current_page) {
+                paginationMeta = {
+                    currentPage: data.current_page,
+                    lastPage: data.last_page,
+                    total: data.total
+                };
+                data = data.data;
+            } else if (Array.isArray(data)) {
+                const perPage = 8;
+                paginationMeta.total = data.length;
+                paginationMeta.lastPage = Math.ceil(data.length / perPage);
+                paginationMeta.currentPage = Number(page);
+                
+                const start = (Number(page) - 1) * perPage;
+                const end = start + perPage;
+                data = data.slice(start, end);
+            }
+
+            setKelas5Books(data);
+            setKelas5Pagination(paginationMeta);
         } catch (err) {
             console.error(err);
         } finally {
@@ -131,22 +311,88 @@ export const BookProvider = ({ children }) => {
         }
     },[])
 
-    const fetchKelas6Books = useCallback(async () => {
+    const fetchKelas6Books = useCallback(async (page = 1) => {
         setLoading(true);
         try {
-            const response = await axios.get('/books-kelas-6');
-            setKelas6Books(response.data);
+            const response = await axios.get(`/books-kelas-6?page=${page}`);
+            let data = response.data;
+            let paginationMeta = {
+                currentPage: 1,
+                lastPage: 1,
+                total: 0
+            };
+
+            if (data.books && data.books.data) {
+                paginationMeta = {
+                    currentPage: data.books.current_page,
+                    lastPage: data.books.last_page,
+                    total: data.books.total
+                };
+                data = data.books.data;
+            } else if (data.data && data.current_page) {
+                paginationMeta = {
+                    currentPage: data.current_page,
+                    lastPage: data.last_page,
+                    total: data.total
+                };
+                data = data.data;
+            } else if (Array.isArray(data)) {
+                const perPage = 8;
+                paginationMeta.total = data.length;
+                paginationMeta.lastPage = Math.ceil(data.length / perPage);
+                paginationMeta.currentPage = Number(page);
+                
+                const start = (Number(page) - 1) * perPage;
+                const end = start + perPage;
+                data = data.slice(start, end);
+            }
+
+            setKelas6Books(data);
+            setKelas6Pagination(paginationMeta);
         } catch (err) {
             console.error(err);
         } finally {
             setLoading(false);
         }
     },[])
-    const fetchKelas7Books = useCallback(async () => {
+    const fetchKelas7Books = useCallback(async (page = 1) => {
         setLoading(true);
         try {
-            const response = await axios.get('/books-kelas-7');
-            setKelas7Books(response.data);
+            const response = await axios.get(`/books-kelas-7?page=${page}`);
+            let data = response.data;
+            let paginationMeta = {
+                currentPage: 1,
+                lastPage: 1,
+                total: 0
+            };
+
+            if (data.books && data.books.data) {
+                paginationMeta = {
+                    currentPage: data.books.current_page,
+                    lastPage: data.books.last_page,
+                    total: data.books.total
+                };
+                data = data.books.data;
+            } else if (data.data && data.current_page) {
+                paginationMeta = {
+                    currentPage: data.current_page,
+                    lastPage: data.last_page,
+                    total: data.total
+                };
+                data = data.data;
+            } else if (Array.isArray(data)) {
+                const perPage = 8;
+                paginationMeta.total = data.length;
+                paginationMeta.lastPage = Math.ceil(data.length / perPage);
+                paginationMeta.currentPage = Number(page);
+                
+                const start = (Number(page) - 1) * perPage;
+                const end = start + perPage;
+                data = data.slice(start, end);
+            }
+
+            setKelas7Books(data);
+            setKelas7Pagination(paginationMeta);
         } catch (err) {
             console.error(err);
         } finally {
@@ -154,55 +400,227 @@ export const BookProvider = ({ children }) => {
         }
     },[])
 
-    const fetchKelas8Books = useCallback(async () => {
+    const fetchKelas8Books = useCallback(async (page = 1) => {
         setLoading(true);
         try {
-            const response = await axios.get('/books-kelas-8');
-            setKelas8Books(response.data);
+            const response = await axios.get(`/books-kelas-8?page=${page}`);
+            let data = response.data;
+            let paginationMeta = {
+                currentPage: 1,
+                lastPage: 1,
+                total: 0
+            };
+
+            if (data.books && data.books.data) {
+                paginationMeta = {
+                    currentPage: data.books.current_page,
+                    lastPage: data.books.last_page,
+                    total: data.books.total
+                };
+                data = data.books.data;
+            } else if (data.data && data.current_page) {
+                paginationMeta = {
+                    currentPage: data.current_page,
+                    lastPage: data.last_page,
+                    total: data.total
+                };
+                data = data.data;
+            } else if (Array.isArray(data)) {
+                const perPage = 8;
+                paginationMeta.total = data.length;
+                paginationMeta.lastPage = Math.ceil(data.length / perPage);
+                paginationMeta.currentPage = Number(page);
+                
+                const start = (Number(page) - 1) * perPage;
+                const end = start + perPage;
+                data = data.slice(start, end);
+            }
+
+            setKelas8Books(data);
+            setKelas8Pagination(paginationMeta);
         } catch (err) {
             console.error(err);
         } finally {
             setLoading(false);
         }
     },[])
-    const fetchKelas9Books = useCallback(async () => {
+    const fetchKelas9Books = useCallback(async (page = 1) => {
         setLoading(true);
         try {
-            const response = await axios.get('/books-kelas-9');
-            setKelas9Books(response.data);
+            const response = await axios.get(`/books-kelas-9?page=${page}`);
+            let data = response.data;
+            let paginationMeta = {
+                currentPage: 1,
+                lastPage: 1,
+                total: 0
+            };
+
+            if (data.books && data.books.data) {
+                paginationMeta = {
+                    currentPage: data.books.current_page,
+                    lastPage: data.books.last_page,
+                    total: data.books.total
+                };
+                data = data.books.data;
+            } else if (data.data && data.current_page) {
+                paginationMeta = {
+                    currentPage: data.current_page,
+                    lastPage: data.last_page,
+                    total: data.total
+                };
+                data = data.data;
+            } else if (Array.isArray(data)) {
+                const perPage = 8;
+                paginationMeta.total = data.length;
+                paginationMeta.lastPage = Math.ceil(data.length / perPage);
+                paginationMeta.currentPage = Number(page);
+                
+                const start = (Number(page) - 1) * perPage;
+                const end = start + perPage;
+                data = data.slice(start, end);
+            }
+
+            setKelas9Books(data);
+            setKelas9Pagination(paginationMeta);
         } catch (err) {
             console.error(err);
         } finally {
             setLoading(false);
         }
     },[])
-    const fetchKelas10Books = useCallback(async () => {
+    const fetchKelas10Books = useCallback(async (page = 1) => {
         setLoading(true);
         try {
-            const response = await axios.get('/books-kelas-10');
-            setKelas10Books(response.data);
+            const response = await axios.get(`/books-kelas-10?page=${page}`);
+            let data = response.data;
+            let paginationMeta = {
+                currentPage: 1,
+                lastPage: 1,
+                total: 0
+            };
+
+            if (data.books && data.books.data) {
+                paginationMeta = {
+                    currentPage: data.books.current_page,
+                    lastPage: data.books.last_page,
+                    total: data.books.total
+                };
+                data = data.books.data;
+            } else if (data.data && data.current_page) {
+                paginationMeta = {
+                    currentPage: data.current_page,
+                    lastPage: data.last_page,
+                    total: data.total
+                };
+                data = data.data;
+            } else if (Array.isArray(data)) {
+                const perPage = 8;
+                paginationMeta.total = data.length;
+                paginationMeta.lastPage = Math.ceil(data.length / perPage);
+                paginationMeta.currentPage = Number(page);
+                
+                const start = (Number(page) - 1) * perPage;
+                const end = start + perPage;
+                data = data.slice(start, end);
+            }
+
+            setKelas10Books(data);
+            setKelas10Pagination(paginationMeta);
         } catch (err) {
             console.error(err);
         } finally {
             setLoading(false);
         }
     },[])
-    const fetchKelas11Books = useCallback(async () => {
+    const fetchKelas11Books = useCallback(async (page = 1) => {
         setLoading(true);
         try {
-            const response = await axios.get('/books-kelas-11');
-            setKelas11Books(response.data);
+            const response = await axios.get(`/books-kelas-11?page=${page}`);
+            let data = response.data;
+            let paginationMeta = {
+                currentPage: 1,
+                lastPage: 1,
+                total: 0
+            };
+
+            if (data.books && data.books.data) {
+                paginationMeta = {
+                    currentPage: data.books.current_page,
+                    lastPage: data.books.last_page,
+                    total: data.books.total
+                };
+                data = data.books.data;
+            } else if (data.data && data.current_page) {
+                paginationMeta = {
+                    currentPage: data.current_page,
+                    lastPage: data.last_page,
+                    total: data.total
+                };
+                data = data.data;
+            } else if (Array.isArray(data)) {
+                const perPage = 8;
+                paginationMeta.total = data.length;
+                paginationMeta.lastPage = Math.ceil(data.length / perPage);
+                paginationMeta.currentPage = Number(page);
+                
+                const start = (Number(page) - 1) * perPage;
+                const end = start + perPage;
+                data = data.slice(start, end);
+            }
+
+            setKelas11Books(data);
+            setKelas11Pagination(paginationMeta);
         } catch (err) {
             console.error(err);
         } finally {
             setLoading(false);
         }
     },[])
-    const fetchKelas12Books = useCallback(async () => {
+    const fetchKelas12Books = useCallback(async (page = 1) => {
         setLoading(true);
         try {
-            const response = await axios.get('/books-kelas-12');
-            setKelas12Books(response.data);
+            const response = await axios.get(`/books-kelas-12?page=${page}`);
+            
+            // Check for pagination structure
+            let data = response.data;
+            let paginationMeta = {
+                currentPage: 1,
+                lastPage: 1,
+                total: 0
+            };
+
+            // Handle different possible response structures
+            if (data.books && data.books.data) {
+                // Structure similar to fetchBooks
+                paginationMeta = {
+                    currentPage: data.books.current_page,
+                    lastPage: data.books.last_page,
+                    total: data.books.total
+                };
+                data = data.books.data;
+            } else if (data.data && data.current_page) {
+                // Direct pagination structure
+                paginationMeta = {
+                    currentPage: data.current_page,
+                    lastPage: data.last_page,
+                    total: data.total
+                };
+                data = data.data;
+            } else if (Array.isArray(data)) {
+                // Fallback for array response with Client-Side Pagination
+                const perPage = 8; // Adjust this value based on your grid layout
+                paginationMeta.total = data.length;
+                paginationMeta.lastPage = Math.ceil(data.length / perPage);
+                paginationMeta.currentPage = Number(page);
+                
+                // Perform client-side slicing
+                const start = (Number(page) - 1) * perPage;
+                const end = start + perPage;
+                data = data.slice(start, end);
+            }
+
+            setKelas12Books(data);
+            setKelas12Pagination(paginationMeta);
         } catch (err) {
             console.error(err);
         } finally {
@@ -211,11 +629,44 @@ export const BookProvider = ({ children }) => {
     },[])
 
     // Fungsi untuk mengambil buku guru
-    const fetchGuruBooks = useCallback(async () => {
+    const fetchGuruBooks = useCallback(async (page = 1) => {
         setLoading(true);
         try {
-            const response = await axios.get('/books-guru');
-            setGuruBooks(response.data);
+            const response = await axios.get(`/books-guru?page=${page}`);
+            let data = response.data;
+            let paginationMeta = {
+                currentPage: 1,
+                lastPage: 1,
+                total: 0
+            };
+
+            if (data.books && data.books.data) {
+                paginationMeta = {
+                    currentPage: data.books.current_page,
+                    lastPage: data.books.last_page,
+                    total: data.books.total
+                };
+                data = data.books.data;
+            } else if (data.data && data.current_page) {
+                paginationMeta = {
+                    currentPage: data.current_page,
+                    lastPage: data.last_page,
+                    total: data.total
+                };
+                data = data.data;
+            } else if (Array.isArray(data)) {
+                const perPage = 8;
+                paginationMeta.total = data.length;
+                paginationMeta.lastPage = Math.ceil(data.length / perPage);
+                paginationMeta.currentPage = Number(page);
+                
+                const start = (Number(page) - 1) * perPage;
+                const end = start + perPage;
+                data = data.slice(start, end);
+            }
+
+            setGuruBooks(data);
+            setGuruPagination(paginationMeta);
         } catch (err) {
             console.error(err);
         } finally {
@@ -240,17 +691,50 @@ export const BookProvider = ({ children }) => {
      
 
     // Fungsi untuk mengambil buku non akademik
-    const fetchNonAkademikBooks = useCallback(async () => {
+    const fetchNonAkademikBooks = useCallback(async (page = 1) => {
         setLoading(true);
         try {
-            const response = await axios.get('/books-non-akademik');
-            const mappedData = response.data.map(b => ({
+            const response = await axios.get(`/books-non-akademik?page=${page}`);
+            let data = response.data;
+            let paginationMeta = {
+                currentPage: 1,
+                lastPage: 1,
+                total: 0
+            };
+
+            if (data.books && data.books.data) {
+                paginationMeta = {
+                    currentPage: data.books.current_page,
+                    lastPage: data.books.last_page,
+                    total: data.books.total
+                };
+                data = data.books.data;
+            } else if (data.data && data.current_page) {
+                paginationMeta = {
+                    currentPage: data.current_page,
+                    lastPage: data.last_page,
+                    total: data.total
+                };
+                data = data.data;
+            } else if (Array.isArray(data)) {
+                const perPage = 8;
+                paginationMeta.total = data.length;
+                paginationMeta.lastPage = Math.ceil(data.length / perPage);
+                paginationMeta.currentPage = Number(page);
+                
+                const start = (Number(page) - 1) * perPage;
+                const end = start + perPage;
+                data = data.slice(start, end);
+            }
+
+            const mappedData = data.map(b => ({
                 ...b,
                 cover: b.cover_image || b.cover,
                 isi: b.file_pdf || b.isi,
                 tahun: b.tahun_terbit || b.tahun,
             }));
             setNonAkademikBooks(mappedData);
+            setNonAkademikPagination(paginationMeta);
         } catch (err) {
             console.error(err);
         } finally {
@@ -1017,6 +1501,20 @@ const deleteBookKelas12 = async (id) => {
                 kelas10Books,
                 kelas11Books,
                 kelas12Books,
+                kelas1Pagination,
+                kelas2Pagination,
+                kelas3Pagination,
+                kelas4Pagination,
+                kelas5Pagination,
+                kelas6Pagination,
+                kelas7Pagination,
+                kelas8Pagination,
+                kelas9Pagination,
+                kelas10Pagination,
+                kelas11Pagination,
+                kelas12Pagination,
+                nonAkademikPagination,
+                guruPagination,
                 pagination,
                 loading,
                 error,
