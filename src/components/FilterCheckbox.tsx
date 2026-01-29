@@ -110,7 +110,7 @@ const FilterCheckbox: React.FC<FilterCheckboxProps> = ({ books, onFilterChange, 
               <div className="relative flex items-center">
                 <input
                   type="checkbox"
-                  className="peer h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                  className="peer h-4 w-4 rounded border-gray-300 text-red-600 focus:ring-red-500 cursor-pointer"
                   checked={selectedFilters[category].includes(value)}
                   onChange={() => toggleFilter(category, value)}
                 />
@@ -134,14 +134,14 @@ const FilterCheckbox: React.FC<FilterCheckboxProps> = ({ books, onFilterChange, 
         onClick={() => setIsOpen(!isOpen)}
         className={`flex items-center gap-2 px-4 py-2 border rounded-lg shadow-sm transition-colors ${
           activeFilterCount > 0 
-            ? 'bg-blue-50 border-blue-200 text-blue-700' 
+            ? 'bg-red-50 border-red-200 text-red-700' 
             : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
         }`}
       >
         <Filter size={18} />
         <span className="font-medium">Filter</span>
         {activeFilterCount > 0 && (
-          <span className="bg-blue-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+          <span className="bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
             {activeFilterCount}
           </span>
         )}
@@ -182,7 +182,7 @@ const FilterCheckbox: React.FC<FilterCheckboxProps> = ({ books, onFilterChange, 
           <div className="p-3 bg-gray-50 border-t border-gray-100 flex justify-end">
             <button
               onClick={() => setIsOpen(false)}
-              className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
+              className="px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors shadow-sm"
             >
               Terapkan
             </button>
