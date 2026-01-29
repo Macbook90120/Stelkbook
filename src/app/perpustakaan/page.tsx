@@ -153,9 +153,17 @@ export default function Home() {
               
               {/* Persetujuan Registrasi */}
               <div className="bg-white shadow-md hover:shadow-lg transition-shadow duration-200 p-5 rounded-2xl w-full max-w-[672px]">
-                <h2 className="text-lg font-bold mb-4 text-center text-gray-800">
-                  Persetujuan Registrasi
-                </h2>
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-lg font-bold text-gray-800">
+                    Persetujuan Registrasi
+                  </h2>
+                  <button 
+                    onClick={() => router.push('/perpustakaan/registrasi_request')}
+                    className="text-sm text-blue-600 hover:text-blue-800 font-medium"
+                  >
+                    Lihat Semua
+                  </button>
+                </div>
 
                 {pendingUsers.length === 0 ? (
                   <div className="flex justify-center py-4">

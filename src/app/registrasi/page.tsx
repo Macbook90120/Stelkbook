@@ -28,6 +28,11 @@ function Page() {
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false); // ✅ Spinner State
+  const [passwordError, setPasswordError] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [confirmPasswordError, setConfirmPasswordError] = useState('');
 
   const handleStatusChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const selectedRole = e.target.value;
@@ -47,6 +52,45 @@ function Page() {
     const selectedSekolah = e.target.value;
     setSekolah(selectedSekolah);
     setKelas('');
+  };
+
+  const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setEmail(value);
+
+    if (!value.includes('@')) {
+      setEmailError("Email must include the '@' symbol");
+    } else {
+      setEmailError('');
+    }
+  };
+
+  const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setPassword(value);
+
+    if (value.length > 15) {
+      setPasswordError('character limit must only 15 character at the time on password');
+    } else {
+      setPasswordError('');
+    }
+
+    if (confirmPassword && value !== confirmPassword) {
+      setConfirmPasswordError('Password does not match');
+    } else if (confirmPassword && value === confirmPassword) {
+      setConfirmPasswordError('');
+    }
+  };
+
+  const handleConfirmPasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setConfirmPassword(value);
+
+    if (value !== password) {
+      setConfirmPasswordError('Password does not match');
+    } else {
+      setConfirmPasswordError('');
+    }
   };
 
   const handleSelesaiClick = async () => {
@@ -162,25 +206,38 @@ function Page() {
 
             {/* Email */}
             <div>
-              <label className="block text-gray-700 text-sm font-medium mb-2">Email</label>
+              <label className="block text-gray-700 text-sm font-medium mb-2">Email <span className="text-red-500">*</span></label>
               <input
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
+                onChange={handleEmailChange}
+                className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 ${
+                  emailError
+                    ? 'border-red-500 ring-2 ring-red-500 text-red-900'
+                    : 'border-gray-300 focus:ring-red'
+                }`}
                 required
               />
+              {emailError && (
+                <div className="mt-2 text-red-500 text-sm">
+                  {emailError}
+                </div>
+              )}
             </div>
 
             {/* Password */}
             <div>
-              <label className="block text-gray-700 text-sm font-medium mb-2">Password</label>
+              <label className="block text-gray-700 text-sm font-medium mb-2">Password <span className="text-red-500">*</span></label>
               <div className="relative">
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red pr-10"
+                  onChange={handlePasswordChange}
+                  className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 pr-10 ${
+                    passwordError
+                      ? 'border-red-500 ring-2 ring-red-500 text-red-900'
+                      : 'border-gray-300 focus:ring-red'
+                  }`}
                   required
                 />
                 <button
@@ -191,11 +248,46 @@ function Page() {
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
+              {passwordError && (
+                <div className="mt-2 text-red-500 text-sm">
+                  {passwordError}
+                </div>
+              )}
+            </div>
+
+            {/* Confirm Password */}
+            <div>
+              <label className="block text-gray-700 text-sm font-medium mb-2">Confirm Password <span className="text-red-500">*</span></label>
+              <div className="relative">
+                <input
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  value={confirmPassword}
+                  onChange={handleConfirmPasswordChange}
+                  className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 pr-10 ${
+                    confirmPasswordError
+                      ? 'border-red-500 ring-2 ring-red-500 text-red-900'
+                      : 'border-gray-300 focus:ring-red'
+                  }`}
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                >
+                  {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
+              {confirmPasswordError && (
+                <div className="mt-2 text-red-500 text-sm">
+                  {confirmPasswordError}
+                </div>
+              )}
             </div>
 
             {/* Kode */}
             <div>
-              <label className="block text-gray-700 text-sm font-medium mb-2">Kode (NIS/NIP)</label>
+              <label className="block text-gray-700 text-sm font-medium mb-2">Kode (NIS/NIP) <span className="text-red-500">*</span></label>
               <input
                 type="text"
                 value={kode}
@@ -207,7 +299,7 @@ function Page() {
 
             {/* Status */}
             <div>
-              <label className="block text-gray-700 text-sm font-medium mb-2">Status</label>
+              <label className="block text-gray-700 text-sm font-medium mb-2">Status <span className="text-red-500">*</span></label>
               <select
                 value={role}
                 onChange={handleStatusChange}
@@ -225,7 +317,7 @@ function Page() {
             {/* Sekolah */}
             {showSekolahField && (
               <div>
-                <label className="block text-gray-700 text-sm font-medium mb-2">Sekolah</label>
+                <label className="block text-gray-700 text-sm font-medium mb-2">Sekolah <span className="text-red-500">*</span></label>
                 <select
                   value={sekolah}
                   onChange={handleSekolahChange}
@@ -243,7 +335,7 @@ function Page() {
             {/* Kelas */}
             {showKelasField && sekolah && (
               <div>
-                <label className="block text-gray-700 text-sm font-medium mb-2">Kelas</label>
+                <label className="block text-gray-700 text-sm font-medium mb-2">Kelas <span className="text-red-500">*</span></label>
                 <select
                   value={kelas}
                   onChange={(e) => setKelas(e.target.value)}
@@ -258,7 +350,7 @@ function Page() {
 
             {/* Gender */}
             <div>
-              <label className="block text-gray-700 text-sm font-medium mb-2">Gender</label>
+              <label className="block text-gray-700 text-sm font-medium mb-2">Gender <span className="text-red-500">*</span></label>
               <select
                 value={gender}
                 onChange={(e) => setGender(e.target.value)}
@@ -307,9 +399,13 @@ function Page() {
     onClick={handleSelesaiClick}
     disabled={
       isLoading ||
+      !!passwordError ||
+      !!emailError ||
+      !!confirmPasswordError ||
       !username ||
       !email ||
       !password ||
+      !confirmPassword ||
       !kode ||
       !role ||
       !gender ||

@@ -68,7 +68,8 @@ function GuruPageContent() {
   const [mappedBooks, setMappedBooks] = useState<Book[]>([]);
   const [sortOption, setSortOption] = useState<SortOption>(null);
   const [activeFilters, setActiveFilters] = useState<FilterState>({
-    kategori: [],
+    kelas: [],
+    mapel: [],
     penerbit: [],
     penulis: []
   });

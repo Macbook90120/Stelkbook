@@ -30,7 +30,8 @@ function BookContent() {
   const [combinedBooks, setCombinedBooks] = useState<Book[]>([]);
   const [sortOption, setSortOption] = useState<SortOption>(null);
   const [activeFilters, setActiveFilters] = useState<FilterState>({
-    kategori: [],
+    kelas: [],
+    mapel: [],
     penerbit: [],
     penulis: []
   });

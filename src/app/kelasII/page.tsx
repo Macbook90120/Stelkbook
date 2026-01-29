@@ -26,15 +26,15 @@ const BookCard = ({ book }: { book: Book }) => {
 
   return (
     <div
-      className="bg-white hover:bg-gray-100 rounded-lg p-4 cursor-pointer flex flex-col items-center transition-colors duration-200"
+      className="text-center cursor-pointer hover:bg-gray-100 p-2 rounded-lg w-full max-w-[180px] transition-colors flex flex-col items-center"
       onClick={() => book.path && router.push(book.path)}
     >
-      <div className="w-[150px] h-[200px] relative">
+      <div className="relative w-full pb-[133%] rounded-lg overflow-hidden shadow-md mx-auto">
         <Image
            src={book.cover}
            alt={book.judul}
            fill
-           sizes="300px"
+           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 180px"
            className="rounded-md object-cover"
            priority
            onError={(e) => {
@@ -43,7 +43,7 @@ const BookCard = ({ book }: { book: Book }) => {
            }}
          />
       </div>
-      <p className="mt-4 text-center text-sm font-semibold font-poppins">{book.judul}</p>
+      <p className="mt-2 text-sm font-poppins font-semibold text-center line-clamp-2">{book.judul}</p>
     </div>
   );
 };
@@ -175,7 +175,7 @@ function PageContent() {
         {/* Books Section */}
         <div className="flex-grow">
           {displayBooks.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 justify-center">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 justify-items-center">
               {displayBooks.map((book) => (
                 <BookCard key={book.id} book={book} />
               ))}

@@ -67,10 +67,10 @@ function Page() {
 
       {/* Profile Section */}
       <div className="flex justify-center pt-12 px-8">
-        <div className="bg-white border border-gray-300 rounded-lg p-8 shadow-lg w-full max-w-3xl flex flex-col lg:flex-row lg:items-center lg:space-x-8">
+        <div className="bg-white border border-gray-300 rounded-lg p-8 shadow-lg w-full max-w-3xl flex flex-col items-center">
           
           {/* Profile Image */}
-          <div className="flex justify-center lg:justify-start items-center mb-6 lg:mb-0">
+          <div className="flex justify-center items-center mb-6">
             <Image
               src={user.avatar ? `http://localhost:8000/storage/${user.avatar}` : "/assets/Class/Icon_user.png"}
               alt="Profile Picture"
