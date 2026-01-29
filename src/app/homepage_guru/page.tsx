@@ -8,6 +8,7 @@ import useAuthMiddleware from '@/hooks/auth';
 import { useAuth } from '@/context/authContext';
 import Pagination from '@/components/Pagination';
 import SortFilter, { SortOption } from '@/components/SortFilter';
+import FilterCheckbox, { FilterState } from '@/components/FilterCheckbox';
 
 interface Book {
   id: number;
@@ -15,7 +16,11 @@ interface Book {
   cover: string;
   path?: string;
   kategori?: string;
+  kelas?: string;
+  mapel?: string;
   sekolah?: string;
+  penerbit?: string;
+  penulis?: string;
 }
 
 const BookCard = ({ book }: { book: Book }) => {
@@ -62,6 +67,11 @@ function GuruPageContent() {
   const { guruBooks, guruPagination, loading, fetchGuruBooks } = useBook();
   const [mappedBooks, setMappedBooks] = useState<Book[]>([]);
   const [sortOption, setSortOption] = useState<SortOption>(null);
+  const [activeFilters, setActiveFilters] = useState<FilterState>({
+    kategori: [],
+    penerbit: [],
+    penulis: []
+  });
 
   const currentPage = Number(searchParams.get('page')) || 1;
 
@@ -106,7 +116,16 @@ function GuruPageContent() {
 
   useEffect(() => {
     if (guruBooks) {
-      const processedBooks = guruBooks.map((book: any) => {
+      const filteredBooks = guruBooks.filter((book: any) => {
+        const bookClass = book.kelas || book.kategori;
+        const matchesClass = activeFilters.kelas.length === 0 || (bookClass && activeFilters.kelas.includes(bookClass));
+        const matchesSubject = activeFilters.mapel.length === 0 || (book.mapel && activeFilters.mapel.includes(book.mapel));
+        const matchesPublisher = activeFilters.penerbit.length === 0 || (book.penerbit && activeFilters.penerbit.includes(book.penerbit));
+        const matchesAuthor = activeFilters.penulis.length === 0 || (book.penulis && activeFilters.penulis.includes(book.penulis));
+        return matchesClass && matchesSubject && matchesPublisher && matchesAuthor;
+      });
+
+      const processedBooks = filteredBooks.map((book: any) => {
         const coverUrl = book.cover
           ? `http://localhost:8000/storage/${book.cover}`
           : '/assets/default-cover.png';
@@ -117,7 +136,11 @@ function GuruPageContent() {
           cover: coverUrl,
           path: `/homepage_guru/Buku?id=${book.id}`,
           kategori: book.kategori,
-          sekolah: book.sekolah
+          kelas: book.kelas || book.kategori,
+          mapel: book.mapel,
+          sekolah: book.sekolah,
+          penerbit: book.penerbit,
+          penulis: book.penulis
         };
       });
 
@@ -129,7 +152,7 @@ function GuruPageContent() {
 
       setMappedBooks(processedBooks);
     }
-  }, [guruBooks, sortOption]);
+  }, [guruBooks, sortOption, activeFilters]);
 
   if (loading) {
     return (
@@ -151,10 +174,13 @@ function GuruPageContent() {
           <p className="text-xl font-semibold font-poppins">
             Buku Ajar Anda
           </p>
-          <SortFilter
-            currentSort={sortOption}
-            onSortChange={setSortOption}
-          />
+          <div className="flex gap-3">
+            <FilterCheckbox books={guruBooks} onFilterChange={setActiveFilters} />
+            <SortFilter
+              currentSort={sortOption}
+              onSortChange={setSortOption}
+            />
+          </div>
         </div>
 
         <div className="flex-grow">

@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import Pagination from '@/components/Pagination';
 import SortFilter, { SortOption } from '@/components/SortFilter';
+import FilterCheckbox, { FilterState } from '@/components/FilterCheckbox';
 import { useBook } from '@/context/bookContext';
 import useAuthMiddleware from '@/hooks/auth';
 
@@ -13,6 +14,11 @@ interface Book {
   judul: string;
   cover: string;
   path?: string;
+  kategori?: string;
+  kelas?: string;
+  mapel?: string;
+  penerbit?: string;
+  penulis?: string;
 }
 
 const BookCard = ({ book }: { book: Book }) => {
@@ -49,6 +55,12 @@ function PageContent() {
   const { kelas2Books, kelas2Pagination, loading, error, fetchKelas2Books } = useBook();
   const [displayBooks, setDisplayBooks] = useState<Book[]>([]);
   const [sortOption, setSortOption] = useState<SortOption>(null);
+  const [activeFilters, setActiveFilters] = useState<FilterState>({
+    kelas: [],
+    mapel: [],
+    penerbit: [],
+    penulis: []
+  });
 
   const currentPage = Number(searchParams.get('page')) || 1;
 
@@ -82,7 +94,17 @@ function PageContent() {
   }, [currentPage, kelas2Pagination]);
 
   useEffect(() => {
-    const processedBooks = kelas2Books.map((book: Book) => {
+    const filteredBooks = kelas2Books.filter((book: any) => {
+      // For backward compatibility, check both kelas and kategori
+      const bookClass = book.kelas || book.kategori;
+      const matchesClass = activeFilters.kelas.length === 0 || (bookClass && activeFilters.kelas.includes(bookClass));
+      const matchesSubject = activeFilters.mapel.length === 0 || (book.mapel && activeFilters.mapel.includes(book.mapel));
+      const matchesPublisher = activeFilters.penerbit.length === 0 || (book.penerbit && activeFilters.penerbit.includes(book.penerbit));
+      const matchesAuthor = activeFilters.penulis.length === 0 || (book.penulis && activeFilters.penulis.includes(book.penulis));
+      return matchesClass && matchesSubject && matchesPublisher && matchesAuthor;
+    });
+
+    const processedBooks = filteredBooks.map((book: any) => {
       const coverUrl = book.cover 
         ? `http://localhost:8000/storage/${book.cover}` 
         : '/assets/default-cover.png';
@@ -92,6 +114,10 @@ function PageContent() {
         judul: book.judul,
         cover: coverUrl,
         path: `/kelasII/Buku?id=${book.id}`,
+        kelas: book.kelas || book.kategori,
+        mapel: book.mapel,
+        penerbit: book.penerbit,
+        penulis: book.penulis
       };
     });
 
@@ -102,7 +128,7 @@ function PageContent() {
     }
 
     setDisplayBooks(processedBooks);
-  }, [kelas2Books, sortOption]);
+  }, [kelas2Books, sortOption, activeFilters]);
 
   if (loading) {
     return (
@@ -133,10 +159,17 @@ function PageContent() {
             <Image src="/assets/Kelas_X/Primary_Direct.png" alt="Divider Icon" width={10} height={16} />
             <h2 className="text-xl font-bold text-gray-800">Kelas II</h2>
           </div>
-          <SortFilter 
-            currentSort={sortOption} 
-            onSortChange={setSortOption} 
-          />
+          <div className="flex gap-3">
+            <FilterCheckbox 
+              books={kelas2Books} 
+              onFilterChange={setActiveFilters} 
+              hiddenFilters={['kelas']}
+            />
+            <SortFilter 
+              currentSort={sortOption} 
+              onSortChange={setSortOption} 
+            />
+          </div>
         </div>
 
         {/* Books Section */}

@@ -8,12 +8,18 @@ import { useBook } from '@/context/bookContext';
 import { useAuth } from '@/context/authContext';
 import Pagination from '@/components/Pagination';
 import SortFilter, { SortOption } from '@/components/SortFilter';
+import FilterCheckbox, { FilterState } from '@/components/FilterCheckbox';
 
 interface Book {
   id: number;
   judul: string;
   cover: string;
   path?: string;
+  kategori?: string;
+  kelas?: string;
+  mapel?: string;
+  penerbit?: string;
+  penulis?: string;
 }
 
 function BookContent() {
@@ -23,6 +29,11 @@ function BookContent() {
   const { books, fetchBooks, loading, pagination, error } = useBook();
   const [combinedBooks, setCombinedBooks] = useState<Book[]>([]);
   const [sortOption, setSortOption] = useState<SortOption>(null);
+  const [activeFilters, setActiveFilters] = useState<FilterState>({
+    kategori: [],
+    penerbit: [],
+    penulis: []
+  });
 
   const currentPage = Number(searchParams.get('page')) || 1;
 
@@ -40,7 +51,18 @@ function BookContent() {
 
   useEffect(() => {
     if (books && Array.isArray(books)) {
-      const mappedBooks: Book[] = books.map((book: any) => {
+      // Filter logic
+      let processedBooks = books.filter((book: any) => {
+        const bookClass = book.kelas || book.kategori;
+        const matchesClass = activeFilters.kelas.length === 0 || (bookClass && activeFilters.kelas.includes(bookClass));
+        const matchesSubject = activeFilters.mapel.length === 0 || (book.mapel && activeFilters.mapel.includes(book.mapel));
+        const matchesPublisher = activeFilters.penerbit.length === 0 || (book.penerbit && activeFilters.penerbit.includes(book.penerbit));
+        const matchesAuthor = activeFilters.penulis.length === 0 || (book.penulis && activeFilters.penulis.includes(book.penulis));
+        
+        return matchesClass && matchesSubject && matchesPublisher && matchesAuthor;
+      });
+
+      const mappedBooks: Book[] = processedBooks.map((book: any) => {
         let coverUrl = '/assets/default-cover.png';
         
         if (book.cover_url) {
@@ -67,7 +89,7 @@ function BookContent() {
 
       setCombinedBooks([staticBook, ...mappedBooks]);
     }
-  }, [books, sortOption]);
+  }, [books, sortOption, activeFilters]);
 
   const handlePageChange = (page: number) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -118,10 +140,13 @@ function BookContent() {
           </button>
           <p className="text-xl font-semibold font-poppins">Perpus Anda</p>
         </div>
-        <SortFilter
-            currentSort={sortOption}
-            onSortChange={setSortOption}
-        />
+        <div className="flex gap-3">
+          <FilterCheckbox books={books} onFilterChange={setActiveFilters} />
+          <SortFilter
+              currentSort={sortOption}
+              onSortChange={setSortOption}
+          />
+        </div>
       </div>
 
       {error && (
