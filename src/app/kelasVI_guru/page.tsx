@@ -1,6 +1,5 @@
 'use client';
 import React, { useEffect, useState, Suspense } from 'react';
-import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Navbar from '@/components/Navbar_Guru';
 import { useBook } from '@/context/bookContext';
@@ -8,12 +7,20 @@ import useAuthMiddleware from '@/hooks/auth';
 import { useAuth } from '@/context/authContext';
 import Pagination from '@/components/Pagination';
 import SortFilter, { SortOption } from '@/components/SortFilter';
+import FilterCheckbox, { FilterState } from '@/components/FilterCheckbox';
+import BookCard from '@/components/BookCard';
 
 interface Book {
   id: number;
   judul: string;
   cover: string;
   path?: string;
+  kategori?: string;
+  kelas?: string;
+  mapel?: string;
+  penerbit?: string;
+  penulis?: string;
+  sekolah?: string;
 }
 
 function Kelas6GuruContent() {
@@ -24,6 +31,12 @@ function Kelas6GuruContent() {
   const { kelas6Books, kelas6Pagination, loading, error, fetchKelas6Books } = useBook();
   const [displayBooks, setDisplayBooks] = useState<Book[]>([]);
   const [sortOption, setSortOption] = useState<SortOption>(null);
+  const [activeFilters, setActiveFilters] = useState<FilterState>({
+    kelas: [],
+    mapel: [],
+    penerbit: [],
+    penulis: []
+  });
 
   const currentPage = Number(searchParams.get('page')) || 1;
 
@@ -54,7 +67,35 @@ function Kelas6GuruContent() {
 
   useEffect(() => {
     if (kelas6Books) {
-      const processedBooks = kelas6Books.map((book: any) => {
+      // First, filter the books
+      const filteredBooks = kelas6Books.filter((book: any) => {
+        // Handle class filter - check both kelas and kategori
+        // Some books might store class info in 'kategori' or 'kelas'
+        const bookClass = book.kelas || book.kategori;
+        
+        // Helper to check if a book matches selected classes
+        // This handles cases where bookClass might be a string or array, or part of a string
+        const matchesClass = activeFilters.kelas.length === 0 || (
+          bookClass && activeFilters.kelas.includes(bookClass)
+        );
+
+        const matchesSubject = activeFilters.mapel.length === 0 || (
+          book.mapel && activeFilters.mapel.includes(book.mapel)
+        );
+
+        const matchesPublisher = activeFilters.penerbit.length === 0 || (
+          book.penerbit && activeFilters.penerbit.includes(book.penerbit)
+        );
+
+        const matchesAuthor = activeFilters.penulis.length === 0 || (
+          book.penulis && activeFilters.penulis.includes(book.penulis)
+        );
+
+        return matchesClass && matchesSubject && matchesPublisher && matchesAuthor;
+      });
+
+      // Map to Book interface
+      const processedBooks = filteredBooks.map((book: any) => {
         const coverUrl = book.cover 
           ? `http://localhost:8000/storage/${book.cover}` 
           : '/assets/default-cover.png';
@@ -64,8 +105,16 @@ function Kelas6GuruContent() {
           judul: book.judul,
           cover: coverUrl,
           path: `/kelasVI_guru/Buku?id=${book.id}`,
+          kategori: book.kategori,
+          kelas: book.kelas,
+          mapel: book.mapel,
+          penerbit: book.penerbit,
+          penulis: book.penulis,
+          sekolah: book.sekolah
         };
       });
+
+      // Sort
       if (sortOption === 'asc') {
         processedBooks.sort((a: Book, b: Book) => a.judul.localeCompare(b.judul));
       } else if (sortOption === 'desc') {
@@ -74,7 +123,7 @@ function Kelas6GuruContent() {
 
       setDisplayBooks(processedBooks);
     }
-  }, [kelas6Books, sortOption]);
+  }, [kelas6Books, sortOption, activeFilters]);
 
   const handleNavigationClick = (path: string) => {
     router.push(path);
@@ -96,49 +145,43 @@ function Kelas6GuruContent() {
       <Navbar />
 
       <main className="pt-24 px-4 sm:px-8 flex-grow flex flex-col pb-8">
-        <div className="mb-8 flex justify-between items-center">
-          <p className="text-xl font-semibold font-poppins">
-            Buku Kelas VI
-          </p>
-          <SortFilter
-            currentSort={sortOption}
-            onSortChange={setSortOption}
-          />
+        <div className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div className="flex flex-col gap-1">
+            <p className="text-xl font-semibold font-poppins">
+              Buku Kelas VI
+            </p>
+            <p className="text-sm text-gray-500">
+              Menampilkan {displayBooks.length} buku
+            </p>
+          </div>
+          
+          <div className="flex flex-wrap items-center gap-3">
+            <FilterCheckbox 
+              books={kelas6Books || []}
+              onFilterChange={setActiveFilters}
+            />
+            <SortFilter
+              currentSort={sortOption}
+              onSortChange={setSortOption}
+            />
+          </div>
         </div>
 
         <div className="flex-grow">
           {displayBooks.length > 0 ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 justify-items-center">
               {displayBooks.map((book) => (
-                <div
-                  key={book.id}
-                  className="text-center cursor-pointer hover:bg-gray-100 p-2 rounded-lg w-full max-w-[180px]"
-                  onClick={() => handleNavigationClick(book.path!)}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={e => { if (e.key === 'Enter' && book.path) router.push(book.path) }}
-                >
-                  <div className="relative w-full pb-[133%] rounded-lg overflow-hidden shadow-md mx-auto">
-                    <Image
-                      src={book.cover}
-                      alt={book.judul}
-                      fill
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 180px"
-                      className="object-cover rounded-lg"
-                      onError={(e) => {
-                        (e.currentTarget as HTMLImageElement).src = '/assets/default-cover.png';
-                      }}
-                    />
-                  </div>
-                  <p className="mt-2 text-sm font-poppins font-semibold whitespace-pre-line text-center">
-                    {book.judul}
-                  </p>
-                </div>
+                <BookCard 
+                  key={book.id} 
+                  book={book} 
+                  onClick={() => handleNavigationClick(book.path!)} 
+                />
               ))}
             </div>
           ) : (
-            <div className="flex justify-center items-center h-64 text-gray-500">
-              Tidak ada buku ditemukan.
+            <div className="flex flex-col justify-center items-center h-64 text-gray-500">
+              <p className="text-lg font-medium">Tidak ada buku ditemukan</p>
+              <p className="text-sm">Coba sesuaikan filter pencarian Anda</p>
             </div>
           )}
         </div>

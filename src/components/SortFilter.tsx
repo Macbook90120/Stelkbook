@@ -40,7 +40,7 @@ const SortFilter: React.FC<SortFilterProps> = ({
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-50 transition-colors"
+        className="flex items-center gap-2 px-4 py-3 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-50 transition-colors min-h-[44px]"
       >
         <span className="text-gray-700 font-medium">{label}</span>
         <ChevronDown 

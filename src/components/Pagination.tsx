@@ -48,7 +48,7 @@ const Pagination: React.FC<PaginationProps> = ({
       <button
         onClick={() => currentPage > 1 && onPageChange(currentPage - 1)}
         disabled={currentPage === 1 || isLoading}
-        className={`w-10 h-10 flex items-center justify-center rounded-lg border transition-colors duration-200 
+        className={`w-11 h-11 flex items-center justify-center rounded-lg border transition-colors duration-200 
           ${currentPage === 1 || isLoading
             ? 'bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200' 
             : 'bg-white text-gray-600 hover:bg-gray-50 border-gray-300 hover:border-red-600 hover:text-red-600'}`}
@@ -63,7 +63,7 @@ const Pagination: React.FC<PaginationProps> = ({
           key={index}
           onClick={() => handlePageClick(page)}
           disabled={page === '...' || isLoading}
-          className={`w-10 h-10 flex items-center justify-center rounded-lg border font-medium transition-all duration-200
+          className={`w-11 h-11 flex items-center justify-center rounded-lg border font-medium transition-all duration-200
             ${page === currentPage
               ? 'bg-red-600 text-white border-red-600 shadow-md transform scale-105'
               : page === '...'
@@ -79,7 +79,7 @@ const Pagination: React.FC<PaginationProps> = ({
       <button
         onClick={() => currentPage < totalPages && onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages || isLoading}
-        className={`w-10 h-10 flex items-center justify-center rounded-lg border transition-colors duration-200
+        className={`w-11 h-11 flex items-center justify-center rounded-lg border transition-colors duration-200
           ${currentPage === totalPages || isLoading
             ? 'bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200'
             : 'bg-white text-gray-600 hover:bg-gray-50 border-gray-300 hover:border-red-600 hover:text-red-600'}`}

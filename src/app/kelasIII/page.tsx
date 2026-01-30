@@ -146,24 +146,23 @@ function PageContent() {
       {/* Navbar */}
       <Navbar />
 
-      <main className="pt-24 px-8 flex-grow flex flex-col pb-8">
+      <main className="pt-24 px-4 md:px-8 flex-grow flex flex-col pb-8">
         {/* Page Header */}
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center space-x-2">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 md:gap-0">
+          <div className="flex items-center space-x-2 flex-wrap">
             <h1 
-              className="text-xl font-bold text-gray-800 cursor-pointer hover:underline"
+              className="text-lg md:text-xl font-bold text-gray-800 cursor-pointer hover:underline"
               onClick={handleStudiAndaClick}
             >
               Studi Anda
             </h1>
             <Image src="/assets/Kelas_X/Primary_Direct.png" alt="Divider Icon" width={10} height={16} />
-            <h2 className="text-xl font-bold text-gray-800">Kelas III</h2>
+            <h2 className="text-lg md:text-xl font-bold text-gray-800">Kelas III</h2>
           </div>
-          <div className="flex gap-3">
+          <div className="flex gap-3 w-full md:w-auto flex-wrap">
             <FilterCheckbox 
               books={kelas3Books} 
               onFilterChange={setActiveFilters} 
-              hiddenFilters={['kelas']}
             />
             <SortFilter 
               currentSort={sortOption} 

@@ -40,11 +40,11 @@ const HomePage = () => {
       </header>
 
       {/* Combined Grid for Kelas I - VI */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-8 place-items-center mt-6 mx-auto max-w-4xl">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-8 place-items-center mt-6 mx-auto max-w-4xl px-4">
   {classes.map((cls) => (
     <div
       key={cls.name}
-      className={`relative ${cls.color} w-40 h-40 sm:w-48 sm:h-48 md:w-64 md:h-64 rounded-xl text-white font-bold italic text-2xl sm:text-3xl shadow-xl hover:opacity-100 transition transform hover:scale-110 cursor-pointer overflow-hidden`}
+      className={`relative ${cls.color} w-full aspect-square max-w-[160px] sm:max-w-[192px] md:max-w-[256px] rounded-xl text-white font-bold italic text-xl sm:text-2xl md:text-3xl shadow-xl hover:opacity-100 transition transform hover:scale-105 cursor-pointer overflow-hidden flex items-center justify-center`}
       onClick={() => handleButtonClick(cls.route)}
     >
       {/* Texture overlay */}
@@ -53,7 +53,7 @@ const HomePage = () => {
         style={{ backgroundImage: "url('/assets/texture/011.svg')" }}
       />
       {/* Class name */}
-      <div className="relative flex items-center justify-center h-full w-full">
+      <div className="relative z-10 text-center px-2">
         {cls.name}
       </div>
     </div>

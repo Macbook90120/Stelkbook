@@ -104,21 +104,21 @@ const FilterCheckbox: React.FC<FilterCheckboxProps> = ({ books, onFilterChange, 
     return (
       <div className="mb-4">
         <h3 className="text-sm font-semibold text-gray-700 mb-2 uppercase tracking-wider">{title}</h3>
-        <div className="max-h-40 overflow-y-auto space-y-1 pr-2 scrollbar-thin scrollbar-thumb-gray-300">
+        <div className="max-h-60 overflow-y-auto space-y-1 pr-2 scrollbar-thin scrollbar-thumb-gray-300">
           {items.map(([value, count]) => (
-            <label key={value} className="flex items-center space-x-2 cursor-pointer group p-1 hover:bg-gray-50 rounded">
+            <label key={value} className="flex items-center space-x-3 cursor-pointer group p-3 hover:bg-gray-50 rounded-lg transition-colors min-h-[44px]">
               <div className="relative flex items-center">
                 <input
                   type="checkbox"
-                  className="peer h-4 w-4 rounded border-gray-300 text-red-600 focus:ring-red-500 cursor-pointer"
+                  className="peer h-5 w-5 rounded border-gray-300 text-red-600 focus:ring-red-500 cursor-pointer"
                   checked={selectedFilters[category].includes(value)}
                   onChange={() => toggleFilter(category, value)}
                 />
               </div>
-              <span className="text-sm text-gray-600 flex-grow group-hover:text-gray-900 transition-colors">
+              <span className="text-sm text-gray-700 flex-grow group-hover:text-gray-900 font-medium">
                 {value}
               </span>
-              <span className="text-xs text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded-full">
+              <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full font-medium">
                 {count}
               </span>
             </label>
@@ -132,7 +132,7 @@ const FilterCheckbox: React.FC<FilterCheckboxProps> = ({ books, onFilterChange, 
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center gap-2 px-4 py-2 border rounded-lg shadow-sm transition-colors ${
+        className={`flex items-center gap-2 px-4 py-3 border rounded-lg shadow-sm transition-colors min-h-[44px] ${
           activeFilterCount > 0 
             ? 'bg-red-50 border-red-200 text-red-700' 
             : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'

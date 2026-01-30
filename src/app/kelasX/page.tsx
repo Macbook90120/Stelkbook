@@ -26,24 +26,24 @@ const BookCard = ({ book }: { book: Book }) => {
 
   return (
     <div
-      className="bg-white hover:bg-gray-100 rounded-lg p-4 cursor-pointer flex flex-col items-center transition-colors duration-200"
+      className="text-center cursor-pointer hover:bg-gray-100 p-2 rounded-lg w-full max-w-[180px] transition-colors flex flex-col items-center"
       onClick={() => book.path && router.push(book.path)}
     >
-      <div className="w-[150px] h-[200px] relative">
-         <Image
-            src={book.cover}
-            alt={book.judul}
-            fill
-            sizes="300px"
-            className="rounded-md object-cover"
-            priority
-            onError={(e) => {
-              const target = e.target as HTMLImageElement;
-              target.src = '/assets/default-cover.png';
-            }}
-          />
+      <div className="relative w-full pb-[133%] rounded-lg overflow-hidden shadow-md mx-auto">
+        <Image
+           src={book.cover}
+           alt={book.judul}
+           fill
+           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 180px"
+           className="rounded-md object-cover"
+           priority
+           onError={(e) => {
+             const target = e.target as HTMLImageElement;
+             target.src = '/assets/default-cover.png';
+           }}
+         />
       </div>
-      <p className="mt-4 text-center text-sm font-semibold font-poppins">{book.judul}</p>
+      <p className="mt-2 text-sm font-poppins font-semibold text-center line-clamp-2">{book.judul}</p>
     </div>
   );
 };
@@ -150,24 +150,23 @@ function PageContent() {
       {/* Navbar */}
       <Navbar />
 
-      <main className="pt-24 px-8 flex-grow flex flex-col pb-8">
+      <main className="pt-24 px-4 md:px-8 flex-grow flex flex-col pb-8">
         {/* Page Header */}
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center space-x-2">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 md:gap-0">
+          <div className="flex items-center space-x-2 flex-wrap">
             <h1 
-              className="text-xl font-bold text-gray-800 cursor-pointer hover:underline"
+              className="text-lg md:text-xl font-bold text-gray-800 cursor-pointer hover:underline"
               onClick={handleStudiAndaClick}
             >
               Studi Anda
             </h1>
             <Image src="/assets/Kelas_X/Primary_Direct.png" alt="Divider Icon" width={10} height={16} />
-            <h2 className="text-xl font-bold text-gray-800">Kelas X</h2>
+            <h2 className="text-lg md:text-xl font-bold text-gray-800">Kelas X</h2>
           </div>
-          <div className="flex gap-3">
+          <div className="flex gap-3 w-full md:w-auto flex-wrap">
             <FilterCheckbox 
               books={kelas10Books} 
               onFilterChange={setActiveFilters} 
-              hiddenFilters={['kelas']}
             />
             <SortFilter 
               currentSort={sortOption} 
