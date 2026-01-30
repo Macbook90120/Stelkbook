@@ -100,8 +100,14 @@ function Page() {
     setEmail(value);
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // Google domain regex: allows gmail.com, googlemail.com, google.com
+    // It matches case-insensitively due to logic check, but for regex we can be specific
+    const googleDomainRegex = /@(?:gmail\.com|googlemail\.com|google\.com)$/i;
+
     if (value && !emailRegex.test(value)) {
-      setEmailError("Enter a valid email address (example: name@email.com)"); 
+      setEmailError("Enter a valid email address (example: name@gmail.com)"); 
+    } else if (value && !googleDomainRegex.test(value)) {
+      setEmailError("Please use a valid email address (example: @gmail.com, @googlemail.com)");
     } else {
       setEmailError('');
     }
