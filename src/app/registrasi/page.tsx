@@ -33,6 +33,14 @@ function Page() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
+  const [usernameError, setUsernameError] = useState('');
+  const [kodeError, setKodeError] = useState('');
+  const [passwordRequirements, setPasswordRequirements] = useState({
+    hasUpperCase: false,
+    hasNumber: false,
+    hasSpecialChar: false,
+    hasLength: false,
+  });
 
   const handleStatusChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const selectedRole = e.target.value;
@@ -54,12 +62,46 @@ function Page() {
     setKelas('');
   };
 
+  const handleUsernameChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setUsername(value);
+    
+    // Trim leading/trailing whitespace before validation as per requirement
+    const trimmedValue = value.trim();
+
+    if (trimmedValue.length === 0 && value.length > 0) {
+       // Handle case where user only typed spaces
+       setUsernameError("Username must be 3–20 characters");
+       return;
+    }
+
+    if (value === '') {
+        setUsernameError('');
+        return;
+    }
+
+    // Validation Rules
+    const lengthValid = trimmedValue.length >= 3 && trimmedValue.length <= 20;
+    const charsValid = /^[a-zA-Z0-9]+$/.test(trimmedValue);
+
+    if (!lengthValid) {
+      setUsernameError("Username must be 3–20 characters");
+    } else if (!charsValid) {
+      // User didn't specify error message for invalid chars, but logic requires it.
+      // Using a descriptive message.
+      setUsernameError("Username must contain only letters and numbers");
+    } else {
+      setUsernameError('');
+    }
+  };
+
   const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setEmail(value);
 
-    if (!value.includes('@')) {
-      setEmailError("Email must include the '@' symbol");
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (value && !emailRegex.test(value)) {
+      setEmailError("Enter a valid email address (example: name@email.com)"); 
     } else {
       setEmailError('');
     }
@@ -69,8 +111,22 @@ function Page() {
     const value = e.target.value;
     setPassword(value);
 
+    const hasUpperCase = /[A-Z]/.test(value);
+    const hasNumber = /\d/.test(value);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(value);
+    const hasLength = value.length >= 8;
+
+    setPasswordRequirements({
+      hasUpperCase,
+      hasNumber,
+      hasSpecialChar,
+      hasLength
+    });
+
     if (value.length > 15) {
       setPasswordError('character limit must only 15 character at the time on password');
+    } else if (value && (!hasUpperCase || !hasNumber || !hasSpecialChar)) {
+      setPasswordError('password must be symbols, capital or numbers');
     } else {
       setPasswordError('');
     }
@@ -79,6 +135,23 @@ function Page() {
       setConfirmPasswordError('Password does not match');
     } else if (confirmPassword && value === confirmPassword) {
       setConfirmPasswordError('');
+    }
+  };
+
+  const handleKodeChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setKode(value);
+
+    if (value) {
+      if (!/^\d+$/.test(value)) {
+        setKodeError('Kode must be numeric only');
+      } else if (value.length < 5 || value.length > 18) {
+        setKodeError('Kode must be between 5 and 18 digits');
+      } else {
+        setKodeError('');
+      }
+    } else {
+      setKodeError('');
     }
   };
 
@@ -194,14 +267,27 @@ function Page() {
           <div className="grid gap-4 w-full">
             {/* Username */}
             <div>
-              <label className="block text-gray-700 text-sm font-medium mb-2">Username</label>
+              <label className="block text-gray-700 text-sm font-medium mb-2">Username <span className="text-red-500">*</span></label>
               <input
                 type="text"
                 value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
+                onChange={handleUsernameChange}
+                className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 ${
+                  usernameError
+                    ? 'border-red-500 ring-2 ring-red-500 text-red-900'
+                    : 'border-gray-300 focus:ring-red'
+                }`}
                 required
               />
+              {usernameError ? (
+                <div className="mt-1 text-red-500 text-sm">
+                  {usernameError}
+                </div>
+              ) : (
+                <div className="mt-1 text-gray-500 text-sm">
+                  3–20 characters, and Letters only
+                </div>
+              )}
             </div>
 
             {/* Email */}
@@ -253,6 +339,20 @@ function Page() {
                   {passwordError}
                 </div>
               )}
+               <div className="mt-2 space-y-1">
+                <p className="text-xs text-gray-600">Password requirements:</p>
+                <ul className="text-xs space-y-1">
+                  <li className={`flex items-center gap-2 ${passwordRequirements.hasUpperCase ? 'text-green-600' : 'text-gray-500'}`}>
+                    <span>{passwordRequirements.hasUpperCase ? '✓' : '○'}</span> At least one uppercase letter
+                  </li>
+                  <li className={`flex items-center gap-2 ${passwordRequirements.hasNumber ? 'text-green-600' : 'text-gray-500'}`}>
+                    <span>{passwordRequirements.hasNumber ? '✓' : '○'}</span> At least one number
+                  </li>
+                  <li className={`flex items-center gap-2 ${passwordRequirements.hasSpecialChar ? 'text-green-600' : 'text-gray-500'}`}>
+                    <span>{passwordRequirements.hasSpecialChar ? '✓' : '○'}</span> At least one special character
+                  </li>
+                </ul>
+              </div>
             </div>
 
             {/* Confirm Password */}
@@ -291,10 +391,22 @@ function Page() {
               <input
                 type="text"
                 value={kode}
-                onChange={(e) => setKode(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red"
+                onChange={handleKodeChange}
+                className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 ${
+                  kodeError
+                    ? 'border-red-500 ring-2 ring-red-500 text-red-900'
+                    : 'border-gray-300 focus:ring-red'
+                }`}
                 required
               />
+               {kodeError && (
+                <div className="mt-2 text-red-500 text-sm">
+                  {kodeError}
+                </div>
+              )}
+               <p className="mt-1 text-xs text-gray-500">
+                Must be 5-18 digits numeric code.
+              </p>
             </div>
 
             {/* Status */}
@@ -402,6 +514,8 @@ function Page() {
       !!passwordError ||
       !!emailError ||
       !!confirmPasswordError ||
+      !!kodeError ||
+      !!usernameError ||
       !username ||
       !email ||
       !password ||
