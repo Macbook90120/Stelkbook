@@ -1,11 +1,13 @@
 'use client';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, Suspense } from 'react';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/context/authContext';
 import Head from 'next/head';
+import { getStorageUrl } from '@/helpers/storage';
 
-function Page() {
+
+function EditUserContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { fetchSiswaSmp, siswaSmpDetail, updateSiswaSmp } = useAuth();
@@ -58,7 +60,7 @@ function Page() {
         setPreviewImage(null);
         setSelectedFile(null);
       } else {
-        setPreviewImage(`http://localhost:8000/storage/${siswaSmpDetail.avatar}`);
+        setPreviewImage(getStorageUrl(siswaSmpDetail.avatar));
       }
     }
   }, [siswaSmpDetail]);
@@ -385,4 +387,14 @@ function Page() {
   );
 }
 
-export default Page;
+export default function Page() {
+  return (
+    <Suspense fallback={
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500"></div>
+      </div>
+    }>
+      <EditUserContent />
+    </Suspense>
+  );
+}

@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import HapusUserModal from "./hapus_user";
 import Navbar from "@/components/Navbar_Admin_Perpus";
 import { useAuth } from "@/context/authContext";
+import { getStorageUrl } from '@/helpers/storage';
+
 
 interface Perpus {
   id: string;
@@ -29,6 +31,12 @@ function Page() {
 
   useEffect(() => {
     const getPerpusData = async () => {
+      // Cek apakah data sudah ada untuk menghindari fetch berulang
+      if (perpusData && perpusData.length > 0) {
+        setIsLoading(false);
+        return;
+      }
+
       try {
         setIsLoading(true);
         await fetchAllPerpus();
@@ -40,7 +48,7 @@ function Page() {
     };
 
     getPerpusData();
-  }, [fetchAllPerpus]);
+  }, [fetchAllPerpus, perpusData]);
 
   const handleDeleteUser = (perpus: Perpus) => {
     setSelectedPerpus({ 
@@ -126,7 +134,7 @@ function Page() {
                   <Image
   src={
     perpus.avatar
-      ? `http://localhost:8000/storage/${perpus.avatar}`
+      ? getStorageUrl(perpus.avatar)
       : "/assets/Class/icon_user.png"
   }
   alt="User Icon"

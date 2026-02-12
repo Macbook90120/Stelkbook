@@ -1,12 +1,15 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import WarningModalBuku from "./WarningModalBuku3";
 import PageFlipBook from "@/components/PageFlipBook2";
 import Navbar from "@/components/Navbar_Lainnya_Perpus";
+import BookRating from "@/components/BookRating";
 import { useBook } from "@/context/bookContext";
+import { getStorageUrl } from '@/helpers/storage';
+
 
 interface Book {
   id: number;
@@ -18,9 +21,11 @@ interface Book {
   ISBN: string;
   isi: string;
   cover: string;
+  average_rating?: number;
+  total_ratings?: number;
 }
 
-const Page: React.FC = () => { 
+const BookContent: React.FC = () => { 
   const [showWarningModal, setShowWarningModal] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -110,7 +115,7 @@ const pdfUrl = book.isi.startsWith('http') ? book.isi : `/api/pdf/${book.isi}`;
         {/* Kiri */}
         <div className="flex flex-col items-center lg:items-start">
           <Image
-            src={`http://localhost:8000/storage/${book.cover}`}
+            src={getStorageUrl(book.cover)}
             alt="Cover Buku"
             width={200}
             height={280}
@@ -130,6 +135,15 @@ const pdfUrl = book.isi.startsWith('http') ? book.isi : `/api/pdf/${book.isi}`;
               <li><strong>Tahun:</strong> {book.tahun}</li>
               <li><strong>ISBN:</strong> {book.ISBN}</li>
             </ul>
+          </div>
+
+          <div className="mt-4 w-full max-w-xs">
+            <BookRating 
+              bookId={book.id}
+              initialAverageRating={book.average_rating}
+              initialTotalRatings={book.total_ratings}
+              isReadOnly={true}
+            />
           </div>
 
           {/* Tombol */}
@@ -161,7 +175,7 @@ const pdfUrl = book.isi.startsWith('http') ? book.isi : `/api/pdf/${book.isi}`;
         </div>
 
         {/* Kanan */}
-        <div className="flex-grow overflow-x-auto">
+        <div className="flex-grow overflow-x-auto w-full">
         {/* <div className="bg-gradient-to-r from-red to-slate-300 p-2 rounded-lg">
     <iframe
       src={pdfUrl}
@@ -188,6 +202,18 @@ const pdfUrl = book.isi.startsWith('http') ? book.isi : `/api/pdf/${book.isi}`;
         />
       )}
     </div>
+  );
+};
+
+const Page = () => {
+  return (
+    <Suspense fallback={
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    }>
+      <BookContent />
+    </Suspense>
   );
 };
 

@@ -1,12 +1,14 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import WarningModalBuku from "./WarningModalBuku3";
 import PageFlipBook from "@/components/PageFlipBook2";
 import Navbar from "@/components/Navbar_Lainnya_Perpus";
+import SkeletonBookDetail from "@/components/SkeletonBookDetail";
 import { useBook } from "@/context/bookContext";
+import { getStorageUrl } from "@/helpers/storage";
 
 interface Book {
   id: number;
@@ -18,15 +20,17 @@ interface Book {
   ISBN: string;
   isi: string;
   cover: string;
+  pdf_url?: string;
+  cover_url?: string;
 }
 
-const Page: React.FC = () => {
+const BookContent: React.FC = () => {
   const [showWarningModal, setShowWarningModal] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
   const bookId = parseInt(searchParams.get("id") || "0", 10);
 
-  const { fetchBookById, deleteBook, getBookPdfUrl } = useBook(); // ✅ Ambil fungsi getBookPdfUrl
+  const { fetchBookById, deleteBook } = useBook();
   const [book, setBook] = useState<Book | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -36,8 +40,6 @@ const Page: React.FC = () => {
       try {
         const data = await fetchBookById(bookId);
         setBook(data);
-
-        // ✅ Ambil PDF URL dari context
       } catch (error) {
         console.error("Error fetching book or PDF URL:", error);
       } finally {
@@ -46,7 +48,7 @@ const Page: React.FC = () => {
     };
 
     fetchData();
-  }, [bookId, fetchBookById, getBookPdfUrl]);
+  }, [bookId, fetchBookById]);
 
   const handleDeleteBook = async (id: number) => {
     try {
@@ -60,18 +62,26 @@ const Page: React.FC = () => {
   };
 
   if (loading) {
+    return <SkeletonBookDetail />;
+  }
+  if (!book) {
     return (
       <div className="h-screen flex items-center justify-center bg-gray-50">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 border-4 border-red border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-gray-600">Memuat buku...</p>
+        <div className="text-center p-8 bg-white rounded-lg shadow-md">
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">Buku Tidak Ditemukan</h2>
+          <p className="text-gray-600 mb-4">Maaf, buku dengan ID {bookId} tidak dapat ditemukan.</p>
+          <button
+            onClick={() => router.push("/perpustakaan/Daftar_Buku")}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+          >
+            Kembali ke Daftar Buku
+          </button>
         </div>
       </div>
     );
   }
-  if (!book) return null;
 
-  const pdfUrl = `http://localhost:8000/storage/${book.isi}`; 
+  const pdfUrl = book.pdf_url || getStorageUrl(book.isi); 
 
   return (
     <div className="h-screen p-8 bg-gray-50 overflow-y-auto">
@@ -114,16 +124,18 @@ const Page: React.FC = () => {
       </div>
 
       {/* Konten Buku */}
-      <div className="flex flex-col lg:flex-row gap-8 items-center">
+      <div className="flex flex-col lg:flex-row gap-4 items-start">
         {/* Kiri */}
         <div className="flex flex-col items-center lg:items-start">
           <Image
-            src={`http://localhost:8000/storage/${book.cover}`}
+            src={book.cover_url || getStorageUrl(book.cover)}
             alt="Cover Buku"
             width={200}
             height={280}
             priority={true}
-            className="rounded-lg shadow-md mb-6"
+            quality={75}
+            sizes="(max-width: 768px) 150px, 200px"
+            className="rounded-lg shadow-md mb-6 object-cover"
             onError={(e) => {
               e.currentTarget.src = "/assets/default-cover.png";
             }}
@@ -160,9 +172,9 @@ const Page: React.FC = () => {
         </div>
 
         {/* Kanan */}
-        <div className="flex-grow overflow-x-auto">
+        <div className="flex-grow overflow-x-auto w-full">
           {pdfUrl ? (
-            <PageFlipBook pdfUrl={pdfUrl} />
+            <PageFlipBook pdfUrl={pdfUrl} align="start" />
           ) : (
             <p className="text-gray-500">Memuat buku...</p>
           )}
@@ -181,4 +193,17 @@ const Page: React.FC = () => {
   );
 };
 
-export default Page;
+export default function Page() {
+  return (
+    <Suspense fallback={
+      <div className="h-screen flex items-center justify-center bg-gray-50">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-10 h-10 border-4 border-red border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-gray-600">Memuat buku...</p>
+        </div>
+      </div>
+    }>
+      <BookContent />
+    </Suspense>
+  );
+}

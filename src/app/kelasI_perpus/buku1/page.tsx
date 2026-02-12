@@ -1,12 +1,14 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import WarningModalBuku from "./WarningModalKelas3";
 import PageFlipBook from "@/components/PageFlipBook2";
 import Navbar from "@/components/Navbar_Lainnya_Perpus";
 import { useBook } from "@/context/bookContext";
+import { getStorageUrl } from '@/helpers/storage';
+
 
 interface Book {
   id: number;
@@ -20,7 +22,7 @@ interface Book {
   cover: string;
 }
 
-const Page: React.FC = () => {
+const BookContent: React.FC = () => {
   const [showWarningModal, setShowWarningModal] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -71,7 +73,7 @@ const Page: React.FC = () => {
 
   const pdfUrl = book.isi.startsWith("http")
     ? book.isi
-    : `http://localhost:8000/storage/${book.isi}`;
+    : getStorageUrl(book.isi);
 
   return (
     <div className="h-screen p-8 bg-gray-50 overflow-y-auto">
@@ -108,7 +110,7 @@ const Page: React.FC = () => {
         {/* Kiri */}
         <div className="flex flex-col items-center lg:items-start">
           <Image
-            src={`http://localhost:8000/storage/${book.cover}`}
+            src={getStorageUrl(book.cover)}
             alt="Cover Buku"
             width={200}
             height={280}
@@ -175,9 +177,9 @@ const Page: React.FC = () => {
         </div>
 
         {/* Kanan */}
-        <div className="flex-grow overflow-x-auto">
+        <div className="flex-grow overflow-x-auto w-full">
           {pdfUrl ? (
-            <PageFlipBook pdfUrl={pdfUrl} />
+            <PageFlipBook pdfUrl={pdfUrl} align="start" />
           ) : (
             <p className="text-gray-500">Memuat buku...</p>
           )}
@@ -193,6 +195,21 @@ const Page: React.FC = () => {
         />
       )}
     </div>
+  );
+};
+
+const Page: React.FC = () => {
+  return (
+    <Suspense fallback={
+      <div className="h-screen flex items-center justify-center bg-gray-50">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-10 h-10 border-4 border-red border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-gray-600">Memuat halaman...</p>
+        </div>
+      </div>
+    }>
+      <BookContent />
+    </Suspense>
   );
 };
 

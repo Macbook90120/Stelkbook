@@ -1,16 +1,14 @@
 .book-container {
   width: 100%;
-  max-width: 500px;
   margin: 0 auto;
   position: relative;
   cursor: pointer;
-  transition: transform 0.2s;
-  visibility: hidden;
-  overflow: hidden;
+  visibility: visible;
+  overflow: visible;
 }
 
 .book-container:hover {
-  transform: scale(1.01);
+  box-shadow: 0 0 25px rgba(0,0,0,0.15);
 }
 
 canvas {
@@ -36,7 +34,7 @@ body.no-scroll {
 
 .page canvas {
   width: 100% !important;
-  height: auto !important;
+  height: 100% !important;
   object-fit: contain;
   display: block;
 }
@@ -54,4 +52,14 @@ body.no-scroll {
   .book-container {
     width: 100%;
   }
+}
+
+/* Hide Scrollbar Utility */
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
 }

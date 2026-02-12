@@ -1,10 +1,12 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Image from 'next/image';
 import NotificationSuccessful from './NotificationEditSuccessful';
 import Navbar from '@/components/Navbar_Lainnya_Perpus';
 import { useBook } from '@/context/bookContext';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { getStorageUrl } from '@/helpers/storage';
+
 
 // Loading Spinner Component
 const LoadingSpinner = () => (
@@ -13,7 +15,7 @@ const LoadingSpinner = () => (
     </div>
 );
 
-function Page() {
+function EditBukuContent() {
     const [showNotification, setShowNotification] = useState(false);
     const [pdfFile, setPdfFile] = useState<File | null>(null);
     const [coverFile, setCoverFile] = useState<File | null>(null);
@@ -57,7 +59,7 @@ function Page() {
                 }
                 
                 setPenerbit(data.penerbit);
-                setExistingCover(data.cover ? `http://localhost:8000/storage/${data.cover}` : '/assets/default-cover.png');
+                setExistingCover(data.cover ? getStorageUrl(data.cover) : '/assets/default-cover.png');
                 const fileName = data.isi?.split('/').pop() || '';
                 setPdfFileName(fileName);
                 setIsDataLoading(false);
@@ -332,4 +334,10 @@ function Page() {
     );
 }
 
-export default Page;
+export default function Page() {
+  return (
+    <Suspense fallback={<LoadingSpinner />}>
+      <EditBukuContent />
+    </Suspense>
+  );
+}

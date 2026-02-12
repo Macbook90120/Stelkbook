@@ -1,11 +1,13 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useAuth } from "@/context/authContext";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import ConfirmationModal from "./hapus_user";
 import Navbar from "@/components/Navbar_Admin_Guru_SMP";
+import { getStorageUrl } from '@/helpers/storage';
+
 
 interface Guru {
   id: string;
@@ -15,7 +17,7 @@ interface Guru {
   avatar?: string;
 }
 
-const SearchGuruSMP: React.FC = () => {
+const SearchGuruSMPContent: React.FC = () => {
   const { guruSmpData, fetchAllGuruSmp } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedGuru, setSelectedGuru] = useState<Guru | null>(null);
@@ -133,7 +135,7 @@ const SearchGuruSMP: React.FC = () => {
                   <Image
                     src={
                       guru.avatar
-                        ? `http://localhost:8000/storage/${guru.avatar}`
+                        ? getStorageUrl(guru.avatar)
                         : "/assets/Class/icon_user.png"
                     }
                     alt="User Icon"
@@ -206,4 +208,14 @@ const SearchGuruSMP: React.FC = () => {
   );
 };
 
-export default SearchGuruSMP;
+export default function SearchGuruSMP() {
+  return (
+    <Suspense fallback={
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-500"></div>
+      </div>
+    }>
+      <SearchGuruSMPContent />
+    </Suspense>
+  );
+}

@@ -10,6 +10,8 @@ import Pagination from '@/components/Pagination';
 import SortFilter, { SortOption } from '@/components/SortFilter';
 import FilterCheckbox, { FilterState } from '@/components/FilterCheckbox';
 import BookCard from '@/components/BookCard';
+import { getStorageUrl } from '@/helpers/storage';
+
 
 interface Book {
   id: number;
@@ -22,6 +24,8 @@ interface Book {
   penerbit?: string;
   penulis?: string;
   sekolah?: string;
+  average_rating?: number;
+  total_ratings?: number;
 }
 
 function Kelas4GuruContent() {
@@ -80,7 +84,7 @@ function Kelas4GuruContent() {
 
       const processedBooks = filteredBooks.map((book: any) => {
         const coverUrl = book.cover 
-          ? `http://localhost:8000/storage/${book.cover}` 
+          ? getStorageUrl(book.cover) 
           : '/assets/default-cover.png';
         
         return {
@@ -93,7 +97,9 @@ function Kelas4GuruContent() {
           mapel: book.mapel,
           penerbit: book.penerbit,
           penulis: book.penulis,
-          sekolah: book.sekolah
+          sekolah: book.sekolah,
+          average_rating: book.average_rating,
+          total_ratings: book.total_ratings
         };
       });
 

@@ -1,11 +1,14 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Navbar from "@/components/Navbar_Lainnya";
 import PageFlipBook from "@/components/PageFlipBook2";
+import BookRating from "@/components/BookRating";
 import { useBook } from "@/context/bookContext";
+import { getStorageUrl } from '@/helpers/storage';
+
 
 interface Book {
   id: number;
@@ -17,9 +20,11 @@ interface Book {
   ISBN: string;
   isi: string;
   cover: string;
+  average_rating?: number;
+  total_ratings?: number;
 }
 
-const Page: React.FC = () => {
+const BookContent: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const bookId = parseInt(searchParams.get("id") || "0", 10);
@@ -59,10 +64,10 @@ const Page: React.FC = () => {
   // ✅ Sama seperti kode kedua, cek apakah isi sudah berupa URL penuh
   const pdfUrl = book.isi.startsWith("http")
     ? book.isi
-    : `http://localhost:8000/storage/${book.isi}`;
+    : getStorageUrl(book.isi);
   const coverUrl = book.cover.startsWith("http")
     ? book.cover
-    : `http://localhost:8000/storage/${book.cover}`;
+    : getStorageUrl(book.cover);
 
   return (
     <div className="h-screen p-8 bg-gray-50 overflow-y-auto">
@@ -105,7 +110,7 @@ const Page: React.FC = () => {
       </div>
 
       {/* Konten Buku */}
-      <div className="flex flex-col lg:flex-row gap-8 items-center">
+      <div className="flex flex-col lg:flex-row gap-4 items-start">
         {/* Kiri */}
         <div className="flex flex-col items-center lg:items-start">
           <Image
@@ -137,19 +142,43 @@ const Page: React.FC = () => {
                 <strong>ISBN:</strong> {book.ISBN}
               </li>
             </ul>
+
+            {/* Book Rating Feature */}
+            <div className="mt-8 w-full max-w-md">
+              <BookRating 
+                bookId={book.id} 
+                initialAverageRating={book.average_rating || 0}
+                initialTotalRatings={book.total_ratings || 0}
+              />
+            </div>
           </div>
         </div>
 
         {/* Kanan */}
-        <div className="flex-grow overflow-x-auto">
+        <div className="flex-grow overflow-x-auto w-full">
           {pdfUrl ? (
-            <PageFlipBook pdfUrl={pdfUrl} />
+            <PageFlipBook pdfUrl={pdfUrl} align="start" />
           ) : (
             <p className="text-gray-500">Memuat buku...</p>
           )}
         </div>
       </div>
     </div>
+  );
+};
+
+const Page: React.FC = () => {
+  return (
+    <Suspense fallback={
+      <div className="h-screen flex items-center justify-center bg-gray-50">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-10 h-10 border-4 border-red border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-gray-600">Memuat buku...</p>
+        </div>
+      </div>
+    }>
+      <BookContent />
+    </Suspense>
   );
 };
 

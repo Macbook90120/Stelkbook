@@ -9,6 +9,8 @@ import FilterCheckbox, { FilterState } from '@/components/FilterCheckbox';
 import BookCard from '@/components/BookCard';
 import { useBook } from '@/context/bookContext';
 import useAuthMiddleware from '@/hooks/auth';
+import { getStorageUrl } from '@/helpers/storage';
+
 
 interface Book {
   id: number;
@@ -20,6 +22,8 @@ interface Book {
   mapel?: string;
   penerbit?: string;
   penulis?: string;
+  average_rating?: number;
+  total_ratings?: number;
 }
 
 function PageContent() {
@@ -80,7 +84,7 @@ function PageContent() {
 
     const processedBooks = filteredBooks.map((book: any) => {
       const coverUrl = book.cover 
-        ? `http://localhost:8000/storage/${book.cover}` 
+        ? getStorageUrl(book.cover) 
         : '/assets/default-cover.png';
       
       return {
@@ -92,7 +96,9 @@ function PageContent() {
         kelas: book.kelas,
         mapel: book.mapel,
         penerbit: book.penerbit,
-        penulis: book.penulis
+        penulis: book.penulis,
+        average_rating: book.average_rating,
+        total_ratings: book.total_ratings
       };
     });
 

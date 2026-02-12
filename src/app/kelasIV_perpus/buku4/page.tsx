@@ -1,12 +1,14 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import WarningModalBuku from "./WarningModalKelas3";
 import PageFlipBook from "@/components/PageFlipBook2";
 import Navbar from "@/components/Navbar_Lainnya_Perpus";
 import { useBook } from "@/context/bookContext";
+import { getStorageUrl } from '@/helpers/storage';
+
 
 interface Book {
   id: number;
@@ -20,7 +22,7 @@ interface Book {
   cover: string;
 }
 
-const Page: React.FC = () => {
+const BookContent: React.FC = () => {
   const [showWarningModal, setShowWarningModal] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -71,7 +73,11 @@ const Page: React.FC = () => {
 
   const pdfUrl = book.isi.startsWith("http")
     ? book.isi
-    : `http://localhost:8000/storage/${book.isi}`;
+    : getStorageUrl(book.isi);
+    
+  const coverUrl = book.cover.startsWith("http")
+    ? book.cover
+    : getStorageUrl(book.cover);
 
   return (
     <div className="h-screen p-8 bg-gray-50 overflow-y-auto">
@@ -108,7 +114,7 @@ const Page: React.FC = () => {
         {/* Kiri */}
         <div className="flex flex-col items-center lg:items-start">
           <Image
-            src={`http://localhost:8000/storage/${book.cover}`}
+            src={coverUrl}
             alt="Cover Buku"
             width={200}
             height={280}
@@ -138,62 +144,55 @@ const Page: React.FC = () => {
             </ul>
           </div>
 
-          {/* Tombol */}
-          <div className="mt-4 flex flex-col gap-2">
+          {/* Tombol Hapus & Edit */}
+          <div className="mt-6 flex flex-col gap-2 w-full">
             <button
-              onClick={() =>
-                router.push(`/kelasIV_perpus/buku4/Edit_Buku?id=${book.id}`)
-              }
-              className="bg-green-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-600 flex items-center gap-2"
-            >
-              <Image
-                src="/assets/icon/edit.svg"
-                alt="Edit Icon"
-                width={16}
-                height={16}
-                style={{ width: "auto", height: "auto" }}
-              />
-              <span>Edit Buku</span>
-            </button>
-
-            <button
+              className="bg-red text-white py-2 px-6 rounded-lg font-semibold hover:bg-red-600 w-full"
               onClick={() => setShowWarningModal(true)}
-              className="bg-red text-white px-4 py-2 rounded-lg shadow-md hover:bg-red flex items-center gap-2"
             >
-              <div style={{ position: "relative", width: 16, height: 16 }}>
-                <Image
-                  src="/assets/Admin/Delete_user.png"
-                  alt="Delete Icon"
-                  fill
-                  sizes="16px"
-                  style={{ objectFit: "contain" }}
-                />
-              </div>
-              <span>Hapus Buku</span>
+              Hapus Buku
+            </button>
+            <button
+              className="bg-blue-500 text-white py-2 px-6 rounded-lg font-semibold hover:bg-blue-600 w-full"
+              onClick={() => router.push(`/kelasIV_perpus/buku4/Edit_Buku?id=${bookId}`)}
+            >
+              Edit Buku
             </button>
           </div>
         </div>
 
         {/* Kanan */}
-        <div className="flex-grow overflow-x-auto">
+        <div className="flex-grow overflow-x-auto w-full">
           {pdfUrl ? (
-            <PageFlipBook pdfUrl={pdfUrl} />
+            <PageFlipBook pdfUrl={pdfUrl} align="start" />
           ) : (
             <p className="text-gray-500">Memuat buku...</p>
           )}
         </div>
       </div>
 
-      {/* Modal */}
       {showWarningModal && (
         <WarningModalBuku
-          isVisible={showWarningModal}
+          show={showWarningModal}
           onClose={() => setShowWarningModal(false)}
-          book={book}
+          onConfirm={() => handleDeleteBook(bookId)}
         />
       )}
     </div>
   );
 };
 
-export default Page;
+export default function Page() {
+  return (
+    <Suspense fallback={
+      <div className="h-screen flex items-center justify-center bg-gray-50">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-10 h-10 border-4 border-red border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-gray-600">Memuat buku...</p>
+        </div>
+      </div>
+    }>
+      <BookContent />
+    </Suspense>
+  );
+}

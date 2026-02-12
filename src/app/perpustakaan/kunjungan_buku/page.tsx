@@ -1,12 +1,15 @@
 'use client';
 
 import KunjunganChart from '@/components/KunjunganChart_Books';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Navbar from '@/components/Navbar_Lainnya_Perpus2';
 import { ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useBook } from '@/context/bookContext';
-import Image from 'next/image'; // Untuk contoh perbaikan image
+import { getStorageUrl } from '@/helpers/storage';
+import Image from 'next/image';
+import api from '@/utils/axios';
+import { Star, Trash2, Search } from 'lucide-react';
 
 interface RekapKunjunganBook {
   book_id: number;
@@ -18,31 +21,109 @@ interface RekapKunjunganBook {
   cover_url: string;
 }
 
+interface KunjunganBook {
+  id: number;
+  book_id: number;
+  user_id: number | null;
+  username: string | null;
+  judul: string;
+  cover: string;
+  cover_url: string | null;
+  created_at: string;
+  sekolah: string | null;
+  kategori: string | null;
+}
+
+interface BookRatingHistory {
+  id: number;
+  book_id: number;
+  user_id: number;
+  rating: number;
+  review: string | null;
+  created_at: string;
+  user: {
+    id: number;
+    username: string;
+    avatar: string | null;
+  };
+  book: {
+    id: number;
+    judul: string;
+    cover: string;
+    sekolah: string | null;
+    kategori: string | null;
+  };
+}
+
 export default function KunjunganPage() {
-  const [jenjang, setJenjang] = useState<'SD' | 'SMP' | 'SMK' | 'NA' | null>(null);
+  const [jenjang, setJenjang] = useState<'All' | 'SD' | 'SMP' | 'SMK' | 'NA' | null>(null);
   const [kelas, setKelas] = useState<number | null>(null);
+  const [ratings, setRatings] = useState<BookRatingHistory[]>([]);
+  const [ratingsLoading, setRatingsLoading] = useState(true);
+  const [ratingSearch, setRatingSearch] = useState('');
   const router = useRouter();
 
   const {
     fetchRekapKunjunganBooks,
     rekapKunjunganBooks,
+    fetchKunjunganBooks,
+    kunjunganBooks,
     loading
   }: {
     fetchRekapKunjunganBooks: () => Promise<void>;
     rekapKunjunganBooks: RekapKunjunganBook[];
+    fetchKunjunganBooks: () => Promise<void>;
+    kunjunganBooks: KunjunganBook[];
     loading: boolean;
   } = useBook();
 
+  const fetchRatings = useCallback(async () => {
+    setRatingsLoading(true);
+    try {
+      const response = await api.get('/book-ratings');
+      if (response.data.success) {
+        setRatings(response.data.data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch ratings:', error);
+    } finally {
+      setRatingsLoading(false);
+    }
+  }, []);
+
+  const handleDeleteRating = async (id: number) => {
+    if (!confirm('Apakah Anda yakin ingin menghapus rating ini?')) return;
+
+    try {
+      const response = await api.delete(`/book-ratings/${id}`);
+      if (response.data.success) {
+        alert('Rating berhasil dihapus');
+        fetchRatings(); // Refresh data
+      }
+    } catch (error) {
+      console.error('Failed to delete rating:', error);
+      alert('Gagal menghapus rating');
+    }
+  };
+
   useEffect(() => {
     const loadData = async () => {
-      await fetchRekapKunjunganBooks();
+      try {
+        await Promise.all([
+          fetchRekapKunjunganBooks(), 
+          fetchKunjunganBooks(),
+          fetchRatings()
+        ]);
+      } catch (error) {
+        console.error('Error loading page data:', error);
+      }
     };
     loadData();
-  }, [fetchRekapKunjunganBooks]);
+  }, [fetchRekapKunjunganBooks, fetchKunjunganBooks, fetchRatings]);
 
   useEffect(() => {
     if (!loading && jenjang === null) {
-      setJenjang('SD');
+      setJenjang('All');
       setKelas(null);
     }
   }, [loading, jenjang]);
@@ -56,7 +137,7 @@ export default function KunjunganPage() {
   };
 
   const renderKelasButtons = () => {
-    if (!jenjang || jenjang === 'NA') return null;
+    if (!jenjang || jenjang === 'NA' || jenjang === 'All') return null;
 
     let range: number[] = [];
     if (jenjang === 'SD') range = [1, 2, 3, 4, 5, 6];
@@ -84,6 +165,10 @@ export default function KunjunganPage() {
   const bukuFilteredByJenjang = (() => {
     if (!jenjang) return [];
 
+    if (jenjang === 'All') {
+      return rekapKunjunganBooks;
+    }
+
     if (jenjang === 'NA') {
       return rekapKunjunganBooks.filter(
         (book) => book.kategori === 'NA' || book.sekolah === null
@@ -105,6 +190,57 @@ export default function KunjunganPage() {
       name: book.judul,
       total_kunjungan: book.total_kunjungan,
     }));
+
+  // Filter Data Riwayat Kunjungan Buku berdasarkan Jenjang dan Kelas
+  const filteredKunjunganBooks = kunjunganBooks.filter((item) => {
+    // 1. Filter by Jenjang (Sekolah)
+    if (jenjang && jenjang !== 'All') {
+      if (jenjang === 'NA') {
+        if (item.kategori !== 'NA' && item.sekolah !== null) return false;
+      } else {
+        if (item.sekolah !== jenjang) return false;
+      }
+    }
+
+    // 2. Filter by Kelas
+    if (kelas) {
+       // Jika item kategori 'NA', kita anggap lolos filter kelas (opsional, tergantung logic bisnis)
+       // Tapi biasanya NA tidak punya kelas.
+       if (item.kategori === 'NA') return true;
+       if (item.kategori !== toRoman(kelas)) return false;
+    }
+
+    return true;
+  });
+
+  const filteredRatings = ratings.filter((item) => {
+    // 1. Filter by Jenjang (Sekolah)
+    if (jenjang && jenjang !== 'All') {
+      if (jenjang === 'NA') {
+        if (item.book.kategori !== 'NA' && item.book.sekolah !== null) return false;
+      } else {
+        if (item.book.sekolah !== jenjang) return false;
+      }
+    }
+
+    // 2. Filter by Kelas
+    if (kelas) {
+      if (item.book.kategori === 'NA') return true;
+      if (item.book.kategori !== toRoman(kelas)) return false;
+    }
+
+    // 3. Filter by Search Query
+    if (ratingSearch) {
+      const searchLower = ratingSearch.toLowerCase();
+      const matchJudul = item.book.judul.toLowerCase().includes(searchLower);
+      const matchUser = item.user.username.toLowerCase().includes(searchLower);
+      const matchReview = item.review?.toLowerCase().includes(searchLower);
+      
+      if (!matchJudul && !matchUser && !matchReview) return false;
+    }
+
+    return true;
+  });
 
   return (
     <div className="min-h-screen px-6 mt-6 pt-20 bg-gray-50 p-4 relative" aria-busy={loading}>
@@ -144,7 +280,7 @@ export default function KunjunganPage() {
           )}
 
           <div className="flex justify-center mt-6 gap-4 flex-wrap">
-            {['SD', 'SMP', 'SMK', 'NA'].map((item) => (
+            {['All', 'SD', 'SMP', 'SMK', 'NA'].map((item) => (
               <button
                 key={item}
                 onClick={() => {
@@ -177,7 +313,7 @@ export default function KunjunganPage() {
              <div className="w-full max-w-[112px] mx-auto">
   <div className="relative aspect-[3/4]"> {/* 3:4 aspect ratio (120:160) */}
     <Image
-      src={`http://localhost:8000${bukuPalingSeringDibaca.cover_url}`}
+      src={getStorageUrl(bukuPalingSeringDibaca.cover_url)}
       alt={bukuPalingSeringDibaca.judul}
       fill
       className="object-cover rounded mb-4"
@@ -203,6 +339,179 @@ export default function KunjunganPage() {
               <p className="text-red-600 font-medium text-base">Memuat...</p>
             </div>
           )}
+        </div>
+      </div>
+
+      <div className="mt-8 bg-white shadow-lg rounded-xl p-6 border border-gray-200">
+        <h2 className="text-xl font-bold text-gray-800 mb-4">Riwayat Kunjungan Buku</h2>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="border-b border-gray-200">
+                <th className="py-3 px-4 text-gray-600 font-semibold">Cover</th>
+                <th className="py-3 px-4 text-gray-600 font-semibold">Judul Buku</th>
+                <th className="py-3 px-4 text-gray-600 font-semibold">Pembaca</th>
+                <th className="py-3 px-4 text-gray-600 font-semibold">Waktu</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredKunjunganBooks && filteredKunjunganBooks.length > 0 ? (
+                filteredKunjunganBooks.map((item) => (
+                  <tr key={item.id} className="border-b border-gray-100 hover:bg-gray-50">
+                    <td className="py-3 px-4">
+                      <div className="relative w-12 h-16">
+                        <Image
+                          src={getStorageUrl(item.cover_url)}
+                          alt={item.judul}
+                          fill
+                          className="object-cover rounded"
+                          sizes="48px"
+                        />
+                      </div>
+                    </td>
+                    <td className="py-3 px-4 text-gray-800">{item.judul}</td>
+                    <td className="py-3 px-4 text-gray-800">
+                      {item.username ? (
+                        <span className="font-medium">{item.username}</span>
+                      ) : (
+                        <span className="text-gray-400 italic">Anonim</span>
+                      )}
+                    </td>
+                    <td className="py-3 px-4 text-gray-600">
+                      {new Date(item.created_at).toLocaleString('id-ID', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={4} className="py-8 text-center text-gray-500">
+                    Belum ada riwayat kunjungan buku untuk kategori ini.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div className="mt-8 bg-white shadow-lg rounded-xl p-6 border border-gray-200 mb-10">
+        <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-4">
+           <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+             Riwayat Rating Buku
+           </h2>
+          
+          <div className="relative w-full md:w-64">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Search size={18} className="text-gray-400" />
+            </div>
+            <input
+              type="text"
+              placeholder="Cari rating atau komentar..."
+              value={ratingSearch}
+              onChange={(e) => setRatingSearch(e.target.value)}
+              className="block w-full pl-10 pr-3 py-2 border border-gray-200 rounded-full bg-gray-50 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
+            />
+          </div>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="border-b border-gray-200">
+                <th className="py-3 px-4 text-gray-600 font-semibold">Cover</th>
+                <th className="py-3 px-4 text-gray-600 font-semibold">Judul Buku</th>
+                <th className="py-3 px-4 text-gray-600 font-semibold">Penilai</th>
+                <th className="py-3 px-4 text-gray-600 font-semibold">Rating</th>
+                <th className="py-3 px-4 text-gray-600 font-semibold">Komentar</th>
+                <th className="py-3 px-4 text-gray-600 font-semibold">Waktu</th>
+                <th className="py-3 px-4 text-gray-600 font-semibold text-center">Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              {!ratingsLoading ? (
+                filteredRatings && filteredRatings.length > 0 ? (
+                  filteredRatings.map((item) => (
+                    <tr key={item.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                      <td className="py-3 px-4">
+                        <div className="relative w-12 h-16 shadow-sm">
+                          <Image
+                            src={getStorageUrl(item.book.cover)}
+                            alt={item.book.judul}
+                            fill
+                            className="object-cover rounded"
+                            sizes="48px"
+                          />
+                        </div>
+                      </td>
+                      <td className="py-3 px-4">
+                        <div className="font-medium text-gray-800">{item.book.judul}</div>
+                        <div className="text-xs text-gray-500">
+                          {item.book.sekolah} - {item.book.kategori}
+                        </div>
+                      </td>
+                      <td className="py-3 px-4">
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium text-gray-800">{item.user.username}</span>
+                        </div>
+                      </td>
+                      <td className="py-3 px-4">
+                        <div className="flex items-center gap-1">
+                          <span className="text-sm font-bold text-gray-700">{item.rating}/5</span>
+                        </div>
+                      </td>
+                      <td className="py-3 px-4 max-w-xs">
+                        {item.review ? (
+                          <p className="text-gray-700 text-sm italic break-words">"{item.review}"</p>
+                        ) : (
+                          <span className="text-gray-400 text-xs italic">Tidak ada ulasan</span>
+                        )}
+                      </td>
+                      <td className="py-3 px-4 text-gray-600 text-sm">
+                        {new Date(item.created_at).toLocaleString('id-ID', {
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                      </td>
+                      <td className="py-3 px-4 text-center">
+                        <button
+                          onClick={() => handleDeleteRating(item.id)}
+                          className="p-2 text-red-600 hover:bg-red-50 rounded-full transition-colors"
+                          title="Hapus Rating"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={7} className="py-12 text-center text-gray-500">
+                      <div className="flex flex-col items-center gap-2">
+                        <p>Belum ada riwayat rating untuk kategori ini.</p>
+                      </div>
+                    </td>
+                  </tr>
+                )
+              ) : (
+                <tr>
+                  <td colSpan={7} className="py-12 text-center">
+                    <div className="flex justify-center items-center gap-2">
+                      <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-red-600"></div>
+                      <span className="text-gray-600">Memuat riwayat rating...</span>
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

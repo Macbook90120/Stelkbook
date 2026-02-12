@@ -1,10 +1,12 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import HapusUserModal from "./hapus_user";
 import Navbar from "@/components/Navbar_Admin_Perpus";
 import { useAuth } from "@/context/authContext";
+import { getStorageUrl } from '@/helpers/storage';
+
 
 interface Perpus {
   id: string;
@@ -15,7 +17,7 @@ interface Perpus {
   avatar: string;
 }
 
-function SearchPerpus() {
+function SearchPerpusContent() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPerpus, setSelectedPerpus] = useState({ 
     id: "", 
@@ -142,7 +144,7 @@ function SearchPerpus() {
                   <Image
                     src={
                       perpus.avatar
-                        ? `http://localhost:8000/storage/${perpus.avatar}`
+                        ? getStorageUrl(perpus.avatar)
                         : "/assets/Class/icon_user.png"
                     }
                     alt="User Icon"
@@ -210,4 +212,14 @@ function SearchPerpus() {
   );
 }
 
-export default SearchPerpus;
+export default function SearchPerpus() {
+  return (
+    <Suspense fallback={
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-500"></div>
+      </div>
+    }>
+      <SearchPerpusContent />
+    </Suspense>
+  );
+}

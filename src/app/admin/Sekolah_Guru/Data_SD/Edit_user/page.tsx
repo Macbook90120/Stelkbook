@@ -1,11 +1,13 @@
 'use client';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, Suspense } from 'react';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/context/authContext';
 import Head from 'next/head';
+import { getStorageUrl } from '@/helpers/storage';
 
-function Page() {
+
+function EditUserContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { fetchGuruSd, guruSdDetail, updateGuruSd } = useAuth();
@@ -52,7 +54,7 @@ function Page() {
       });
 
       if (guruSdDetail.avatar) {
-        setPreviewImage(`http://localhost:8000/storage/${guruSdDetail.avatar}`);
+        setPreviewImage(getStorageUrl(guruSdDetail.avatar));
       } else {
         setPreviewImage(null);
       }
@@ -352,4 +354,17 @@ function Page() {
   );
 }
 
-export default Page;
+export default function Page() {
+  return (
+    <Suspense fallback={
+      <div className="flex justify-center items-center h-screen bg-gray-100">
+        <div className="flex flex-col items-center">
+          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+          <p className="mt-4 text-gray-600 font-medium">Memuat halaman...</p>
+        </div>
+      </div>
+    }>
+      <EditUserContent />
+    </Suspense>
+  );
+}

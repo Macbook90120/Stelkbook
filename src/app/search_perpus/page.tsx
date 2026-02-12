@@ -1,10 +1,12 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Navbar from "@/components/Navbar_Perpus";
 import { useBook } from "@/context/bookContext";
+import { getStorageUrl } from '@/helpers/storage';
+
 
 interface Book {
   id: number;
@@ -16,7 +18,7 @@ interface Book {
   path?: string;
 }
 
-const SearchPage = () => {
+const SearchPageContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const query = searchParams.get("q")?.toLowerCase() || "";
@@ -42,7 +44,7 @@ const SearchPage = () => {
     if (query && books.length > 0) {
       const processedBooks = books.map((book: any) => {
         const coverUrl = book.cover
-          ? `http://localhost:8000/storage/${book.cover}`
+          ? getStorageUrl(book.cover)
           : "/assets/default-cover.png";
 
         return {
@@ -147,6 +149,19 @@ const SearchPage = () => {
         </div>
       )}
     </div>
+  );
+};
+
+const SearchPage = () => {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex flex-col justify-center items-center bg-white">
+        <div className="w-14 h-14 border-4 border-red border-t-transparent rounded-full animate-spin"></div>
+        <p className="text-gray-600 mt-4 text-lg">Memuat halaman...</p>
+      </div>
+    }>
+      <SearchPageContent />
+    </Suspense>
   );
 };
 

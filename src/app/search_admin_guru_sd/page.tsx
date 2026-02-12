@@ -1,10 +1,12 @@
 'use client'
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useAuth } from "@/context/authContext";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import ConfirmationModal from "./hapus_user";
 import Navbar from "@/components/Navbar_Admin_Guru_SD";
+import { getStorageUrl } from '@/helpers/storage';
+
 
 interface Guru {
   id: string;
@@ -14,7 +16,7 @@ interface Guru {
   avatar?: string;
 }
 
-function SearchGuruSD() {
+function SearchGuruSDContent() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedGuru, setSelectedGuru] = useState<Guru | null>(null);
   const [filteredGuru, setFilteredGuru] = useState<Guru[]>([]);
@@ -132,7 +134,7 @@ function SearchGuruSD() {
                   <Image
                     src={
                       guru.avatar
-                        ? `http://localhost:8000/storage/${guru.avatar}`
+                        ? getStorageUrl(guru.avatar)
                         : "/assets/Class/icon_user.png"
                     }
                     alt="User Icon"
@@ -200,5 +202,17 @@ function SearchGuruSD() {
     </div>
   );
 }
+
+const SearchGuruSD: React.FC = () => {
+  return (
+    <Suspense fallback={
+      <div className="flex justify-center items-center h-screen bg-gray-50">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-500"></div>
+      </div>
+    }>
+      <SearchGuruSDContent />
+    </Suspense>
+  );
+};
 
 export default SearchGuruSD;

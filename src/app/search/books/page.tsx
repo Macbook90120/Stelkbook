@@ -1,11 +1,13 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Navbar from "@/components/Navbar_Lainnya";
 import PageFlipBook from "@/components/PageFlipBook2";
 import { useBook } from "@/context/bookContext";
+import { getStorageUrl } from '@/helpers/storage';
+
 
 interface Book {
   id: number;
@@ -19,7 +21,7 @@ interface Book {
   cover: string;
 }
 
-const Page = () => {
+const BookContent = () => {
   const searchParams = useSearchParams();
   const bookId = parseInt(searchParams.get("id") || "0", 10);
   const { fetchBookById } = useBook();
@@ -54,8 +56,8 @@ const Page = () => {
   }
   if (!book) return <div>Buku tidak ditemukan.</div>;
 
-  const pdfUrl = `http://localhost:8000/storage/${book.isi}`;
-  const coverUrl = `http://localhost:8000/storage/${book.cover}`;
+  const pdfUrl = getStorageUrl(book.isi);
+  const coverUrl = getStorageUrl(book.cover);
 
   return (
     <div className="min-h-screen bg-gray-50 overflow-y-auto">
@@ -76,7 +78,7 @@ const Page = () => {
         </div>
 
         {/* Book Info + Flipbook */}
-        <div className="flex flex-col lg:flex-row gap-8 items-start">
+        <div className="flex flex-col lg:flex-row gap-8 lg:items-start">
           {/* Book Info */}
           <div className="flex flex-col items-center lg:items-start">
             {/* Cover */}
@@ -114,7 +116,7 @@ const Page = () => {
     ></iframe>
   </div> */}
               {pdfUrl ? (
-            <PageFlipBook pdfUrl={pdfUrl} />
+            <PageFlipBook pdfUrl={pdfUrl} align="start" />
           ) : (
             <p className="text-gray-500">Memuat buku...</p>
           )}
@@ -125,4 +127,17 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default function Page() {
+  return (
+    <Suspense fallback={
+      <div className="h-screen flex items-center justify-center bg-gray-50">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-10 h-10 border-4 border-red border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-gray-600">Memuat buku...</p>
+        </div>
+      </div>
+    }>
+      <BookContent />
+    </Suspense>
+  );
+}
