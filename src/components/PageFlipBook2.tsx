@@ -419,7 +419,7 @@ const PageFlipBook: React.FC<PageFlipBookProps> = ({ pdfUrl, align = 'center' })
       className={
          isModalFullscreen 
          ? "fixed inset-0 z-[9999] bg-black/60 flex flex-col items-center justify-center gap-6 p-4 backdrop-blur-sm"
-         : `relative w-full min-h-[90vh] flex flex-col ${align === 'start' ? 'items-start' : align === 'end' ? 'items-end' : 'items-center'} justify-start gap-6 hide-scrollbar overflow-hidden pt-0 pb-8`
+         : `relative w-full min-h-[90vh] flex flex-col ${align === 'start' ? 'items-start' : align === 'end' ? 'items-end' : 'items-center'} justify-center gap-6 hide-scrollbar overflow-hidden pt-0 pb-8`
        }
     >
       {/* Close button for modal */}

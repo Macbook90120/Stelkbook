@@ -66,7 +66,7 @@ function Page() {
 
         {/* Flipbook */}
         <div className="flex-grow overflow-x-auto w-full">
-          <PageFlipBook pdfUrl="/assets/pdfs/MTK-OLM.pdf" align="start" />
+          <PageFlipBook pdfUrl="/assets/pdfs/MTK-OLM.pdf" />
         </div>
       </div>
 

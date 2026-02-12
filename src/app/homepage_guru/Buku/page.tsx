@@ -156,7 +156,7 @@ const BookContent: React.FC = () => {
         {/* Kanan */}
         <div className="flex-grow overflow-x-auto w-full">
           {pdfUrl ? (
-            <PageFlipBook pdfUrl={pdfUrl} align="start" />
+            <PageFlipBook pdfUrl={pdfUrl} />
           ) : (
             <p className="text-gray-500">Memuat buku...</p>
           )}

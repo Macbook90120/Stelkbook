@@ -124,7 +124,7 @@ const BookContent: React.FC = () => {
       </div>
 
       {/* Konten Buku */}
-      <div className="flex flex-col lg:flex-row gap-4 items-start">
+      <div className="flex flex-col lg:flex-row gap-4 items-center">
         {/* Kiri */}
         <div className="flex flex-col items-center lg:items-start">
           <Image
@@ -174,7 +174,7 @@ const BookContent: React.FC = () => {
         {/* Kanan */}
         <div className="flex-grow overflow-x-auto w-full">
           {pdfUrl ? (
-            <PageFlipBook pdfUrl={pdfUrl} align="start" />
+            <PageFlipBook pdfUrl={pdfUrl} />
           ) : (
             <p className="text-gray-500">Memuat buku...</p>
           )}
