@@ -186,7 +186,7 @@ const pdfUrl = book.isi.startsWith('http') ? book.isi : `/api/pdf/${book.isi}`;
   </div> */}
           
           {pdfUrl ? (
-            <PageFlipBook pdfUrl={pdfUrl} />
+            <PageFlipBook pdfUrl={pdfUrl} align="center" />
           ) : (
             <p className="text-gray-500">Memuat buku...</p>
           )}

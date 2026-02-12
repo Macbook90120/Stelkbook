@@ -4,7 +4,7 @@ import React, { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Navbar from "@/components/Navbar_Lainnya_Guru"; // ✅ Navbar khusus Guru
-import PageFlipBook from "@/components/PageFlipBook2";
+import PageFlipBook from "@/app/guru_lainnya/PageFlipBook2";
 import BookRating from "@/components/BookRating";
 import { useBook } from "@/context/bookContext";
 import { getStorageUrl } from '@/helpers/storage';
@@ -74,13 +74,9 @@ const BookContent: React.FC = () => {
   };
 
   return (
-    <div className="h-screen p-8 bg-gray-50 overflow-y-auto">
+    <div className="min-h-screen bg-gray-50 overflow-y-auto pt-24 px-8 pb-8">
       {/* Navbar */}
-      <header className="flex justify-between items-center mb-4">
-        <div className="pt-12 px-8">
-          <Navbar />
-        </div>
-      </header>
+      <Navbar />
 
       {/* Breadcrumb */}
       <div className="mb-8 flex items-center">
@@ -158,9 +154,9 @@ const BookContent: React.FC = () => {
         </div>
 
         {/* Kanan */}
-        <div className="flex-grow overflow-x-auto w-full">
+        <div className="flex-grow w-full flex justify-center items-center">
           {pdfUrl ? (
-            <PageFlipBook pdfUrl={pdfUrl} align="start" />
+            <PageFlipBook pdfUrl={pdfUrl} align="center" />
           ) : (
             <p className="text-gray-500">Memuat buku...</p>
           )}

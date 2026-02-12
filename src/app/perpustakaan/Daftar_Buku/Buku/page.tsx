@@ -105,7 +105,7 @@ const BookContent: React.FC = () => {
           alt=">"
           width={10}
           height={16}
-          className="mx-2"
+          className="mx-1"
         />
         <p
           className="text-xl font-semibold font-poppins cursor-pointer hover:underline"
@@ -118,7 +118,7 @@ const BookContent: React.FC = () => {
           alt=">"
           width={10}
           height={16}
-          className="mx-2"
+          className="mx-1"
         />
         <p className="text-xl font-semibold font-poppins">{book.judul}</p>
       </div>
@@ -174,7 +174,7 @@ const BookContent: React.FC = () => {
         {/* Kanan */}
         <div className="flex-grow overflow-x-auto w-full">
           {pdfUrl ? (
-            <PageFlipBook pdfUrl={pdfUrl} />
+            <PageFlipBook pdfUrl={pdfUrl} align="center" />
           ) : (
             <p className="text-gray-500">Memuat buku...</p>
           )}

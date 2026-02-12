@@ -4,7 +4,8 @@ import React, { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Navbar from "@/components/Navbar_Lainnya_Guru"; // ✅ Navbar khusus Guru
-import PageFlipBook from "@/components/PageFlipBook2";
+import PageFlipBook from "../PageFlipBook2";
+import BookRating from "@/components/BookRating";
 import { useBook } from "@/context/bookContext";
 import { getStorageUrl } from '@/helpers/storage';
 
@@ -19,6 +20,8 @@ interface Book {
   ISBN: string;
   isi: string;
   cover: string;
+  average_rating?: number;
+  total_ratings?: number;
 }
 
 const BookContent: React.FC = () => {
@@ -71,88 +74,101 @@ const BookContent: React.FC = () => {
   };
 
   return (
-    <div className="h-screen p-8 bg-gray-50 overflow-y-auto">
+    <div className="min-h-screen bg-gray-50 overflow-y-auto">
       {/* Navbar */}
-      <header className="flex justify-between items-center mb-4">
-        <div className="pt-12 px-8">
-          <Navbar />
-        </div>
-      </header>
-
-      {/* Breadcrumb */}
-      <div className="mb-8 flex items-center">
-        <p className="text-xl font-semibold font-poppins">Studi Anda</p>
-        <Image
-          src="/assets/Kelas_X/Primary_Direct.png"
-          alt=">"
-          width={10}
-          height={16}
-          className="mx-1"
-        />
-        <p className="text-xl font-semibold font-poppins">{book.kategori}</p>
-        <Image
-          src="/assets/Kelas_X/Primary_Direct.png"
-          alt=">"
-          width={10}
-          height={16}
-          className="mx-1"
-        />
-        <p className="text-xl font-semibold font-poppins">{book.judul}</p>
+      <div className="mb-8">
+        <Navbar />
       </div>
 
-      {/* Konten Buku */}
-      <div className="flex flex-col lg:flex-row gap-4 items-start">
-        {/* Kiri */}
-        <div className="flex flex-col items-center lg:items-start">
-          <Image
-            src={coverUrl}
-            alt="Cover Buku"
-            width={200}
-            height={280}
-            className="rounded-lg shadow-md mb-6"
-            priority={true}
-            style={{ width: "auto", height: "auto" }}
-            onError={(e) => {
-              e.currentTarget.src = "/assets/default-cover.png";
-            }}
-          />
+      {/* Main Content */}
+      <main className="pt-20 px-8">
+        {/* Breadcrumb */}
+        <div className="mb-8 flex items-center">
+          <p className="text-xl font-semibold font-poppins">Studi Anda</p>
+          <div className="mx-2">
+            <Image
+              src="/assets/Kelas_X/Primary_Direct.png"
+              alt=">"
+              width={10}
+              height={16}
+            />
+          </div>
+          <p className="text-xl font-semibold font-poppins">{book.kategori}</p>
+          <div className="mx-2">
+            <Image
+              src="/assets/Kelas_X/Primary_Direct.png"
+              alt=">"
+              width={10}
+              height={16}
+            />
+          </div>
+          <p className="text-xl font-semibold font-poppins">{book.judul}</p>
+        </div>
 
-          <div className="text-center lg:text-left">
-            <h2 className="text-lg font-bold">{book.judul}</h2>
-            <ul className="mt-2 text-sm space-y-1">
-              <li>
-                <strong>Penerbit:</strong> {book.penerbit}
-              </li>
-              <li>
-                <strong>Penulis:</strong> {book.penulis}
-              </li>
-              <li>
-                <strong>Tahun:</strong> {book.tahun}
-              </li>
-              <li>
-                <strong>ISBN:</strong> {book.ISBN}
-              </li>
-            </ul>
+        {/* Konten Buku */}
+        <div className="flex flex-col lg:flex-row gap-8 items-start">
+          {/* Sisi Kiri: Cover & Metadata */}
+          <div className="flex flex-col items-center lg:items-start w-full lg:w-1/4">
+            <Image
+              src={coverUrl}
+              alt="Cover Buku"
+              width={200}
+              height={280}
+              className="rounded-lg shadow-md mb-6"
+              priority={true}
+              style={{ width: "auto", height: "auto" }}
+              onError={(e) => {
+                e.currentTarget.src = "/assets/default-cover.png";
+              }}
+            />
 
-            {/* ✅ Tombol Unduh tetap ada */}
-            <button
-              onClick={handleDownload}
-              className="mt-4 w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600"
-            >
-              Unduh Buku
-            </button>
+            <div className="text-center lg:text-left w-full">
+              <h2 className="text-xl font-bold mb-4">{book.judul}</h2>
+              <ul className="mt-2 text-sm space-y-2 text-gray-700">
+                <li>
+                  <strong className="text-black">Penerbit:</strong> {book.penerbit}
+                </li>
+                <li>
+                  <strong className="text-black">Penulis:</strong> {book.penulis}
+                </li>
+                <li>
+                  <strong className="text-black">Tahun:</strong> {book.tahun}
+                </li>
+                <li>
+                  <strong className="text-black">ISBN:</strong> {book.ISBN}
+                </li>
+              </ul>
+
+              <button
+                onClick={handleDownload}
+                className="mt-6 w-full bg-blue-600 text-white py-2.5 rounded-lg hover:bg-blue-700 transition-colors font-semibold shadow-sm mb-6"
+              >
+                Unduh Buku
+              </button>
+
+              <div className="mt-2">
+                <BookRating 
+                  bookId={book.id}
+                  initialAverageRating={book.average_rating}
+                  initialTotalRatings={book.total_ratings}
+                  isReadOnly={false}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Sisi Kanan: Flipbook */}
+          <div className="w-full lg:w-3/4 flex justify-center">
+            {pdfUrl ? (
+              <PageFlipBook pdfUrl={pdfUrl} align="center" />
+            ) : (
+              <div className="flex items-center justify-center h-[600px] w-full bg-white rounded-xl border border-dashed border-gray-300">
+                <p className="text-gray-500">Memuat penampil buku...</p>
+              </div>
+            )}
           </div>
         </div>
-
-        {/* Kanan */}
-        <div className="flex-grow overflow-x-auto w-full">
-          {pdfUrl ? (
-            <PageFlipBook pdfUrl={pdfUrl} align="start" />
-          ) : (
-            <p className="text-gray-500">Memuat buku...</p>
-          )}
-        </div>
-      </div>
+      </main>
     </div>
   );
 };
