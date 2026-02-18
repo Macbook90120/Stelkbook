@@ -101,8 +101,7 @@ function Login() {
 
     return (
         <div className="flex min-h-screen flex-col lg:flex-row">
-            {/* Left-side slideshow - Hidden on mobile, shown on lg and up */}
-            <div className="hidden lg:block lg:w-9/12 relative" style={{ height: '100vh' }}>
+            <div className="hidden lg:block lg:w-8/12 relative" style={{ height: '100vh' }}>
                 {isClient && slides.map((slide, index) => (
                     <div
                         key={slide.id}
@@ -124,8 +123,7 @@ function Login() {
                 ))}
             </div>
 
-            {/* Right-side login */}
-            <div className="flex w-full lg:w-4/12 items-center justify-center p-4 sm:p-8 bg-white lg:min-h-screen">
+            <div className="relative flex w-full lg:w-4/12 items-center justify-center p-4 sm:p-8 bg-white lg:min-h-screen">
                 <div className="w-full max-w-md p-6 sm:p-8 bg-white rounded-lg">
                     <div className="text-center mb-8">
                         <Image

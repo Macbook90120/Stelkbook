@@ -46,6 +46,7 @@ export const BookProvider = ({ children }) => {
     const [guruPagination, setGuruPagination] = useState(paginationInitialState);
     const [rekapKunjunganBooks, setRekapKunjunganBooks] = useState([]);
     const [kunjunganBooks, setKunjunganBooks] = useState([]);
+    const [pendingUploads, setPendingUploads] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [pagination, setPagination] = useState({
@@ -53,6 +54,54 @@ export const BookProvider = ({ children }) => {
         lastPage: 1,
         total: 0
     });
+
+    const fetchPendingUploads = useCallback(async () => {
+        setLoading(true);
+        try {
+            const response = await axios.get('/pending-book-uploads');
+            if (response.data.success) {
+                setPendingUploads(response.data.data);
+            }
+        } catch (err) {
+            console.error('Failed to fetch pending uploads:', err);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    const approveBookUpload = async (id, formData) => {
+        setLoading(true);
+        try {
+            const response = await axios.post(`/approve-book-upload/${id}`, formData);
+            if (response.data.success) {
+                setPendingUploads(prev => prev.filter(item => item.id !== id));
+                // Refresh books list or add to state
+                fetchBooks();
+                return response.data;
+            }
+        } catch (err) {
+            console.error('Failed to approve book upload:', err);
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const declineBookUpload = async (id) => {
+        setLoading(true);
+        try {
+            const response = await axios.post(`/decline-book-upload/${id}`);
+            if (response.data.success) {
+                setPendingUploads(prev => prev.filter(item => item.id !== id));
+                return response.data;
+            }
+        } catch (err) {
+            console.error('Failed to decline book upload:', err);
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    };
 
     // Fungsi untuk mengambil semua buku
     const fetchBooks = useCallback(async (page = 1) => {
@@ -994,11 +1043,22 @@ const fetchNonAkademikBookById = useCallback(async (id) => {
     const addBook = async (bookData) => {
         setLoading(true);
         try {
-            const response = await axios.post('/books', bookData, {
+            // Check if this is a pending upload (from Guru)
+            const isPending = bookData.get('is_pending') === '1';
+            const endpoint = isPending ? '/pending-book-uploads' : '/books';
+
+            const response = await axios.post(endpoint, bookData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             });
+
+            if (isPending) {
+                // If pending, we don't necessarily want to add it to the active books list yet
+                // But we might want to refresh pending uploads if the user is a librarian
+                return response.data;
+            }
+
             // Update books state with the new book data (structure based on backend response: { data: { ... } })
             setBooks((prevBooks) => [response.data.book, ...prevBooks]);
             return response.data;
@@ -1549,6 +1609,10 @@ const deleteBookKelas12 = async (id) => {
                 nonAkademikPagination,
                 guruPagination,
                 pagination,
+                pendingUploads,
+                fetchPendingUploads,
+                approveBookUpload,
+                declineBookUpload,
                 loading,
                 error,
                 fetchBooks,

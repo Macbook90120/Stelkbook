@@ -1,6 +1,7 @@
 'use client';
 
 import KunjunganChart from '@/components/KunjunganChart';
+import KunjunganGeneralDashboard from '@/components/KunjunganGeneralDashboard';
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar_Lainnya_Perpus2';
 import { ArrowLeft } from 'lucide-react';
@@ -103,6 +104,10 @@ export default function KunjunganPage() {
       >
         <ArrowLeft size={24} />
       </button>
+
+      <div className="mb-8">
+        <KunjunganGeneralDashboard />
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Chart Section */}

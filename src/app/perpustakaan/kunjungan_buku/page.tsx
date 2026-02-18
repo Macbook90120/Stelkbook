@@ -9,7 +9,9 @@ import { useBook } from '@/context/bookContext';
 import { getStorageUrl } from '@/helpers/storage';
 import Image from 'next/image';
 import api from '@/utils/axios';
-import { Star, Trash2, Search } from 'lucide-react';
+import { Star, Trash2, Search, Check, X as CloseIcon, Edit } from 'lucide-react';
+import EditApproveModal from '@/app/perpustakaan/kunjungan_buku/EditApproveModal';
+import DashboardCharts from '@/components/DashboardCharts';
 
 interface RekapKunjunganBook {
   book_id: number;
@@ -61,6 +63,8 @@ export default function KunjunganPage() {
   const [ratings, setRatings] = useState<BookRatingHistory[]>([]);
   const [ratingsLoading, setRatingsLoading] = useState(true);
   const [ratingSearch, setRatingSearch] = useState('');
+  const [selectedRequest, setSelectedRequest] = useState<any>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const router = useRouter();
 
   const {
@@ -68,12 +72,20 @@ export default function KunjunganPage() {
     rekapKunjunganBooks,
     fetchKunjunganBooks,
     kunjunganBooks,
+    pendingUploads,
+    fetchPendingUploads,
+    approveBookUpload,
+    declineBookUpload,
     loading
   }: {
     fetchRekapKunjunganBooks: () => Promise<void>;
     rekapKunjunganBooks: RekapKunjunganBook[];
     fetchKunjunganBooks: () => Promise<void>;
     kunjunganBooks: KunjunganBook[];
+    pendingUploads: any[];
+    fetchPendingUploads: () => Promise<void>;
+    approveBookUpload: (id: number, formData: FormData) => Promise<any>;
+    declineBookUpload: (id: number) => Promise<any>;
     loading: boolean;
   } = useBook();
 
@@ -106,20 +118,36 @@ export default function KunjunganPage() {
     }
   };
 
+  const handleDeclineRequest = async (id: number) => {
+    if (!confirm('Apakah Anda yakin ingin menolak permintaan upload ini?')) return;
+    try {
+      await declineBookUpload(id);
+      alert('Permintaan ditolak');
+    } catch (error) {
+      alert('Gagal menolak permintaan');
+    }
+  };
+
+  const handleOpenEditModal = (request: any) => {
+    setSelectedRequest(request);
+    setIsEditModalOpen(true);
+  };
+
   useEffect(() => {
     const loadData = async () => {
       try {
         await Promise.all([
           fetchRekapKunjunganBooks(), 
           fetchKunjunganBooks(),
-          fetchRatings()
+          fetchRatings(),
+          fetchPendingUploads()
         ]);
       } catch (error) {
         console.error('Error loading page data:', error);
       }
     };
     loadData();
-  }, [fetchRekapKunjunganBooks, fetchKunjunganBooks, fetchRatings]);
+  }, [fetchRekapKunjunganBooks, fetchKunjunganBooks, fetchRatings, fetchPendingUploads]);
 
   useEffect(() => {
     if (!loading && jenjang === null) {
@@ -253,6 +281,10 @@ export default function KunjunganPage() {
       >
         <ArrowLeft size={24} />
       </button>
+
+      <div className="mb-8">
+        <DashboardCharts />
+      </div>
 
       {/* Fullscreen white loading overlay */}
       {loading && (
@@ -400,6 +432,72 @@ export default function KunjunganPage() {
         </div>
       </div>
 
+      {/* Permintaan Upload Section */}
+      <div className="mt-8 bg-white shadow-lg rounded-xl p-6 border border-gray-200">
+        <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+          Permintaan Upload Buku
+          {pendingUploads.length > 0 && (
+            <span className="bg-red-600 text-white text-xs px-2 py-1 rounded-full animate-pulse">
+              {pendingUploads.length} Baru
+            </span>
+          )}
+        </h2>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="border-b border-gray-200">
+                <th className="py-3 px-4 text-gray-600 font-semibold">Judul</th>
+                <th className="py-3 px-4 text-gray-600 font-semibold">Pengirim</th>
+                <th className="py-3 px-4 text-gray-600 font-semibold">Tanggal</th>
+                <th className="py-3 px-4 text-gray-600 font-semibold text-center">Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              {pendingUploads.length > 0 ? (
+                pendingUploads.map((request) => (
+                  <tr key={request.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                    <td className="py-3 px-4 font-medium text-gray-800">{request.judul}</td>
+                    <td className="py-3 px-4 text-gray-700">{request.user?.username || 'Guru'}</td>
+                    <td className="py-3 px-4 text-gray-500 text-sm">
+                      {new Date(request.created_at).toLocaleDateString('id-ID', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric'
+                      })}
+                    </td>
+                    <td className="py-3 px-4">
+                      <div className="flex justify-center gap-2">
+                        <button
+                          onClick={() => handleOpenEditModal(request)}
+                          className="p-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors flex items-center gap-1 text-sm font-medium"
+                          title="Review & Approve"
+                        >
+                          <Edit size={16} />
+                          Review
+                        </button>
+                        <button
+                          onClick={() => handleDeclineRequest(request.id)}
+                          className="p-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
+                          title="Tolak"
+                        >
+                          <CloseIcon size={16} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={4} className="py-8 text-center text-gray-500 italic">
+                    Tidak ada permintaan upload buku saat ini.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       <div className="mt-8 bg-white shadow-lg rounded-xl p-6 border border-gray-200 mb-10">
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-4">
            <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
@@ -514,6 +612,13 @@ export default function KunjunganPage() {
           </table>
         </div>
       </div>
+
+      <EditApproveModal 
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        requestData={selectedRequest}
+        onApprove={approveBookUpload}
+      />
     </div>
   );
 }

@@ -11,6 +11,8 @@ import SortFilter, { SortOption } from '@/components/SortFilter';
 import FilterCheckbox, { FilterState } from '@/components/FilterCheckbox';
 import BookCard from '@/components/BookCard';
 import { getStorageUrl } from '@/helpers/storage';
+import { Plus } from 'lucide-react';
+import UploadModal from './UploadBuku/UploadModal';
 
 
 interface Book {
@@ -36,6 +38,7 @@ function GuruPageContent() {
   const { guruBooks, guruPagination, loading, fetchGuruBooks } = useBook();
   const [mappedBooks, setMappedBooks] = useState<Book[]>([]);
   const [sortOption, setSortOption] = useState<SortOption>(null);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [activeFilters, setActiveFilters] = useState<FilterState>({
     kelas: [],
     mapel: [],
@@ -140,12 +143,25 @@ function GuruPageContent() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Navbar />
+      <UploadModal 
+        isOpen={isUploadModalOpen} 
+        onClose={() => setIsUploadModalOpen(false)} 
+      />
 
       <main className="pt-24 px-4 sm:px-8 flex-grow flex flex-col pb-8">
         <div className="mb-8 flex justify-between items-center">
-          <p className="text-xl font-semibold font-poppins">
-            Buku Ajar Anda
-          </p>
+          <div className="flex items-center gap-4">
+            <p className="text-xl font-semibold font-poppins">
+              Buku Ajar Anda
+            </p>
+            <button
+              onClick={() => setIsUploadModalOpen(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-lg transition-all shadow-md shadow-red-200 active:scale-95 group"
+            >
+              <Plus size={16} className="group-hover:rotate-90 transition-transform duration-200" />
+              <span>Upload Buku</span>
+            </button>
+          </div>
           <div className="flex gap-3">
             <FilterCheckbox books={guruBooks} onFilterChange={setActiveFilters} />
             <SortFilter
