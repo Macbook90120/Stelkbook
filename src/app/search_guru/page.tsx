@@ -2,10 +2,10 @@
 
 import React, { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import Image from "next/image";
 import Navbar from "@/components/Navbar_Guru";
 import { useBook } from "@/context/bookContext";
-import { getStorageUrl } from '@/helpers/storage';
+import { getStorageUrl } from "@/helpers/storage";
+import BookCard from "@/components/BookCard";
 
 
 interface Book {
@@ -16,6 +16,8 @@ interface Book {
   penulis?: string;
   kategori?: string;
   path?: string;
+  average_rating?: number;
+  total_ratings?: number;
 }
 
 const SearchGuruContent = () => {
@@ -25,7 +27,15 @@ const SearchGuruContent = () => {
   const [filteredBooks, setFilteredBooks] = useState<Book[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const { books, error, fetchBooks } = useBook();
+  const {
+    books,
+    perpusBooks,
+    nonAkademikBooks,
+    error,
+    fetchBooks,
+    fetchPerpusBooks,
+    fetchNonAkademikBooks,
+  } = useBook();
 
   const navigateToBook = (id: number) => {
     router.push(`search_guru/books?id=${id}`);
@@ -34,17 +44,43 @@ const SearchGuruContent = () => {
   useEffect(() => {
     const loadData = async () => {
       setIsLoading(true);
-      await fetchBooks();
-      setIsLoading(false);
+      try {
+        await Promise.all([
+          fetchBooks(),
+          fetchPerpusBooks?.(),
+          fetchNonAkademikBooks?.(),
+        ]);
+      } finally {
+        setIsLoading(false);
+      }
     };
     loadData();
-  }, [fetchBooks]);
+  }, [fetchBooks, fetchPerpusBooks, fetchNonAkademikBooks]);
 
   useEffect(() => {
-    if (query && books.length > 0) {
-      const processedBooks = books.map((book: any) => {
-        const coverUrl = book.cover
-          ? getStorageUrl(book.cover)
+    const allCollections = [
+      ...(books || []),
+      ...(perpusBooks || []),
+      ...(nonAkademikBooks || []),
+    ];
+
+    const uniqueBooksMap = new Map<number, any>();
+    allCollections.forEach((book: any) => {
+      if (book && typeof book.id === "number" && !uniqueBooksMap.has(book.id)) {
+        uniqueBooksMap.set(book.id, book);
+      }
+    });
+
+    const allBooks = Array.from(uniqueBooksMap.values());
+
+    if (query && allBooks.length > 0) {
+      const processedBooks = allBooks.map((book: any) => {
+        const rawCover =
+          book.cover || book.cover_image || book.thumbnail || "";
+        const coverUrl = rawCover
+          ? rawCover.startsWith("http")
+            ? rawCover
+            : getStorageUrl(rawCover)
           : "/assets/default-cover.png";
 
         return {
@@ -55,22 +91,30 @@ const SearchGuruContent = () => {
           penulis: book.penulis || "Unknown Author",
           kategori: book.kategori || "",
           path: `search_guru/books?id=${book.id}`,
+          average_rating: book.average_rating ?? 0,
+          total_ratings: book.total_ratings ?? 0,
         };
       });
 
-      const results = processedBooks.filter(
-        (book: any) =>
-          book.judul.toLowerCase().includes(query) ||
-          (book.kategori && book.kategori.toLowerCase().includes(query)) ||
-          (book.subject && book.subject.toLowerCase().includes(query)) ||
-          (book.penulis && book.penulis.toLowerCase().includes(query))
-      );
+      const results = processedBooks.filter((book: any) => {
+        const lowerTitle = book.judul.toLowerCase();
+        const lowerKategori = book.kategori?.toLowerCase() || "";
+        const lowerSubject = book.subject?.toLowerCase() || "";
+        const lowerPenulis = book.penulis?.toLowerCase() || "";
+
+        return (
+          lowerTitle.includes(query) ||
+          lowerKategori.includes(query) ||
+          lowerSubject.includes(query) ||
+          lowerPenulis.includes(query)
+        );
+      });
 
       setFilteredBooks(results);
     } else {
       setFilteredBooks([]);
     }
-  }, [query, books]);
+  }, [query, books, perpusBooks, nonAkademikBooks]);
 
   if (isLoading) {
     return (
@@ -103,40 +147,13 @@ const SearchGuruContent = () => {
       </div>
 
       {filteredBooks.length > 0 ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
           {filteredBooks.map((book) => (
-            <div
+            <BookCard
               key={book.id}
+              book={book}
               onClick={() => navigateToBook(book.id)}
-              className="bg-white hover:bg-gray-100 hover:scale-105 transition-transform duration-200 rounded-lg p-4 cursor-pointer flex flex-col items-center"
-            >
-              <div className="w-[150px] h-[200px] relative">
-                <Image
-                  src={book.cover}
-                  alt={book.judul}
-                  fill
-                  sizes="300px"
-                  className="rounded-md object-cover"
-                 priority = {true}
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = "/assets/default-cover.png";
-                  }}
-                />
-              </div>
-
-              <h3 className="mt-4 text-center text-sm font-semibold text-gray-800">
-                {book.judul}
-              </h3>
-              {book.penulis && (
-                <p className="text-xs text-gray-500">{book.penulis}</p>
-              )}
-              {book.kategori && (
-                <p className="text-xs text-gray-500 font-medium">
-                  {book.kategori}
-                </p>
-              )}
-            </div>
+            />
           ))}
         </div>
       ) : (

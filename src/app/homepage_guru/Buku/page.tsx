@@ -148,7 +148,6 @@ const BookContent: React.FC = () => {
               bookId={book.id}
               initialAverageRating={book.average_rating}
               initialTotalRatings={book.total_ratings}
-              isReadOnly={true}
             />
           </div>
         </div>
