@@ -71,7 +71,14 @@ const BookContent = () => {
     <div className="h-screen p-8 bg-gray-50 overflow-y-auto">
       <header className="flex justify-between items-center mb-4">
         <div className="pt-12 px-8">
-          <Navbar />
+          <Navbar 
+            bookContext={{
+              judul: book.judul,
+              penulis: book.penulis,
+              penerbit: book.penerbit,
+              deskripsi: book.kategori
+            }}
+          />
         </div>
       </header>
 

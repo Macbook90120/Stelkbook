@@ -109,10 +109,12 @@ export default function KunjunganPage() {
         <KunjunganGeneralDashboard />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
         {/* Chart Section */}
-        <div className="w-full h-fit bg-white shadow-lg rounded-xl p-4 border border-gray-200">
-          <KunjunganChart data={getData()} />
+        <div className="w-full bg-white shadow-lg rounded-xl p-4 border border-gray-200 flex flex-col">
+          <div className="flex-1 min-h-[400px]">
+            <KunjunganChart data={getData()} height="100%" />
+          </div>
 
           <div className="flex justify-center mt-6 gap-4 flex-wrap">
             {['hari', 'bulan', 'tahun'].map((item) => (
@@ -135,12 +137,12 @@ export default function KunjunganPage() {
 
         <div className="w-full flex flex-col gap-6">
           {/* Visitors Box with Tabs */}
-          <div className="bg-white shadow-lg rounded-xl p-6 border border-gray-200">
-            <div className="flex justify-between items-center mb-4">
-              <div className="flex space-x-2 bg-gray-100 p-1 rounded-lg">
+          <div className="bg-white shadow-lg rounded-xl p-6 border border-gray-200 flex-1 flex flex-col">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+              <div className="flex space-x-2 bg-gray-100 p-1 rounded-lg w-fit">
                 <button
                   onClick={() => setActiveTab('today')}
-                  className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
+                  className={`px-3 py-1.5 text-xs sm:text-sm font-medium rounded-md transition-all ${
                     activeTab === 'today'
                       ? 'bg-white text-red shadow-sm'
                       : 'text-gray-500 hover:text-gray-700'
@@ -150,7 +152,7 @@ export default function KunjunganPage() {
                 </button>
                 <button
                   onClick={() => setActiveTab('history')}
-                  className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
+                  className={`px-3 py-1.5 text-xs sm:text-sm font-medium rounded-md transition-all ${
                     activeTab === 'history'
                       ? 'bg-white text-red shadow-sm'
                       : 'text-gray-500 hover:text-gray-700'
@@ -159,7 +161,7 @@ export default function KunjunganPage() {
                   Riwayat
                 </button>
               </div>
-              <h2 className="text-lg font-bold text-gray-800">
+              <h2 className="text-base sm:text-lg font-bold text-gray-800 whitespace-nowrap">
                 <span className="text-red font-semibold">
                   {activeTab === 'today' 
                     ? (kunjunganData?.length || 0) 
@@ -168,7 +170,7 @@ export default function KunjunganPage() {
               </h2>
             </div>
 
-            <div className="space-y-3 max-h-80 overflow-y-auto">
+            <div className="space-y-3 flex-1 max-h-[400px] overflow-y-auto pr-1">
               {activeTab === 'today' ? (
                 kunjunganData && kunjunganData.length > 0 ? (
                   kunjunganData.map((user: KunjunganUser, index: number) => (
@@ -226,16 +228,19 @@ export default function KunjunganPage() {
           {/* Summary Box */}
           <div className="bg-white shadow-lg rounded-xl p-6 border border-gray-200">
             <h3 className="text-lg font-semibold text-gray-800 mb-3">Ringkasan Kunjungan</h3>
-            <div className="space-y-2">
-              <p className="font-medium text-gray-700">
-                Kunjungan 7 Hari Terakhir: <span className="text-OldRed font-semibold">{total7Hari} pengunjung</span>
-              </p>
-              <p className="font-medium text-gray-700">
-                Kunjungan Bulan Ini: <span className="text-OldRed font-semibold">{totalBulan} pengunjung</span>
-              </p>
-              <p className="font-medium text-gray-700">
-                Kunjungan Tahun Ini: <span className="text-OldRed font-semibold">{totalTahun} pengunjung</span>
-              </p>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center border-b border-gray-100 pb-2">
+                <p className="text-sm sm:text-base font-medium text-gray-700">7 Hari Terakhir:</p>
+                <span className="text-OldRed font-bold">{total7Hari} <span className="text-xs font-normal text-gray-500">pengunjung</span></span>
+              </div>
+              <div className="flex justify-between items-center border-b border-gray-100 pb-2">
+                <p className="text-sm sm:text-base font-medium text-gray-700">Bulan Ini:</p>
+                <span className="text-OldRed font-bold">{totalBulan} <span className="text-xs font-normal text-gray-500">pengunjung</span></span>
+              </div>
+              <div className="flex justify-between items-center">
+                <p className="text-sm sm:text-base font-medium text-gray-700">Tahun Ini:</p>
+                <span className="text-OldRed font-bold">{totalTahun} <span className="text-xs font-normal text-gray-500">pengunjung</span></span>
+              </div>
             </div>
           </div>
         </div>

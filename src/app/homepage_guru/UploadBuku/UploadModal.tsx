@@ -1,20 +1,46 @@
 'use client';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { X, Upload, FileText, CheckCircle2, Clock } from 'lucide-react';
 import { useBook } from '@/context/bookContext';
+import Notification from '@/components/Notification';
 
 interface UploadModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onUploadSuccess?: () => void;
 }
 
-const UploadModal: React.FC<UploadModalProps> = ({ isOpen, onClose }) => {
+const UploadModal: React.FC<UploadModalProps> = ({ isOpen, onClose, onUploadSuccess }) => {
   const [file, setFile] = useState<File | null>(null);
   const [judul, setJudul] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<'idle' | 'waiting'>('idle');
+  const [notification, setNotification] = useState({
+    isVisible: false,
+    message: '',
+    type: 'success' as 'success' | 'error' | 'warning' | 'info',
+  });
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { addBook } = useBook();
+
+  const showNotification = useCallback((message: string, type: 'success' | 'error' | 'warning' | 'info' = 'success') => {
+    setNotification({
+      isVisible: true,
+      message,
+      type,
+    });
+  }, []);
+
+  const hideNotification = useCallback(() => {
+    setNotification(prev => ({ ...prev, isVisible: false }));
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setFile(null);
+    setJudul('');
+    setUploadStatus('idle');
+    onClose();
+  }, [onClose]);
 
   if (!isOpen) return null;
 
@@ -25,7 +51,7 @@ const UploadModal: React.FC<UploadModalProps> = ({ isOpen, onClose }) => {
         setFile(selectedFile);
         if (!judul) setJudul(selectedFile.name.replace('.pdf', ''));
       } else {
-        alert('Mohon unggah file PDF yang valid.');
+        showNotification('Mohon unggah file PDF yang valid.', 'error');
       }
     }
   };
@@ -43,9 +69,11 @@ const UploadModal: React.FC<UploadModalProps> = ({ isOpen, onClose }) => {
     try {
       await addBook(formData);
       setUploadStatus('waiting');
+      onUploadSuccess?.();
+      showNotification('Upload Buku Berhasil!', 'success');
     } catch (error) {
       console.error('Upload failed:', error);
-      alert('Gagal mengunggah buku. Silakan coba lagi.');
+      showNotification('Gagal mengunggah buku. Silakan coba lagi.', 'error');
     } finally {
       setIsUploading(false);
     }
@@ -58,7 +86,7 @@ const UploadModal: React.FC<UploadModalProps> = ({ isOpen, onClose }) => {
         <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white">
           <h2 className="text-lg font-bold text-gray-800">Upload Buku Ajar</h2>
           <button 
-            onClick={onClose}
+            onClick={handleCloseModal}
             className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-400 hover:text-gray-600"
           >
             <X size={20} />
@@ -150,7 +178,7 @@ const UploadModal: React.FC<UploadModalProps> = ({ isOpen, onClose }) => {
                 <span className="font-semibold text-red-600">Mohon tunggu moderator perpus/admin</span> untuk memverifikasi buku Anda.
               </p>
               <button
-                onClick={onClose}
+                onClick={handleCloseModal}
                 className="mt-8 px-8 py-2.5 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 transition-colors active:scale-[0.98]"
               >
                 Selesai
@@ -159,6 +187,14 @@ const UploadModal: React.FC<UploadModalProps> = ({ isOpen, onClose }) => {
           )}
         </div>
       </div>
+
+      <Notification
+        message={notification.message}
+        isVisible={notification.isVisible}
+        onClose={hideNotification}
+        type={notification.type}
+        duration={5000}
+      />
     </div>
   );
 };

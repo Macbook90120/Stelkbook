@@ -8,15 +8,23 @@ import useAuthMiddleware from '@/hooks/auth';
 import { useAuth } from '@/context/authContext';
 import Pagination from '@/components/Pagination';
 import SortFilter, { SortOption } from '@/components/SortFilter';
+import FilterCheckbox, { FilterState } from '@/components/FilterCheckbox';
 import BookCard from '@/components/BookCard';
 import { getStorageUrl } from '@/helpers/storage';
-
 
 interface Book {
   id: number;
   judul: string;
   cover: string;
   path?: string;
+  kategori?: string;
+  kelas?: string;
+  mapel?: string;
+  penerbit?: string;
+  penulis?: string;
+  sekolah?: string;
+  average_rating?: number;
+  total_ratings?: number;
 }
 
 function Kelas1PerpusContent() {
@@ -27,6 +35,12 @@ function Kelas1PerpusContent() {
   const { kelas1Books, kelas1Pagination, loading, error, fetchKelas1Books } = useBook();
   const [displayBooks, setDisplayBooks] = useState<Book[]>([]);
   const [sortOption, setSortOption] = useState<SortOption>(null);
+  const [activeFilters, setActiveFilters] = useState<FilterState>({
+    kelas: [],
+    mapel: [],
+    penerbit: [],
+    penulis: []
+  });
 
   const currentPage = Number(searchParams.get('page')) || 1;
 
@@ -57,7 +71,31 @@ function Kelas1PerpusContent() {
 
   useEffect(() => {
     if (kelas1Books) {
-      const processedBooks = kelas1Books.map((book: any) => {
+      // First, filter the books
+      const filteredBooks = kelas1Books.filter((book: any) => {
+        const bookClass = book.kelas || book.kategori;
+        
+        const matchesClass = activeFilters.kelas.length === 0 || (
+          bookClass && activeFilters.kelas.includes(bookClass)
+        );
+
+        const matchesSubject = activeFilters.mapel.length === 0 || (
+          book.mapel && activeFilters.mapel.includes(book.mapel)
+        );
+
+        const matchesPublisher = activeFilters.penerbit.length === 0 || (
+          book.penerbit && activeFilters.penerbit.includes(book.penerbit)
+        );
+
+        const matchesAuthor = activeFilters.penulis.length === 0 || (
+          book.penulis && activeFilters.penulis.includes(book.penulis)
+        );
+
+        return matchesClass && matchesSubject && matchesPublisher && matchesAuthor;
+      });
+
+      // Map to Book interface
+      const processedBooks = filteredBooks.map((book: any) => {
         const coverUrl = book.cover 
           ? getStorageUrl(book.cover) 
           : '/assets/default-cover.png';
@@ -67,9 +105,18 @@ function Kelas1PerpusContent() {
           judul: book.judul,
           cover: coverUrl,
           path: `/kelasI_perpus/buku1?id=${book.id}`,
+          kategori: book.kategori,
+          kelas: book.kelas,
+          mapel: book.mapel,
+          penerbit: book.penerbit,
+          penulis: book.penulis,
+          sekolah: book.sekolah,
+          average_rating: book.average_rating,
+          total_ratings: book.total_ratings
         };
       });
 
+      // Sort
       if (sortOption === 'asc') {
         processedBooks.sort((a: Book, b: Book) => a.judul.localeCompare(b.judul));
       } else if (sortOption === 'desc') {
@@ -78,7 +125,7 @@ function Kelas1PerpusContent() {
 
       setDisplayBooks(processedBooks);
     }
-  }, [kelas1Books, sortOption]);
+  }, [kelas1Books, sortOption, activeFilters]);
 
   const handleNavigationClick = (path: string) => {
     router.push(path);
@@ -100,26 +147,43 @@ function Kelas1PerpusContent() {
       <Navbar />
 
       <main className="pt-24 px-4 sm:px-8 flex-grow flex flex-col pb-8">
-        <div className="mb-8 flex justify-between items-center">
-          <p className="text-xl font-semibold font-poppins">
-            Buku Kelas I
-          </p>
-          <SortFilter
-            currentSort={sortOption}
-            onSortChange={setSortOption}
-          />
+        <div className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div className="flex flex-col gap-1">
+            <p className="text-xl font-semibold font-poppins">
+              Buku Kelas I
+            </p>
+            <p className="text-sm text-gray-500">
+              Menampilkan {displayBooks.length} buku
+            </p>
+          </div>
+          
+          <div className="flex flex-wrap items-center gap-3">
+            <FilterCheckbox 
+              books={kelas1Books || []}
+              onFilterChange={setActiveFilters}
+            />
+            <SortFilter
+              currentSort={sortOption}
+              onSortChange={setSortOption}
+            />
+          </div>
         </div>
 
         <div className="flex-grow">
           {displayBooks.length > 0 ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 justify-items-center">
               {displayBooks.map((book) => (
-                <BookCard key={book.id} book={book} />
+                <BookCard 
+                  key={book.id} 
+                  book={book} 
+                  onClick={() => handleNavigationClick(book.path!)} 
+                />
               ))}
             </div>
           ) : (
-            <div className="flex justify-center items-center h-64 text-gray-500">
-              Tidak ada buku ditemukan.
+            <div className="flex flex-col justify-center items-center h-64 text-gray-500">
+              <p className="text-lg font-medium">Tidak ada buku ditemukan</p>
+              <p className="text-sm">Coba sesuaikan filter pencarian Anda</p>
             </div>
           )}
         </div>

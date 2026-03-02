@@ -77,7 +77,14 @@ const BookContent: React.FC = () => {
     <div className="min-h-screen bg-gray-50 overflow-y-auto">
       {/* Navbar */}
       <div className="mb-8">
-        <Navbar />
+        <Navbar 
+          bookContext={{
+            judul: book.judul,
+            penulis: book.penulis,
+            penerbit: book.penerbit,
+            deskripsi: book.kategori
+          }}
+        />
       </div>
 
       {/* Main Content */}

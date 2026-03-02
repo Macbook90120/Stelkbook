@@ -3,12 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --webpack",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
+    "@google/genai": "^1.43.0",
+    "@google/generative-ai": "^0.24.1",
     "@react-icons/all-files": "^4.1.0",
     "@types/react-router-dom": "^5.3.3",
     "axios": "^1.7.9",
@@ -20,7 +22,10 @@
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-icons": "^5.4.0",
-    "recharts": "^2.15.3"
+    "react-markdown": "^10.1.0",
+    "react-pdf": "^10.4.1",
+    "recharts": "^2.15.3",
+    "remark-gfm": "^4.0.1"
   },
   "overrides": {
     "react": "$react",

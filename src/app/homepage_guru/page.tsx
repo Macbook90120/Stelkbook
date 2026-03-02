@@ -13,6 +13,7 @@ import BookCard from '@/components/BookCard';
 import { getStorageUrl } from '@/helpers/storage';
 import { Plus } from 'lucide-react';
 import UploadModal from './UploadBuku/UploadModal';
+import Notification from '@/components/Notification';
 
 
 interface Book {
@@ -39,6 +40,11 @@ function GuruPageContent() {
   const [mappedBooks, setMappedBooks] = useState<Book[]>([]);
   const [sortOption, setSortOption] = useState<SortOption>(null);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [notification, setNotification] = useState({
+    isVisible: false,
+    message: '',
+    type: 'success' as 'success' | 'error' | 'warning' | 'info',
+  });
   const [activeFilters, setActiveFilters] = useState<FilterState>({
     kelas: [],
     mapel: [],
@@ -65,6 +71,22 @@ function GuruPageContent() {
     const params = new URLSearchParams(searchParams.toString());
     params.set('page', page.toString());
     router.push(`/homepage_guru?${params.toString()}`);
+  };
+
+  const showNotification = (message: string, type: 'success' | 'error' | 'warning' | 'info' = 'success') => {
+    setNotification({
+      isVisible: true,
+      message,
+      type,
+    });
+  };
+
+  const hideNotification = () => {
+    setNotification(prev => ({ ...prev, isVisible: false }));
+  };
+
+  const handleUploadSuccess = () => {
+    showNotification('permintaan buku berhasil di upload!', 'success');
   };
 
   useEffect(() => {
@@ -146,6 +168,7 @@ function GuruPageContent() {
       <UploadModal 
         isOpen={isUploadModalOpen} 
         onClose={() => setIsUploadModalOpen(false)} 
+        onUploadSuccess={handleUploadSuccess}
       />
 
       <main className="pt-24 px-4 sm:px-8 flex-grow flex flex-col pb-8">
@@ -207,6 +230,15 @@ function GuruPageContent() {
           </div>
         )}
       </main>
+
+      <Notification
+        message={notification.message}
+        isVisible={notification.isVisible}
+        onClose={hideNotification}
+        type={notification.type}
+        duration={4000}
+        position="bottom-right"
+      />
     </div>
   );
 }

@@ -9,9 +9,12 @@ import { useBook } from '@/context/bookContext';
 import { getStorageUrl } from '@/helpers/storage';
 import Image from 'next/image';
 import api from '@/utils/axios';
-import { Star, Trash2, Search, Check, X as CloseIcon, Edit } from 'lucide-react';
+import { Star, Trash2, Search, Check, X as CloseIcon, Edit, FileText } from 'lucide-react';
 import EditApproveModal from '@/app/perpustakaan/kunjungan_buku/EditApproveModal';
 import DashboardCharts from '@/components/DashboardCharts';
+import PDFViewerModal from '@/components/PDFViewerModal';
+import ConfirmationModal from '@/components/ConfirmationModal';
+import { useAuth } from '@/context/authContext';
 
 interface RekapKunjunganBook {
   book_id: number;
@@ -65,7 +68,13 @@ export default function KunjunganPage() {
   const [ratingSearch, setRatingSearch] = useState('');
   const [selectedRequest, setSelectedRequest] = useState<any>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isPDFViewerOpen, setIsPDFViewerOpen] = useState(false);
+  const [selectedPDF, setSelectedPDF] = useState<{ url: string; title: string; id: number } | null>(null);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [selectedRequestId, setSelectedRequestId] = useState<number | null>(null);
+  const [isDeclining, setIsDeclining] = useState(false);
   const router = useRouter();
+  const { user } = useAuth();
 
   const {
     fetchRekapKunjunganBooks,
@@ -119,18 +128,64 @@ export default function KunjunganPage() {
   };
 
   const handleDeclineRequest = async (id: number) => {
-    if (!confirm('Apakah Anda yakin ingin menolak permintaan upload ini?')) return;
+    setSelectedRequestId(id);
+    setIsConfirmModalOpen(true);
+  };
+
+  const handleConfirmDecline = async () => {
+    if (!selectedRequestId) return;
+    
+    setIsDeclining(true);
     try {
-      await declineBookUpload(id);
-      alert('Permintaan ditolak');
+      await declineBookUpload(selectedRequestId);
+      setIsConfirmModalOpen(false);
+      setSelectedRequestId(null);
+      // Refresh pending uploads
+      fetchPendingUploads();
     } catch (error) {
+      console.error('Failed to decline request:', error);
       alert('Gagal menolak permintaan');
+    } finally {
+      setIsDeclining(false);
     }
+  };
+
+  const handleCancelDecline = () => {
+    setIsConfirmModalOpen(false);
+    setSelectedRequestId(null);
   };
 
   const handleOpenEditModal = (request: any) => {
     setSelectedRequest(request);
     setIsEditModalOpen(true);
+  };
+
+  const isAuthorizedForPDF = user && (
+    user.role?.toLowerCase() === 'admin' ||
+    user.role?.toLowerCase() === 'perpus' ||
+    user.role?.toLowerCase() === 'pengurusperpustakaan'
+  );
+
+  const handleViewPDF = (request: any) => {
+    if (!isAuthorizedForPDF) {
+      alert('Anda tidak memiliki akses untuk melihat PDF ini.');
+      return;
+    }
+    if (request.isi) {
+      setSelectedPDF({
+        url: request.isi,
+        title: request.judul,
+        id: request.id,
+      });
+      setIsPDFViewerOpen(true);
+    } else {
+      alert('File PDF tidak tersedia untuk buku ini.');
+    }
+  };
+
+  const handleClosePDFViewer = () => {
+    setIsPDFViewerOpen(false);
+    setSelectedPDF(null);
   };
 
   useEffect(() => {
@@ -468,6 +523,14 @@ export default function KunjunganPage() {
                     <td className="py-3 px-4">
                       <div className="flex justify-center gap-2">
                         <button
+                          onClick={() => handleViewPDF(request)}
+                          className="p-2 bg-green-50 text-green-600 hover:bg-green-100 rounded-lg transition-colors flex items-center gap-1 text-sm font-medium"
+                          title="Lihat PDF"
+                        >
+                          <FileText size={16} />
+                          Lihat PDF
+                        </button>
+                        <button
                           onClick={() => handleOpenEditModal(request)}
                           className="p-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors flex items-center gap-1 text-sm font-medium"
                           title="Review & Approve"
@@ -618,6 +681,27 @@ export default function KunjunganPage() {
         onClose={() => setIsEditModalOpen(false)}
         requestData={selectedRequest}
         onApprove={approveBookUpload}
+      />
+
+      {selectedPDF && (
+        <PDFViewerModal
+          isOpen={isPDFViewerOpen}
+          onClose={handleClosePDFViewer}
+          pdfUrl={selectedPDF.url}
+          title={selectedPDF.title}
+          bookId={selectedPDF.id}
+        />
+      )}
+
+      <ConfirmationModal
+        isOpen={isConfirmModalOpen}
+        onClose={handleCancelDecline}
+        onConfirm={handleConfirmDecline}
+        message="apakah kamu mau tolak buku ini?"
+        title="Konfirmasi Penolakan"
+        confirmText="iya"
+        cancelText="tidak"
+        isLoading={isDeclining}
       />
     </div>
   );

@@ -4,14 +4,25 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Sidebar from "./Sidebar_guru"; // ✅ Sidebar khusus guru
+import AISidebar from "./AISidebar";
 import { useAuth } from "@/context/authContext";
 import { getStorageUrl } from '@/helpers/storage';
 
 
-const Navbar: React.FC = () => {
+interface NavbarProps {
+  bookContext?: {
+    judul: string;
+    penulis?: string;
+    penerbit?: string;
+    deskripsi?: string;
+  };
+}
+
+const Navbar: React.FC<NavbarProps> = ({ bookContext }) => {
   const { user } = useAuth();
   const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isAISidebarOpen, setIsAISidebarOpen] = useState(false);
 
   const handleNavigation = (path: string) => {
     router.push(path);
@@ -19,6 +30,10 @@ const Navbar: React.FC = () => {
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  const toggleAISidebar = () => {
+    setIsAISidebarOpen(!isAISidebarOpen);
   };
 
   return (
@@ -69,6 +84,21 @@ const Navbar: React.FC = () => {
 
           {/* Profile Icon */}
           <div className="flex items-center space-x-4">
+            {/* AI Assistant Button */}
+            <div
+              className="cursor-pointer p-2 flex items-center justify-center hover:bg-gray-100 rounded-full transition-colors"
+              onClick={toggleAISidebar}
+              title="AI Assistant"
+            >
+              <Image
+                src="/assets/icon/AI_Icon.svg"
+                alt="AI Assistant"
+                width={28}
+                height={28}
+                className="object-contain"
+              />
+            </div>
+
             <div
               className="flex-shrink-0 cursor-pointer"
               onClick={() => handleNavigation("/profile_guru")}
@@ -93,6 +123,13 @@ const Navbar: React.FC = () => {
 
       {/* Sidebar */}
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+
+      {/* AI Sidebar */}
+      <AISidebar
+        isOpen={isAISidebarOpen}
+        onClose={() => setIsAISidebarOpen(false)}
+        bookContext={bookContext}
+      />
     </>
   );
 };

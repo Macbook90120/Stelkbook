@@ -74,7 +74,14 @@ const BookContent: React.FC = () => {
       {/* Navbar */}
       <header className="flex justify-between items-center mb-4">
         <div className="pt-12 px-8">
-          <Navbar />
+          <Navbar 
+            bookContext={{
+              judul: book.judul,
+              penulis: book.penulis,
+              penerbit: book.penerbit,
+              deskripsi: book.kategori
+            }}
+          />
         </div>
       </header>
 

@@ -9,7 +9,16 @@ function Page() {
   return (
     <div className="min-h-screen bg-gray-50 overflow-y-auto">
       {/* Navbar */}
-      <div className="mb-8"><Navbar /></div>
+      <div className="mb-8">
+        <Navbar 
+          bookContext={{
+            judul: "Akidah Akhlak Kelas XII SMA",
+            penulis: "Drs. Margiono, M.Pd",
+            penerbit: "Yudistira",
+            deskripsi: "Buku Paket Akidah Akhlak Kelas XII SMA"
+          }}
+        />
+      </div>
 
       {/* Main Content */}
       <main className="pt-20 px-8"> {/* Added padding to avoid overlap with navbar */}

@@ -1,11 +1,14 @@
 'use client';
-import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import React, { useEffect, useState, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Navbar from '@/components/Navbar_Perpus';
 import { useBook } from '@/context/bookContext';
 import useAuthMiddleware from '@/hooks/auth';
 import { useAuth } from '@/context/authContext';
+import Pagination from '@/components/Pagination';
+import SortFilter, { SortOption } from '@/components/SortFilter';
+import FilterCheckbox, { FilterState } from '@/components/FilterCheckbox';
+import BookCard from '@/components/BookCard';
 import { getStorageUrl } from '@/helpers/storage';
 
 
@@ -14,42 +17,88 @@ interface Book {
   judul: string;
   cover: string;
   path?: string;
+  kategori?: string;
+  kelas?: string;
+  mapel?: string;
+  penerbit?: string;
+  penulis?: string;
+  sekolah?: string;
+  average_rating?: number;
+  total_ratings?: number;
 }
 
-function Page() {
+function Kelas9PerpusContent() {
   useAuthMiddleware();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user } = useAuth();
-  const { kelas9Books, loading, error, fetchKelas9Books } = useBook();
+  const { kelas9Books, kelas9Pagination, loading, error, fetchKelas9Books } = useBook();
   const [displayBooks, setDisplayBooks] = useState<Book[]>([]);
+  const [sortOption, setSortOption] = useState<SortOption>(null);
+  const [activeFilters, setActiveFilters] = useState<FilterState>({
+    kelas: [],
+    mapel: [],
+    penerbit: [],
+    penulis: []
+  });
 
-  // Redirect based on user role
+  const currentPage = Number(searchParams.get('page')) || 1;
 
-
-  // Fetch non-akademik books on component mount
   useEffect(() => {
-    fetchKelas9Books();
-  }, [fetchKelas9Books]);
+    fetchKelas9Books(currentPage);
+  }, [fetchKelas9Books, currentPage]);
 
-  // Process books data when it changes
+  const handlePageChange = (page: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('page', page.toString());
+    router.push(`/kelasIX_perpus?${params.toString()}`);
+  };
+
   useEffect(() => {
-    const processedBooks = kelas9Books.map((book: Book) => {
-      const coverUrl = book.cover 
-        ? getStorageUrl(book.cover) 
-        : '/assets/default-cover.png';
-      
-      // console.log(`Cover URL for Book ID ${book.id}:`, coverUrl);
-      
-      return {
-        id: book.id,
-        judul: book.judul,
-        cover: coverUrl,
-        path: `/kelasIX_perpus/buku9?id=${book.id}`,
-      };
-    });
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') {
+        if (currentPage > 1) handlePageChange(currentPage - 1);
+      } else if (e.key === 'ArrowRight') {
+        if (kelas9Pagination && currentPage < kelas9Pagination.lastPage) {
+          handlePageChange(currentPage + 1);
+        }
+      }
+    };
 
-    setDisplayBooks(processedBooks);
-  }, [kelas9Books]);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [currentPage, kelas9Pagination]);
+
+  useEffect(() => {
+    if (kelas9Books) {
+      const filteredBooks = kelas9Books.filter((book: any) => {
+        const bookClass = book.kelas || book.kategori;
+        const matchesClass = activeFilters.kelas.length === 0 || (bookClass && activeFilters.kelas.includes(bookClass));
+        const matchesSubject = activeFilters.mapel.length === 0 || (book.mapel && activeFilters.mapel.includes(book.mapel));
+        const matchesPublisher = activeFilters.penerbit.length === 0 || (book.penerbit && activeFilters.penerbit.includes(book.penerbit));
+        const matchesAuthor = activeFilters.penulis.length === 0 || (book.penulis && activeFilters.penulis.includes(book.penulis));
+        return matchesClass && matchesSubject && matchesPublisher && matchesAuthor;
+      });
+
+      const processedBooks = filteredBooks.map((book: any) => {
+        const coverUrl = book.cover ? getStorageUrl(book.cover) : '/assets/default-cover.png';
+        return {
+          id: book.id,
+          judul: book.judul,
+          cover: coverUrl,
+          path: `/kelasIX_perpus/buku9?id=${book.id}`,
+          kategori: book.kategori, kelas: book.kelas, mapel: book.mapel,
+          penerbit: book.penerbit, penulis: book.penulis, sekolah: book.sekolah,
+          average_rating: book.average_rating, total_ratings: book.total_ratings
+        };
+      });
+
+      if (sortOption === 'asc') processedBooks.sort((a: Book, b: Book) => a.judul.localeCompare(b.judul));
+      else if (sortOption === 'desc') processedBooks.sort((a: Book, b: Book) => b.judul.localeCompare(a.judul));
+
+      setDisplayBooks(processedBooks);
+    }
+  }, [kelas9Books, sortOption, activeFilters]);
 
   const handleNavigationClick = (path: string) => {
     router.push(path);
@@ -59,7 +108,7 @@ function Page() {
     return (
       <div className="h-screen flex items-center justify-center bg-gray-50">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 border-4 border-red border-t-transparent rounded-full animate-spin"></div>
+          <div className="w-12 h-12 border-4 border-red-500 border-t-transparent rounded-full animate-spin"></div>
           <p className="text-gray-600">Memuat buku...</p>
         </div>
       </div>
@@ -67,46 +116,62 @@ function Page() {
   }
 
   return (
-    <div className="min-h-screen p-8 bg-gray-50 overflow-y-auto">
-      <header className="flex justify-between items-center mb-4">
-        <Navbar />
-      </header>
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      <Navbar />
 
-      <div className="mb-8 flex items-center pt-20 px-8">
-        <p className="text-xl font-semibold text-left font-poppins translate-y-[-15px]">
-          Buku Kelas IX
-        </p>
-      </div>
-
-      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
-        {displayBooks.map((book) => (
-          <div
-            key={book.id}
-            className="text-center cursor-pointer hover:bg-gray-100 p-4 rounded-lg transition-colors"
-            onClick={() => handleNavigationClick(book.path!)}
-          >
-            <div className="w-[150px] h-[200px] relative mx-auto">
-              <Image
-                             src={book.cover}
-                             alt={book.judul}
-                             fill
-                             sizes="300px"
-                             className="rounded-md object-cover shadow-md"
-                             priority
-                             onError={(e) => {
-                               const target = e.target as HTMLImageElement;
-                               target.src = '/assets/default-cover.png';
-                             }}
-                           />
-            </div>
-            <p className="mt-2 text-sm font-poppins font-semibold line-clamp-2">
-              {book.judul}
-            </p>
+      <main className="pt-24 px-4 sm:px-8 flex-grow flex flex-col pb-8">
+        <div className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div className="flex flex-col gap-1">
+            <p className="text-xl font-semibold font-poppins">Buku Kelas IX</p>
+            <p className="text-sm text-gray-500">Menampilkan {displayBooks.length} buku</p>
           </div>
-        ))}
-      </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <FilterCheckbox books={kelas9Books || []} onFilterChange={setActiveFilters} />
+            <SortFilter currentSort={sortOption} onSortChange={setSortOption} />
+          </div>
+        </div>
+
+        <div className="flex-grow">
+          {displayBooks.length > 0 ? (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 justify-items-center">
+              {displayBooks.map((book) => (
+                <BookCard key={book.id} book={book} onClick={() => handleNavigationClick(book.path!)} />
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col justify-center items-center h-64 text-gray-500">
+              <p className="text-lg font-medium">Tidak ada buku ditemukan</p>
+              <p className="text-sm">Coba sesuaikan filter pencarian Anda</p>
+            </div>
+          )}
+        </div>
+
+        {kelas9Pagination && (
+          <div className="mt-8 flex justify-center">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={kelas9Pagination.lastPage || 1}
+              onPageChange={handlePageChange}
+              isLoading={loading}
+            />
+          </div>
+        )}
+      </main>
     </div>
   );
 }
 
-export default Page;
+export default function Page() {
+  return (
+    <Suspense fallback={
+      <div className="h-screen flex items-center justify-center bg-gray-50">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-12 h-12 border-4 border-red-500 border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-gray-600">Memuat...</p>
+        </div>
+      </div>
+    }>
+      <Kelas9PerpusContent />
+    </Suspense>
+  );
+}

@@ -9,7 +9,16 @@ function Page() {
   return (
     <div className="min-h-screen bg-gray-50 overflow-y-auto">
       {/* Navbar */}
-      <div className="mb-8"><Navbar/></div>
+      <div className="mb-8">
+        <Navbar 
+          bookContext={{
+            judul: "Ekonomi SMA Kelas X",
+            penulis: "Endang Mulyadi",
+            penerbit: "Yudistira",
+            deskripsi: "Buku Paket Ekonomi SMA Kelas X"
+          }}
+        />
+      </div>
 
       {/* Main Content */}
       <main className="pt-20 px-8"> {/* Added padding to avoid overlap with navbar */}
