@@ -4,11 +4,16 @@ import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import WarningModalBuku from "./WarningModalBuku3";
-import PageFlipBook from "@/components/PageFlipBook2";
+import dynamic from "next/dynamic";
 import Navbar from "@/components/Navbar_Lainnya_Perpus";
 import SkeletonBookDetail from "@/components/SkeletonBookDetail";
 import { useBook } from "@/context/bookContext";
 import { getStorageUrl } from "@/helpers/storage";
+
+const PageFlipBook = dynamic(() => import("@/components/PageFlipBook2"), {
+  ssr: false,
+  loading: () => <p className="text-gray-500">Memuat viewer...</p>
+});
 
 interface Book {
   id: number;
@@ -36,18 +41,22 @@ const BookContent: React.FC = () => {
 
 
   useEffect(() => {
+    const controller = new AbortController();
     const fetchData = async () => {
       try {
-        const data = await fetchBookById(bookId);
+        const data = await fetchBookById(bookId, controller.signal);
         setBook(data);
-      } catch (error) {
-        console.error("Error fetching book or PDF URL:", error);
+      } catch (error: any) {
+        if (error.name !== 'CanceledError') {
+          console.error("Error fetching book or PDF URL:", error);
+        }
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
+    return () => controller.abort();
   }, [bookId, fetchBookById]);
 
   const handleDeleteBook = async (id: number) => {
@@ -105,7 +114,7 @@ const BookContent: React.FC = () => {
           alt=">"
           width={10}
           height={16}
-          className="mx-1"
+          className="mx-2"
         />
         <p
           className="text-xl font-semibold font-poppins cursor-pointer hover:underline"
@@ -118,13 +127,13 @@ const BookContent: React.FC = () => {
           alt=">"
           width={10}
           height={16}
-          className="mx-1"
+          className="mx-2"
         />
         <p className="text-xl font-semibold font-poppins">{book.judul}</p>
       </div>
 
       {/* Konten Buku */}
-      <div className="flex flex-col lg:flex-row gap-4 items-center">
+      <div className="flex flex-col lg:flex-row gap-8 items-center">
         {/* Kiri */}
         <div className="flex flex-col items-center lg:items-start">
           <Image
@@ -174,7 +183,7 @@ const BookContent: React.FC = () => {
         {/* Kanan */}
         <div className="flex-grow overflow-x-auto w-full">
           {pdfUrl ? (
-            <PageFlipBook pdfUrl={pdfUrl} align="center" />
+            <PageFlipBook pdfUrl={pdfUrl} align="start" />
           ) : (
             <p className="text-gray-500">Memuat buku...</p>
           )}

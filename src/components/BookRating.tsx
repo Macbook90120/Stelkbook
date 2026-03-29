@@ -6,12 +6,17 @@ import { Star } from 'lucide-react';
 
 interface BookRatingProps {
   bookId: number;
-  initialAverageRating?: number;
-  initialTotalRatings?: number;
+  initialAverageRating?: number | string | null;
+  initialTotalRatings?: number | string | null;
   isReadOnly?: boolean;
   variant?: 'default' | 'compact';
   className?: string;
 }
+
+const toFiniteNumber = (value: unknown, fallback = 0) => {
+  const n = typeof value === 'number' ? value : typeof value === 'string' ? Number(value) : NaN;
+  return Number.isFinite(n) ? n : fallback;
+};
 
 const BookRating: React.FC<BookRatingProps> = ({
   bookId,
@@ -24,8 +29,8 @@ const BookRating: React.FC<BookRatingProps> = ({
   const [rating, setRating] = useState<number>(0);
   const [review, setReview] = useState<string>('');
   const [hoverRating, setHoverRating] = useState<number>(0);
-  const [averageRating, setAverageRating] = useState<number>(initialAverageRating);
-  const [totalRatings, setTotalRatings] = useState<number>(initialTotalRatings);
+  const [averageRating, setAverageRating] = useState<number>(toFiniteNumber(initialAverageRating, 0));
+  const [totalRatings, setTotalRatings] = useState<number>(toFiniteNumber(initialTotalRatings, 0));
   const [loading, setLoading] = useState<boolean>(false);
   const [userRatingLoading, setUserRatingLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -34,8 +39,8 @@ const BookRating: React.FC<BookRatingProps> = ({
 
   useEffect(() => {
     // Update local state if props change (e.g. from parent re-fetch)
-    setAverageRating(initialAverageRating);
-    setTotalRatings(initialTotalRatings);
+    setAverageRating(toFiniteNumber(initialAverageRating, 0));
+    setTotalRatings(toFiniteNumber(initialTotalRatings, 0));
   }, [initialAverageRating, initialTotalRatings]);
 
   useEffect(() => {
@@ -44,13 +49,15 @@ const BookRating: React.FC<BookRatingProps> = ({
       try {
         const response = await api.get(`/book-ratings/${bookId}/user`);
         if (response.data.rating) {
-          setRating(response.data.rating);
+          setRating(toFiniteNumber(response.data.rating, 0));
         }
         if (response.data.review) {
           setReview(response.data.review);
         }
-      } catch (err) {
-        console.error('Failed to fetch user rating', err);
+      } catch (err: any) {
+        if (err.response?.status !== 404) {
+            console.error('Failed to fetch user rating', err);
+        }
       } finally {
         setUserRatingLoading(false);
       }
@@ -79,10 +86,10 @@ const BookRating: React.FC<BookRatingProps> = ({
       if (response.data.success) {
         setRating(value);
         if (response.data.average_rating !== undefined) {
-            setAverageRating(response.data.average_rating);
+            setAverageRating(toFiniteNumber(response.data.average_rating, averageRating));
         }
         if (response.data.total_ratings !== undefined) {
-            setTotalRatings(response.data.total_ratings);
+            setTotalRatings(toFiniteNumber(response.data.total_ratings, totalRatings));
         }
       }
     } catch (err: any) {
@@ -105,7 +112,7 @@ const BookRating: React.FC<BookRatingProps> = ({
     <div className={`flex flex-col items-start ${isCompact ? 'gap-2 p-0 bg-transparent border-none shadow-none' : 'gap-4 p-6 bg-white rounded-xl shadow-md border border-gray-100'} transition-all ${!isCompact ? 'hover:shadow-lg' : ''} ${className}`}>
       <div className={`flex items-center ${isCompact ? 'gap-3' : 'gap-4'} w-full`}>
         <div className={`flex flex-col items-center justify-center ${isCompact ? 'bg-yellow-50/50 p-1.5 min-w-[50px]' : 'bg-yellow-50 p-3 min-w-[80px]'} rounded-lg`}>
-            <span className={`${isCompact ? 'text-lg' : 'text-3xl'} font-bold text-yellow-600`}>{averageRating.toFixed(1)}</span>
+            <span className={`${isCompact ? 'text-lg' : 'text-3xl'} font-bold text-yellow-600`}>{toFiniteNumber(averageRating, 0).toFixed(1)}</span>
             <div className="flex text-yellow-500">
                 <Star size={isCompact ? 8 : 12} fill="currentColor" />
                 <Star size={isCompact ? 8 : 12} fill="currentColor" />

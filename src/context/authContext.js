@@ -3,6 +3,19 @@ import { createContext, useState, useEffect, useContext,useCallback } from "reac
 import axios from "../utils/axios";
 import { useRouter } from "next/navigation";
 
+const DEMO_TOKEN_PREFIX = 'demo:';
+const DEMO_USER_STORAGE_KEY = 'auth_user';
+
+const getStoredDemoUser = () => {
+  try {
+    const raw = localStorage.getItem(DEMO_USER_STORAGE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+};
+
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -41,6 +54,19 @@ const [guruSmkDetail, setGuruSmkDetail] = useState(null); // Data spesifik guru 
         return;
       }
 
+      if (token.startsWith(DEMO_TOKEN_PREFIX)) {
+        const demoUser = getStoredDemoUser();
+        if (demoUser) {
+          setUser(demoUser);
+        } else {
+          localStorage.removeItem('auth_token');
+          setUser(null);
+          router.push('/');
+        }
+        setLoading(false);
+        return;
+      }
+
       try {
         const res = await axios.get('/user', {
           headers: { Authorization: `Bearer ${token}` },
@@ -49,12 +75,20 @@ const [guruSmkDetail, setGuruSmkDetail] = useState(null); // Data spesifik guru 
       } catch (error) {
         if (error.response && error.response.status === 401) {
             console.warn("Session expired, logging out.");
+            localStorage.removeItem('auth_token');
+            setUser(null);
+            router.push('/');
+        } else if (!error.response) {
+            console.error("Kesalahan jaringan (Backend mati?):", error.message);
+            // Jangan redirect ke '/' jika kesalahan jaringan, agar tidak loop
+            // Biarkan user tetap di halaman ini dengan state error
+            setUser(null);
         } else {
             console.error("Gagal mengambil data pengguna:", error);
+            localStorage.removeItem('auth_token');
+            setUser(null);
+            router.push('/');
         }
-        localStorage.removeItem('auth_token');
-        setUser(null);
-        router.push('/');
       } finally {
         setLoading(false);
       }
@@ -463,25 +497,26 @@ const fetchAllPerpus = useCallback(async () => {
       throw new Error("Kode dan password harus diisi.");
     }
 
-    // Mock login for specific users
-    // if (form.kode === 'admin' && form.password === 'admin123') {
-    //     const mockUser = { id: 1, username: 'admin', role: 'Admin', email: 'admin@example.com' };
-    //     localStorage.setItem('auth_token', 'mock_admin_token');
-    //     setUser(mockUser);
-    //     return mockUser;
-    // }
-    // if (form.kode === 'siswa' && form.password === 'siswa123') {
-    //     const mockUser = { id: 2, username: 'siswa', role: 'Siswa', email: 'siswa@example.com' };
-    //     localStorage.setItem('auth_token', 'mock_siswa_token');
-    //     setUser(mockUser);
-    //     return mockUser;
-    // }
-    // if (form.kode === 'guru' && form.password === 'guru123') {
-    //     const mockUser = { id: 3, username: 'guru', role: 'Guru', email: 'guru@example.com' };
-    //     localStorage.setItem('auth_token', 'mock_guru_token');
-    //     setUser(mockUser);
-    //     return mockUser;
-    // }
+    const demoAccounts = {
+      '5123456': { password: 'Siswa_123', role: 'Siswa', username: 'Siswa Demo' },
+      '4123456': { password: 'Admin_123', role: 'Admin', username: 'Admin Demo' },
+      '2123456': { password: 'Guru_123', role: 'Guru', username: 'Guru Demo' },
+    };
+
+    const demoAccount = demoAccounts[form.kode];
+    if (demoAccount && form.password === demoAccount.password) {
+      const demoUser = {
+        id: `demo-${form.kode}`,
+        username: demoAccount.username,
+        kode: form.kode,
+        role: demoAccount.role,
+        email: `${form.kode}@demo.local`,
+      };
+      localStorage.setItem('auth_token', `${DEMO_TOKEN_PREFIX}${form.kode}`);
+      localStorage.setItem(DEMO_USER_STORAGE_KEY, JSON.stringify(demoUser));
+      setUser(demoUser);
+      return demoUser;
+    }
 
     try {
       const res = await axios.post('/login', form);
@@ -637,6 +672,7 @@ const rejectUser = useCallback(async (id) => {
       console.error("Logout gagal:", e);
     } finally {
       localStorage.removeItem('auth_token');
+      localStorage.removeItem(DEMO_USER_STORAGE_KEY);
       setUser(null);
       router.push('/');
       router.replace('/');

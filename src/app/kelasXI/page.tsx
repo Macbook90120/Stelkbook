@@ -11,6 +11,7 @@ import SortFilter, { SortOption } from '@/components/SortFilter';
 import FilterCheckbox, { FilterState } from '@/components/FilterCheckbox';
 import { getStorageUrl } from '@/helpers/storage';
 import { generateAutomaticTags } from '@/utils/taggingSystem';
+import TopBooks from '@/components/TopBooks';
 
 
 interface Book {
@@ -173,6 +174,7 @@ function PageContent() {
 
         {/* Books Section */}
         <div className="flex-grow">
+          <TopBooks category="XI" />
           {displayBooks.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 justify-items-center">
               {displayBooks.map((book) => (

@@ -13,18 +13,25 @@ function HomePage() {
   const { user } = useAuth();
 
   useEffect(() => {
-    if (user) {
-      const role = user.role.toLowerCase();
-      if (role === 'admin') {
-        // tetap di halaman ini
-      } else if (role === 'guru') {
-        router.push('/homepage_guru');
-      } else if (role === 'perpus' || role === 'pengurusperpustakaan') {
-        router.push('/perpustakaan');
-      } else {
-        router.push('/homepage');
-      }
+    router.prefetch('/perpustakaan');
+    router.prefetch('/homepage_guru');
+    router.prefetch('/homepage');
+    router.prefetch('/admin');
+  }, [router]);
+
+  useEffect(() => {
+    if (!user) return;
+    const role = (user.role || '').toLowerCase();
+    if (role === 'admin') return;
+    if (role === 'guru') {
+      router.push('/homepage_guru');
+      return;
     }
+    if (role === 'perpus' || role === 'pengurusperpustakaan') {
+      router.push('/perpustakaan');
+      return;
+    }
+    router.push('/homepage');
   }, [user, router]);
 
   const handleButtonClick = (destination: string) => {
@@ -44,6 +51,9 @@ function HomePage() {
       case 'Membuat User':
         router.push('/admin/Create_User');
         break;
+      case 'Persetujuan Buku':
+        router.push('/admin/Persetujuan_Buku');
+        break;
       default:
         console.error('Unknown destination:', destination);
     }
@@ -58,7 +68,7 @@ function HomePage() {
         </div>
       </header>
 
-      <main className="grid grid-cols-1 gap-y-8 md:grid-cols-2 md:gap-6 pt-4">
+      <main className="grid grid-cols-1 gap-y-8 md:grid-cols-2 md:gap-6 pt-4 pb-12">
         {/* Siswa*/}
         <div className="relative w-full h-56 md:h-64 mx-auto">
           <Image
@@ -136,6 +146,27 @@ function HomePage() {
             <p className="text-white font-bold italic text-3xl lg:text-4xl">Membuat User</p>
             <button
               onClick={() => handleButtonClick('Membuat User')}
+              className="mt-2 bg-white text-red font-semibold text-sm py-2 px-8 rounded-full"
+            >
+              Lanjut
+            </button>
+          </div>
+        </div>
+
+        {/* Persetujuan Buku */}
+        <div className="relative w-full h-56 md:h-64 mx-auto">
+          <Image
+            src="/assets/Admin/Card_Admin.png"
+            alt="Persetujuan Buku"
+            fill
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="rounded-lg object-cover"
+            priority = {false}
+          />
+          <div className="absolute bottom-4 left-4">
+            <p className="text-white font-bold italic text-3xl lg:text-4xl">Persetujuan Buku</p>
+            <button
+              onClick={() => handleButtonClick('Persetujuan Buku')}
               className="mt-2 bg-white text-red font-semibold text-sm py-2 px-8 rounded-full"
             >
               Lanjut
