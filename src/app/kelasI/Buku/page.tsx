@@ -62,9 +62,7 @@ const BookContent: React.FC = () => {
   if (!book) return <div>Buku tidak ditemukan.</div>;
 
   // ✅ Sama seperti kode kedua, cek apakah isi sudah berupa URL penuh
-  const pdfUrl = book.isi.startsWith("http")
-    ? book.isi
-    : getStorageUrl(book.isi);
+  const pdfUrl = getStorageUrl(book.isi);
   const coverUrl = book.cover.startsWith("http")
     ? book.cover
     : getStorageUrl(book.cover);
@@ -74,7 +72,14 @@ const BookContent: React.FC = () => {
       {/* Navbar */}
       <header className="flex justify-between items-center mb-4">
         <div className="pt-12 px-8">
-          <Navbar />
+          <Navbar 
+            bookContext={{
+              judul: book.judul,
+              penulis: book.penulis,
+              penerbit: book.penerbit,
+              deskripsi: book.kategori
+            }}
+          />
         </div>
       </header>
 
@@ -180,3 +185,4 @@ const Page = () => {
 };
 
 export default Page;
+

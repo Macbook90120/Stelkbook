@@ -14,7 +14,8 @@ import {
   PieChart,
   Pie,
   Cell,
-  Legend
+  Legend,
+  Sector
 } from 'recharts';
 import api from '@/utils/axios';
 import { 
@@ -29,6 +30,53 @@ import {
 } from 'lucide-react';
 
 const COLORS = ['#EF4444', '#3B82F6', '#10B981', '#F59E0B', '#6366F1'];
+
+const renderActiveShape = (props: any) => {
+  const RADIAN = Math.PI / 180;
+  const {
+    cx, cy, midAngle, innerRadius, outerRadius, startAngle, endAngle,
+    fill, payload, percent, value,
+  } = props;
+  const sin = Math.sin(-RADIAN * midAngle);
+  const cos = Math.cos(-RADIAN * midAngle);
+  const sx = cx + (outerRadius + 10) * cos;
+  const sy = cy + (outerRadius + 10) * sin;
+  const mx = cx + (outerRadius + 30) * cos;
+  const my = cy + (outerRadius + 30) * sin;
+  const ex = mx + (cos >= 0 ? 1 : -1) * 22;
+  const ey = my;
+  const textAnchor = cos >= 0 ? 'start' : 'end';
+
+  return (
+    <g>
+      <text x={cx} y={cy} dy={8} textAnchor="middle" fill={fill} className="text-xs font-bold capitalize">{payload.name}</text>
+      <Sector
+        cx={cx}
+        cy={cy}
+        innerRadius={innerRadius}
+        outerRadius={outerRadius}
+        startAngle={startAngle}
+        endAngle={endAngle}
+        fill={fill}
+      />
+      <Sector
+        cx={cx}
+        cy={cy}
+        startAngle={startAngle}
+        endAngle={endAngle}
+        innerRadius={outerRadius + 6}
+        outerRadius={outerRadius + 10}
+        fill={fill}
+      />
+      <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none" />
+      <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none" />
+      <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#333" fontSize={12}>{`Value: ${value}`}</text>
+      <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} dy={18} textAnchor={textAnchor} fill="#999" fontSize={12}>
+        {`(${(percent * 100).toFixed(2)}%)`}
+      </text>
+    </g>
+  );
+};
 
 interface VisitStat {
   value: number;
@@ -60,6 +108,7 @@ export default function KunjunganGeneralDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshInterval, setRefreshInterval] = useState(60000); // 1 minute
+  const [activeRoleIndex, setActiveRoleIndex] = useState(0);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -233,6 +282,8 @@ export default function KunjunganGeneralDashboard() {
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
+                    activeIndex={activeRoleIndex}
+                    activeShape={renderActiveShape}
                     data={roleData}
                     cx="50%"
                     cy="45%"
@@ -240,14 +291,13 @@ export default function KunjunganGeneralDashboard() {
                     outerRadius={80}
                     paddingAngle={5}
                     dataKey="value"
+                    onMouseEnter={(_, index) => setActiveRoleIndex(index)}
                   >
                     {roleData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip 
-                    contentStyle={{borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}}
-                  />
+                  <Tooltip />
                   <Legend 
                     verticalAlign="bottom" 
                     align="center"

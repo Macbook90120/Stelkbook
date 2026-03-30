@@ -72,7 +72,9 @@ export default function DashboardCharts() {
   const [inventoryData, setInventoryData] = useState<ChartData[]>([]);
   const [freqData, setFreqData] = useState<ChartData[]>([]);
   
-  const [loading, setLoading] = useState(true);
+  const [loadingStudent, setLoadingStudent] = useState(true);
+  const [loadingInventory, setLoadingInventory] = useState(true);
+  const [loadingFreq, setLoadingFreq] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshInterval, setRefreshInterval] = useState(30000); // Default 30s
   const [freqDays, setFreqDays] = useState(30);
@@ -83,33 +85,85 @@ export default function DashboardCharts() {
   const studentChartRef = useRef<HTMLDivElement>(null);
   const inventoryChartRef = useRef<HTMLDivElement>(null);
   const freqChartRef = useRef<HTMLDivElement>(null);
+  
+  // Use ref to keep track of freqDays for stable fetch function
+  const freqDaysRef = useRef(freqDays);
+  useEffect(() => {
+    freqDaysRef.current = freqDays;
+  }, [freqDays]);
 
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+  const fetchStudentData = useCallback(async () => {
+    setLoadingStudent(true);
     try {
-      const [studentRes, inventoryRes, freqRes] = await Promise.all([
-        api.get('/dashboard/student-distribution'),
-        api.get('/dashboard/book-inventory'),
-        api.get(`/dashboard/high-frequency-books?limit=5&days=${freqDays}`)
-      ]);
-
-      if (studentRes.data.success) setStudentData(studentRes.data.data);
-      if (inventoryRes.data.success) setInventoryData(inventoryRes.data.data);
-      if (freqRes.data.success) setFreqData(freqRes.data.data);
-    } catch (err: any) {
-      console.error('Error fetching dashboard data:', err);
-      setError('Gagal memuat data dashboard. Silakan coba lagi nanti.');
+      const res = await api.get('/dashboard/student-distribution');
+      if (res.data.success) setStudentData(res.data.data);
+    } catch (err) {
+      console.error('Error fetching student data:', err);
+      setError('Gagal memuat distribusi siswa.');
     } finally {
-      setLoading(false);
+      setLoadingStudent(false);
     }
   }, []);
 
+  const fetchInventoryData = useCallback(async () => {
+    setLoadingInventory(true);
+    try {
+      const res = await api.get('/dashboard/book-inventory');
+      if (res.data.success) setInventoryData(res.data.data);
+    } catch (err) {
+      console.error('Error fetching inventory data:', err);
+      setError('Gagal memuat inventaris buku.');
+    } finally {
+      setLoadingInventory(false);
+    }
+  }, []);
+
+  const fetchFreqData = useCallback(async () => {
+    setLoadingFreq(true);
+    try {
+      const res = await api.get(`/dashboard/high-frequency-books?limit=5&days=${freqDaysRef.current}`);
+      if (res.data.success) setFreqData(res.data.data);
+    } catch (err) {
+      console.error('Error fetching freq data:', err);
+      setError('Gagal memuat buku terpopuler.');
+    } finally {
+      setLoadingFreq(false);
+    }
+  }, []); // Stable function
+
+  const fetchAllData = useCallback(async () => {
+    setError(null);
+    // Use Promise.all but individual setters handle their own loading states
+    await Promise.all([
+      fetchStudentData(),
+      fetchInventoryData(),
+      fetchFreqData()
+    ]);
+  }, [fetchStudentData, fetchInventoryData, fetchFreqData]);
+
+  // Initial Load
   useEffect(() => {
-    fetchData();
-    const interval = setInterval(fetchData, refreshInterval);
+    fetchAllData();
+  }, []); // Only on mount
+
+  // Interval Refresh - Independent of freqDays
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // Refresh all data periodically
+      fetchStudentData();
+      fetchInventoryData();
+      fetchFreqData();
+    }, refreshInterval);
     return () => clearInterval(interval);
-  }, [fetchData, refreshInterval, freqDays]);
+  }, [refreshInterval, fetchStudentData, fetchInventoryData, fetchFreqData]);
+
+  // Specific Effect for Filter Change - Only loads Freq Data
+  useEffect(() => {
+    // We only want this to run when freqDays changes, NOT on initial mount 
+    // because fetchAllData already handles initial load.
+    // However, for simplicity, running it again or using a "first mount" ref is fine.
+    fetchFreqData();
+  }, [freqDays, fetchFreqData]);
 
   const handleExport = (ref: React.RefObject<HTMLDivElement>, filename: string) => {
     if (!ref.current) return;
@@ -149,6 +203,7 @@ export default function DashboardCharts() {
     setActiveIndex: (i: number) => void,
     ref: React.RefObject<HTMLDivElement>,
     filename: string,
+    loading: boolean,
     extraHeader?: React.ReactNode
   ) => (
     <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100 flex flex-col h-[400px]">
@@ -210,7 +265,7 @@ export default function DashboardCharts() {
       <div className="flex flex-wrap justify-between items-center gap-4 bg-gray-50 p-4 rounded-lg">
         <div className="flex items-center gap-2">
           <h2 className="text-xl font-bold text-gray-800">Dashboard Statistik</h2>
-          {loading && <Loader2 className="animate-spin text-OldRed" size={20} />}
+          {(loadingStudent || loadingInventory || loadingFreq) && <Loader2 className="animate-spin text-OldRed" size={20} />}
         </div>
         
         <div className="flex items-center gap-4">
@@ -230,10 +285,10 @@ export default function DashboardCharts() {
           </div>
           
           <button 
-            onClick={fetchData}
+            onClick={fetchAllData}
             className="flex items-center gap-1 px-3 py-1 bg-white border border-gray-300 rounded text-sm hover:bg-gray-50 transition-colors"
           >
-            <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
+            <RefreshCw size={14} className={(loadingStudent || loadingInventory || loadingFreq) ? 'animate-spin' : ''} />
             Refresh
           </button>
         </div>
@@ -253,7 +308,8 @@ export default function DashboardCharts() {
           activeStudentIndex, 
           setActiveStudentIndex,
           studentChartRef,
-          "distribusi_siswa"
+          "distribusi_siswa",
+          loadingStudent
         )}
         
         {renderChartContainer(
@@ -262,7 +318,8 @@ export default function DashboardCharts() {
           activeInventoryIndex, 
           setActiveInventoryIndex,
           inventoryChartRef,
-          "inventaris_buku"
+          "inventaris_buku",
+          loadingInventory
         )}
         
         {renderChartContainer(
@@ -272,6 +329,7 @@ export default function DashboardCharts() {
           setActiveFreqIndex,
           freqChartRef,
           "buku_terpopuler",
+          loadingFreq,
           <select 
             value={freqDays}
             onChange={(e) => setFreqDays(Number(e.target.value))}

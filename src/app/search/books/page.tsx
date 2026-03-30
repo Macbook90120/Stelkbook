@@ -60,9 +60,7 @@ const BookContent = () => {
   }
   if (!book) return <div>Buku tidak ditemukan.</div>;
 
-  const pdfUrl = book.isi.startsWith("http")
-    ? book.isi
-    : getStorageUrl(book.isi);
+  const pdfUrl = getStorageUrl(book.isi);
   const coverUrl = book.cover.startsWith("http")
     ? book.cover
     : getStorageUrl(book.cover);
@@ -71,7 +69,14 @@ const BookContent = () => {
     <div className="h-screen p-8 bg-gray-50 overflow-y-auto">
       <header className="flex justify-between items-center mb-4">
         <div className="pt-12 px-8">
-          <Navbar />
+          <Navbar 
+            bookContext={{
+              judul: book.judul,
+              penulis: book.penulis,
+              penerbit: book.penerbit,
+              deskripsi: book.kategori
+            }}
+          />
         </div>
       </header>
 
@@ -171,3 +176,4 @@ export default function Page() {
     </Suspense>
   );
 }
+

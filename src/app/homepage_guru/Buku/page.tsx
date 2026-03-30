@@ -61,9 +61,7 @@ const BookContent: React.FC = () => {
   if (!book) return <div>Buku tidak ditemukan.</div>;
 
   // ✅ Samakan logika URL seperti kode kedua
-  const pdfUrl = book.isi.startsWith("http")
-    ? book.isi
-    : getStorageUrl(book.isi);
+  const pdfUrl = getStorageUrl(book.isi);
   const coverUrl = book.cover.startsWith("http")
     ? book.cover
     : getStorageUrl(book.cover);
@@ -178,3 +176,4 @@ const Page = () => {
 };
 
 export default Page;
+

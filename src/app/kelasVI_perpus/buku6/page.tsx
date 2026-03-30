@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState, useEffect, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Image from "next/image";
-import WarningModalBuku from "./WarningModalKelas3";
-import PageFlipBook from "@/components/PageFlipBook2";
 import Navbar from "@/components/Navbar_Lainnya_Perpus";
+import PageFlipBook from "@/components/PageFlipBook2";
+import BookRating from "@/components/BookRating";
 import { useBook } from "@/context/bookContext";
 import { getStorageUrl } from '@/helpers/storage';
 
@@ -20,15 +20,15 @@ interface Book {
   ISBN: string;
   isi: string;
   cover: string;
+  average_rating?: number;
+  total_ratings?: number;
 }
 
 const BookContent: React.FC = () => {
-  const [showWarningModal, setShowWarningModal] = useState(false);
-  const router = useRouter();
   const searchParams = useSearchParams();
   const bookId = parseInt(searchParams.get("id") || "0", 10);
+  const { fetchKelas6BookById } = useBook();
 
-  const { fetchKelas6BookById, deleteBookKelas6, getBookPdfUrl } = useBook();
   const [book, setBook] = useState<Book | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -38,25 +38,14 @@ const BookContent: React.FC = () => {
         const data = await fetchKelas6BookById(bookId);
         setBook(data);
       } catch (error) {
-        console.error("Error fetching book:", error);
+        console.error("Gagal memuat data buku:", error);
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [bookId, fetchKelas6BookById, getBookPdfUrl]);
-
-  const handleDeleteBook = async (id: number) => {
-    try {
-      await deleteBookKelas6(id);
-      setShowWarningModal(false);
-      console.log("Buku dihapus");
-      router.push("/perpus_lainnya");
-    } catch (error) {
-      console.error("Gagal menghapus buku:", error);
-    }
-  };
+  }, [bookId, fetchKelas6BookById]);
 
   if (loading) {
     return (
@@ -68,106 +57,126 @@ const BookContent: React.FC = () => {
       </div>
     );
   }
+  
+  if (!book) return <div>Buku tidak ditemukan.</div>;
 
-  if (!book) return null;
+  const pdfUrl = getStorageUrl(book.isi);
+  const coverUrl = book.cover.startsWith("http")
+    ? book.cover
+    : getStorageUrl(book.cover);
 
-  const pdfUrl = book.isi.startsWith("http")
-    ? book.isi
-    : getStorageUrl(book.isi);
+  const handleDownload = () => {
+    window.open(pdfUrl, "_blank");
+  };
 
   return (
-    <div className="h-screen p-8 bg-gray-50 overflow-y-auto">
+    <div className="min-h-screen bg-gray-50 overflow-y-auto">
       {/* Navbar */}
-      <header className="flex justify-between items-center mb-4">
-        <div className="pt-12 px-8">
-          <Navbar />
-        </div>
-      </header>
-
-      {/* Breadcrumb */}
-      <div className="mb-8 flex items-center">
-        <p className="text-xl font-semibold font-poppins">Studi Anda</p>
-        <Image
-          src="/assets/Kelas_X/Primary_Direct.png"
-          alt=">"
-          width={10}
-          height={16}
-          className="mx-1"
+      <div className="mb-8">
+        <Navbar 
+          bookContext={{
+            judul: book.judul,
+            penulis: book.penulis,
+            penerbit: book.penerbit,
+            deskripsi: book.kategori
+          }}
         />
-        <p className="text-xl font-semibold font-poppins">{book.kategori}</p>
-        <Image
-          src="/assets/Kelas_X/Primary_Direct.png"
-          alt=">"
-          width={10}
-          height={16}
-          className="mx-1"
-        />
-        <p className="text-xl font-semibold font-poppins">{book.judul}</p>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-8 lg:items-start">
-        {/* Book Info */}
-        <div className="flex flex-col items-center lg:items-start w-full lg:w-1/4">
-          <Image
-            src={getStorageUrl(book.cover)}
-            alt="Cover Buku"
-            width={200}
-            height={280}
-            className="rounded-lg shadow-md mb-6"
-          />
-
-          <div className="text-center lg:text-left">
-            <h2 className="text-lg font-bold">{book.judul}</h2>
-            <ul className="mt-2 text-sm space-y-1">
-              <li><strong>Penerbit:</strong> {book.penerbit}</li>
-              <li><strong>Penulis:</strong> {book.penulis}</li>
-              <li><strong>Tahun:</strong> {book.tahun}</li>
-              <li><strong>ISBN:</strong> {book.ISBN}</li>
-            </ul>
+      {/* Main Content */}
+      <main className="pt-20 px-8">
+        {/* Breadcrumb */}
+        <div className="mb-8 flex items-center">
+          <p className="text-xl font-semibold font-poppins">Studi Anda</p>
+          <div className="mx-2">
+            <Image
+              src="/assets/Kelas_X/Primary_Direct.png"
+              alt=">"
+              width={10}
+              height={16}
+            />
           </div>
-
-          {/* Buttons */}
-          <div className="mt-4 flex flex-col w-full gap-3">
-            <button
-              onClick={() => router.push(`/kelasVI_perpus/buku6/Edit_Buku?id=${bookId}`)}
-              className="flex items-center justify-center gap-2 bg-yellow-500 text-white py-2 rounded-lg hover:bg-yellow-600 transition"
-            >
-              <Image src="/assets/icon/edit.svg" alt="Edit" width={16} height={16} />
-              Edit Buku
-            </button>
-            <button
-              onClick={() => setShowWarningModal(true)}
-              className="flex items-center justify-center gap-2 bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition"
-            >
-              <Image src="/assets/icon/delete.svg" alt="Hapus" width={16} height={16} />
-              Hapus Buku
-            </button>
+          <p className="text-xl font-semibold font-poppins">{book.kategori}</p>
+          <div className="mx-2">
+            <Image
+              src="/assets/Kelas_X/Primary_Direct.png"
+              alt=">"
+              width={10}
+              height={16}
+            />
           </div>
+          <p className="text-xl font-semibold font-poppins">{book.judul}</p>
         </div>
 
-        {/* Kanan */}
-        <div className="flex-grow overflow-x-auto w-full">
-          {pdfUrl ? (
-            <PageFlipBook pdfUrl={pdfUrl} align="start" />
-          ) : (
-            <p className="text-gray-500">Memuat buku...</p>
-          )}
-        </div>
-      </div>
+        {/* Konten Buku */}
+        <div className="flex flex-col lg:flex-row gap-8 items-start">
+          {/* Sisi Kiri: Cover & Metadata */}
+          <div className="flex flex-col items-center lg:items-start w-full lg:w-1/4">
+            <Image
+              src={coverUrl}
+              alt="Cover Buku"
+              width={200}
+              height={280}
+              className="rounded-lg shadow-md mb-6"
+              priority={true}
+              style={{ width: "auto", height: "auto" }}
+              onError={(e) => {
+                e.currentTarget.src = "/assets/default-cover.png";
+              }}
+            />
 
-      {/* Warning Modal */}
-      {showWarningModal && (
-        <WarningModalBuku
-          message="Apakah Anda yakin ingin menghapus buku ini?"
-          onConfirm={() => handleDeleteBook(bookId)}
-          onCancel={() => setShowWarningModal(false)}
-        />
-      )}
+            <div className="text-center lg:text-left w-full">
+              <h2 className="text-xl font-bold mb-4">{book.judul}</h2>
+              <ul className="mt-2 text-sm space-y-2 text-gray-700">
+                <li>
+                  <strong className="text-black">Penerbit:</strong> {book.penerbit}
+                </li>
+                <li>
+                  <strong className="text-black">Penulis:</strong> {book.penulis}
+                </li>
+                <li>
+                  <strong className="text-black">Tahun:</strong> {book.tahun}
+                </li>
+                <li>
+                  <strong className="text-black">ISBN:</strong> {book.ISBN}
+                </li>
+              </ul>
+
+              <button
+                onClick={handleDownload}
+                className="mt-6 w-full bg-blue-600 text-white py-2.5 rounded-lg hover:bg-blue-700 transition-colors font-semibold shadow-sm mb-6"
+              >
+                Unduh Buku
+              </button>
+
+              <div className="mt-2">
+                <BookRating 
+                  bookId={book.id}
+                  initialAverageRating={book.average_rating}
+                  initialTotalRatings={book.total_ratings}
+                  isReadOnly={false}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Sisi Kanan: Flipbook */}
+          <div className="w-full lg:w-3/4 flex justify-center">
+            {pdfUrl ? (
+              <PageFlipBook pdfUrl={pdfUrl} align="center" />
+            ) : (
+              <div className="flex items-center justify-center h-[600px] w-full bg-white rounded-xl border border-dashed border-gray-300">
+                <p className="text-gray-500">Memuat penampil buku...</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </main>
     </div>
   );
 };
 
-const Page: React.FC = () => {
+export default function Page() {
   return (
     <Suspense fallback={
       <div className="h-screen flex items-center justify-center bg-gray-50">
@@ -180,6 +189,5 @@ const Page: React.FC = () => {
       <BookContent />
     </Suspense>
   );
-};
+}
 
-export default Page;

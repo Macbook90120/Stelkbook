@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Navbar from "@/components/Navbar_Lainnya_Guru"; // ✅ Navbar khusus Guru
 import PageFlipBook from "@/app/guru_lainnya/PageFlipBook2";
@@ -25,6 +25,7 @@ interface Book {
 }
 
 const BookContent: React.FC = () => {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const bookId = parseInt(searchParams.get("id") || "0", 10);
   const { fetchKelas6BookById } = useBook(); // ✅ versi Guru
@@ -61,9 +62,7 @@ const BookContent: React.FC = () => {
   if (!book) return <div>Buku tidak ditemukan.</div>;
 
   // ✅ Samakan logika URL seperti kode kedua
-  const pdfUrl = book.isi.startsWith("http")
-    ? book.isi
-    : getStorageUrl(book.isi);
+  const pdfUrl = getStorageUrl(book.isi);
   const coverUrl = book.cover.startsWith("http")
     ? book.cover
     : getStorageUrl(book.cover);
@@ -76,11 +75,23 @@ const BookContent: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 overflow-y-auto pt-24 px-8 pb-8">
       {/* Navbar */}
-      <Navbar />
+      <Navbar 
+        bookContext={{
+          judul: book.judul,
+          penulis: book.penulis,
+          penerbit: book.penerbit,
+          deskripsi: book.kategori
+        }}
+      />
 
       {/* Breadcrumb */}
       <div className="mb-8 flex items-center">
-        <p className="text-xl font-semibold font-poppins">Studi Anda</p>
+        <p 
+          className="text-xl font-semibold font-poppins cursor-pointer hover:underline"
+          onClick={() => router.push('/SD_Guru')}
+        >
+          Studi Anda
+        </p>
         <Image
           src="/assets/Kelas_X/Primary_Direct.png"
           alt=">"
@@ -88,7 +99,12 @@ const BookContent: React.FC = () => {
           height={16}
           className="mx-1"
         />
-        <p className="text-xl font-semibold font-poppins">{book.kategori}</p>
+        <p 
+          className="text-xl font-semibold font-poppins cursor-pointer hover:underline"
+          onClick={() => router.push('/kelasVI_guru')}
+        >
+          {book.kategori}
+        </p>
         <Image
           src="/assets/Kelas_X/Primary_Direct.png"
           alt=">"
@@ -180,3 +196,4 @@ export default function Page() {
     </Suspense>
   );
 }
+

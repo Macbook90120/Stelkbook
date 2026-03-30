@@ -4,14 +4,25 @@ import React, { useState, useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Sidebar from "./Sidebar";
+import AISidebar from "./AISidebar";
 import { useAuth } from "@/context/authContext";
 import { getStorageUrl } from '@/helpers/storage';
 
 
-const Navbar: React.FC = () => {
+interface NavbarProps {
+  bookContext?: {
+    judul: string;
+    penulis?: string;
+    penerbit?: string;
+    deskripsi?: string;
+  };
+}
+
+const Navbar: React.FC<NavbarProps> = ({ bookContext }) => {
   const {user} = useAuth()
   const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isAISidebarOpen, setIsAISidebarOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const searchInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -21,6 +32,10 @@ const Navbar: React.FC = () => {
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  const toggleAISidebar = () => {
+    setIsAISidebarOpen(!isAISidebarOpen);
   };
 
   const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -95,8 +110,20 @@ const Navbar: React.FC = () => {
       </form>
     </div>
 
-    {/* Right: Profile Icon */}
+    {/* Right: AI Icon + Profile Icon */}
     <div className="flex items-center flex-shrink-0 space-x-2">
+      <div 
+        className="cursor-pointer p-2"
+        onClick={toggleAISidebar}
+      >
+        <Image
+          src="/assets/icon/AI_Icon.svg"
+          alt="AI Assistant"
+          width={30}
+          height={30}
+          className="object-contain md:w-[35px] md:h-[35px]"
+        />
+      </div>
       <div
         className="cursor-pointer p-2"  
         onClick={() => handleNavigation("/profile")}
@@ -112,6 +139,13 @@ const Navbar: React.FC = () => {
       <Sidebar
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
+      />
+
+      {/* AI Sidebar */}
+      <AISidebar
+        isOpen={isAISidebarOpen}
+        onClose={() => setIsAISidebarOpen(false)}
+        bookContext={bookContext}
       />
     </>
   );

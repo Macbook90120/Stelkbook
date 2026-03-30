@@ -8,7 +8,7 @@
 }
 
 .book-container:hover {
-  box-shadow: 0 0 25px rgba(0,0,0,0.15);
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.15);
 }
 
 canvas {
@@ -20,7 +20,22 @@ body.no-scroll {
   overflow: hidden;
 }
 
+/* ── Book wrapper ────────────────────────────────────────────────────── */
+.book-wrapper {
+  isolation: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+}
 
+/* Prevent scale from breaking PageFlip's internal bounding box during rebuild */
+.book-wrapper.rebuilding {
+  transform: scale(1) !important;
+  visibility: hidden;
+}
+
+/* ── Individual page ─────────────────────────────────────────────────── */
 .page {
   display: flex;
   align-items: center;
@@ -29,7 +44,12 @@ body.no-scroll {
   height: 100%;
   overflow: hidden;
   background-color: white;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.page:hover {
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
 }
 
 .page canvas {
@@ -37,10 +57,106 @@ body.no-scroll {
   height: 100% !important;
   object-fit: contain;
   display: block;
+  /* Crisp text rendering */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
 }
 
+/* ── Fullscreen: ensure the wrapper fills the viewport correctly ───────
+   The :fullscreen pseudo-class targets the element that IS fullscreen
+   (i.e. the outermost div with ref={wrapperRef}).
+   We must ensure all descendants are visible and correctly sized.       */
+:fullscreen {
+  /* Fill the entire screen */
+  width: 100vw !important;
+  height: 100vh !important;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
 
-/* Responsive */
+:fullscreen .book-wrapper {
+  margin: auto;
+  /* Never let the book be clipped by the fullscreen container */
+  overflow: visible !important;
+  flex-shrink: 0;
+}
+
+/* Vendor prefixes for fullscreen */
+:-webkit-full-screen {
+  width: 100vw !important;
+  height: 100vh !important;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+:-webkit-full-screen .book-wrapper {
+  margin: auto;
+  overflow: visible !important;
+  flex-shrink: 0;
+}
+
+:-moz-full-screen {
+  width: 100vw !important;
+  height: 100vh !important;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+:-moz-full-screen .book-wrapper {
+  margin: auto;
+  overflow: visible !important;
+  flex-shrink: 0;
+}
+
+:-ms-fullscreen {
+  width: 100vw !important;
+  height: 100vh !important;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+:-ms-fullscreen .book-wrapper {
+  margin: auto;
+  overflow: visible !important;
+  flex-shrink: 0;
+}
+
+/* ── Backdrop (browser chrome behind the fullscreen element) ─────────── */
+::backdrop {
+  background-color: #f3f4f6;
+}
+
+/* ── PageFlip internal canvas — never let it be invisible ───────────── */
+.stf__parent canvas {
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.stf__parent {
+  overflow: visible !important;
+}
+
+.stf__wrapper {
+  overflow: visible !important;
+}
+
+.stf__block {
+  overflow: visible !important;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
   .book-container {
     width: 95%;
@@ -54,12 +170,12 @@ body.no-scroll {
   }
 }
 
-/* Hide Scrollbar Utility */
+/* ── Scrollbar utility ───────────────────────────────────────────────── */
 .hide-scrollbar {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .hide-scrollbar::-webkit-scrollbar {
-  display: none; /* Chrome, Safari and Opera */
+  display: none;
 }
